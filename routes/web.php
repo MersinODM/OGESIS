@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\AppController;
+use App\Http\Controllers\Web\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::post('auth/login', [AuthController::class, "login"])->name('login');
 
 Route::get('{any?}', [AppController::class, "app"])
     ->where('any', '^(?!api|password\/reset).*$')

@@ -8,13 +8,13 @@ import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min'
 import 'admin-lte/dist/js/adminlte.min'
 import router from './router'
 
-$.fn.dataTable.ext.errMode = (settings, tn, msg) => {
-  if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
-    router.push({ name: 'login' })
-  }
-  if (settings.jqXHR?.status === 419) {
-    location.reload()
-  }
+$.fn.dataTable.ext.errMode = async (settings, tn, msg) => {
+    if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
+        await router.push({name: 'login'})
+    }
+    if (settings.jqXHR?.status === 419) {
+        location.reload()
+    }
 }// Datatables için err mode kapatılıyor tüm hataları biz yakalayacağız
 $.fn.DataTable.ext.pager.numbers_length = 6 // Sayfalama genişliği
 
