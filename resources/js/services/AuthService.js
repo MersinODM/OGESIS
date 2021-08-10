@@ -23,7 +23,7 @@ import { ResponseCodes } from '../utils/constants'
 const AuthService = {
   async login (credentials) {
     try {
-      const response = await http.post('app/auth/login', credentials)
+      const response = await http.post('auth/login', credentials)
       if (response?.status === 200 && response?.data.code === ResponseCodes.CODE_SUCCESS) {
         await router.push({ name: 'start' })
       }
@@ -34,7 +34,7 @@ const AuthService = {
   },
   async logout () {
     try {
-      const response = await http.post('app/auth/logout')
+      const response = await http.post('auth/logout')
       return await response?.data
     } catch (e) {}
   }
