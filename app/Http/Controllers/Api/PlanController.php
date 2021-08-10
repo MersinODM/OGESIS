@@ -36,7 +36,15 @@ class PlanController extends ApiController
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => "Plan güncelleme işlemi başarılı."
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Illuminate\Auth\Access\AuthorizationException $ex) {
+            DB::rollBack();
+            return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
+                    ResponseKeys::MESSAGE => 'Bu işlem için yetkiniz yok!'
+                ]);
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return $this->apiException($e);
         }

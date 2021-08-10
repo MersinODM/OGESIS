@@ -54,12 +54,9 @@ class DevPlanPolicy
      */
     public function update(User $user, DevPlan $devPlan)
     {
-        $ll = $user->inst_id;
-        $po = $devPlan->institution_id;
-        $res =  $user->hasRole('admin') ||
+        return $user->hasRole('admin') ||
             ($user->hasRole('inst-comanager') &&
                 $user->inst_id === $devPlan->institution_id);
-        return $res;
     }
 
     /**
