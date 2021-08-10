@@ -14,8 +14,6 @@ class CreatePlansTable extends Migration
      */
     public function up()
     {
-
-        DB::beginTransaction();
         try {
             Schema::create('ogs_facilities', function (Blueprint $table) {
                 $table->id();
@@ -55,6 +53,7 @@ class CreatePlansTable extends Migration
                 $table->binary('report_file')->nullable();
                 $table->date("start_date")->nullable();
                 $table->date("end_date")->nullable();
+                $table->boolean("is_open")->default(true);
                 $table->timestamps();
 
 //            $table->foreign('institution_id')
@@ -77,13 +76,11 @@ class CreatePlansTable extends Migration
                     ->on('ogs_dev_plans');
             });
 
-
             Schema::create('ogs_activity_types', function (Blueprint $table) {
                 $table->id();
                 $table->string("name", 500);
                 $table->timestamps();
             });
-
 
             Schema::create('ogs_activity_themes', function (Blueprint $table) {
                 $table->id();
@@ -137,7 +134,6 @@ class CreatePlansTable extends Migration
                     ->references('id')
                     ->on('ogs_activities');
             });
-
 
             Schema::create('ogs_teams', function (Blueprint $table) {
                 $table->id();
@@ -200,9 +196,7 @@ class CreatePlansTable extends Migration
                     ->references('id')
                     ->on('ogs_teams');
             });
-            DB::commit();
         } catch (Exception $e) {
-            DB::rollback();
             throw $e;
         }
     }
@@ -214,6 +208,17 @@ class CreatePlansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('ogs_team_teachers');
+        Schema::dropIfExists('ogs_activity_members');
+        Schema::dropIfExists('ogs_teachers');
+        Schema::dropIfExists('ogs_teams');
+        Schema::dropIfExists('ogs_activity_comments');
+        Schema::dropIfExists('ogs_activities');
+        Schema::dropIfExists('ogs_activity_types');
+        Schema::dropIfExists('ogs_activity_themes');
+        Schema::dropIfExists('ogs_institution_infos');
+        Schema::dropIfExists('ogs_dev_plans');
+        Schema::dropIfExists('ogs_institution_facilities');
+        Schema::dropIfExists('ogs_facilities');
     }
 }

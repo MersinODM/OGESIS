@@ -14,7 +14,8 @@ class DevPlan extends Model
 
     protected $fillable = [
         "institution_id", "start_date", "end_date",
-        "description", "report_name", "report_file"
+        "description", "report_name", "report_file",
+        "is_open"
     ];
 
     public function institution(): BelongsTo
