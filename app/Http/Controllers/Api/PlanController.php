@@ -6,47 +6,42 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\DevPlan;
-use App\Policies\DevPlanPolicy;
+use App\Models\Institution;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PlanController extends ApiController
 {
-    public function update($id, Request $request) {
-
+    public function createAll(Request $request) {
         $validationResult = $this->apiValidator($request, [
+            'start_date' => 'required',
+            'end_date' => 'required',
             'description' => 'required',
-//            'report_name' => 'required',
-//            'report_file' => 'required|file|size:4096|mimetypes:application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         ]);
 
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
 
-        try{
-            DB::BeginTransaction();
-            $plan = DevPlan::find($id);
-            $this->authorize('update', $plan);
-            $plan->fill($request->all(["description"]));
-            $plan->save();
-
+        try {
+            DB::beginTransaction();
+            $devPlan = new DevPlan($request->all());
+            $institutions = Institution::all();
+            foreach ($institutions as $institution) {
+                $devPlan->institution_id = $institution->id;
+                $devPlan->is_open = true;
+                $devPlan->save();
+            }
             DB::commit();
-            return response()->json([
+            return  response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                ResponseKeys::MESSAGE => "Plan güncelleme işlemi başarılı."
+                ResponseKeys::MESSAGE => $institutions->count()." adet okul için planlar başarıyla oluşturuldu."
             ]);
         }
-        catch (\Illuminate\Auth\Access\AuthorizationException $ex) {
+        catch (Exception $exception) {
             DB::rollBack();
-            return response()->json([
-                    ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
-                    ResponseKeys::MESSAGE => 'Bu işlem için yetkiniz yok!'
-                ]);
-        }
-        catch (\Exception $e) {
-            DB::rollBack();
-            return $this->apiException($e);
+            return $this->apiException($exception);
         }
     }
 }

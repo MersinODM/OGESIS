@@ -25,7 +25,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Institution extends Model
 {
-    use SelfReferencing;
+//    use SelfReferencing;
+
+    protected $table = "ogs_institutions";
 
     protected $fillable=[
         "id",
