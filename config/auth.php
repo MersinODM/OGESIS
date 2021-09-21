@@ -95,7 +95,7 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_resets',
+            'table' => 'ogs_password_resets',
             'expire' => 180,
             'throttle' => 60,
         ],

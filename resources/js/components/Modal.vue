@@ -80,6 +80,7 @@ export default {
     })
 
     eventBus.emit(EVENT_MODAL_OPENED, { name: props.name })
+
     return {
       isShow,
       close

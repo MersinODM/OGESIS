@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\ThemeController;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,11 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('themes', [ThemeController::class, 'create']);
     Route::put('themes/{id}', [ThemeController::class, 'update']);
     Route::get('themes', [ThemeController::class, 'searchByName']);
+
+    // Aktivite endpoint tanımlamaları
+    Route::post('activities', [ActivityController::class, 'create']);
+    Route::put('activities/{id}', [ActivityController::class, 'update']);
+    Route::get('activities', [ActivityController::class, 'list']);
 });
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {

@@ -13,6 +13,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
+    protected $table = 'ogs_users';
+
     /**
      * The attributes that are mass assignable.
      *
