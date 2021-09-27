@@ -21,7 +21,9 @@ import MasterView from '../views/layouts/MasterView'
 import Start from '../views/home/Start'
 import UnderConstruction from '../views/utils/UnderConstruction'
 import NotFound from '../views/utils/NotFound'
-// import institutionsRoutes from './institutionsRoutes'
+import planRoutes from './planRoutes'
+import institutionRoutes from './institutionRoutes'
+import teacherRoute from "./teacherRoutes";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -45,6 +47,9 @@ const router = createRouter({
           name: 'underConstruction',
           component: UnderConstruction
         },
+        ...planRoutes,
+        ...institutionRoutes,
+        ...teacherRoute
       ]
     },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }

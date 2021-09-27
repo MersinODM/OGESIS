@@ -17,3 +17,8 @@ yarn-error.log
 /public/images/
 /public/fonts/
 /public/css/
+/storage/framework/cache/
+/storage/framework/laravel-excel/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/

@@ -15,14 +15,26 @@
  *
  */
 
-import ImportInstitutions from '../views/institutions/ImportInstitutions'
+import ImportInstitutions from '../views/institution/ImportInstitutions'
+import NewInstitution from '../views/institution/NewInstitution'
+import InstitutionList from '../views/institution/InstitutionList'
 
-const institutionsRoutes = [
+const institutionRoutes = [
   {
     path: 'institutions/bulk-insert',
     name: 'importInstitutions',
     component: ImportInstitutions
+  },
+  {
+    path: 'institutions/new',
+    name: 'newInstitution',
+    component: NewInstitution
+  },
+  {
+    path: 'institutions/list',
+    name: 'listInstitutions',
+    component: InstitutionList
   }
 ]
 
-export default institutionsRoutes
+export default institutionRoutes

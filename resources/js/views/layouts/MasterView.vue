@@ -26,22 +26,22 @@
       <router-view />
     </div>
     <n-footer />
-    <modal :name="curriculumModal">
-      <template #modal-title>
-        <h5>Kazanımlar</h5>
-      </template>
-      <template #modal-body>
-        <preview-curriculums />
-      </template>
-    </modal>
-    <modal :name="questionModal">
-      <template #modal-title>
-        <h5>Soru Önizleme</h5>
-      </template>
-      <template #modal-body>
-        <preview-question />
-      </template>
-    </modal>
+<!--    <modal :name="curriculumModal">-->
+<!--      <template #modal-title>-->
+<!--        <h5>Kazanımlar</h5>-->
+<!--      </template>-->
+<!--      <template #modal-body>-->
+<!--        <preview-curriculums />-->
+<!--      </template>-->
+<!--    </modal>-->
+<!--    <modal :name="questionModal">-->
+<!--      <template #modal-title>-->
+<!--        <h5>Soru Önizleme</h5>-->
+<!--      </template>-->
+<!--      <template #modal-body>-->
+<!--        <preview-question />-->
+<!--      </template>-->
+<!--    </modal>-->
   </div>
 </template>
 

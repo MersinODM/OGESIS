@@ -21,6 +21,7 @@ namespace App\Models;
 
 use App\Traits\SelfReferencing;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Institution extends Model
@@ -48,5 +49,10 @@ class Institution extends Model
     public function plans(): HasMany
     {
         return $this->hasMany(DevPlan::class, "institution_id");
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class, 'district_id');
     }
 }

@@ -52,8 +52,8 @@ export {
 export default function () {
   const CONSTANTS = {
     STATUS: 'store/status',
-    LESSON: 'store/lesson',
-    LESSONS: 'store/lessons',
+    DISTRICT: 'store/district',
+    DISTRICTS: 'store/districts',
     EXAM_TYPE: 'store/examType',
     EXAM_TITLE: 'store/examTitle',
     EXAM_START_DATE: 'store/examStartDate',

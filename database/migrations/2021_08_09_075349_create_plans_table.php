@@ -14,17 +14,25 @@ class CreatePlansTable extends Migration
      */
     public function up()
     {
+
+        Schema::create('ogs_provinces', function (Blueprint $table) {
+            $table->id();
+            $table->string('code', 50)->nullable();
+            $table->string('name', 1000);
+            $table->timestamps();
+        });
+
         //İlçeler
         Schema::create('ogs_districts', function (Blueprint $table) {
-            $table->unsignedTinyInteger('id', true);
-            $table->unsignedTinyInteger('province_id');
+            $table->id();
+            $table->unsignedBigInteger('province_id');
             $table->string('code', 50)->nullable();
             $table->string('name', 1000);
             $table->timestamps();
 
             $table->foreign("province_id")
                 ->references("id")
-                ->on("provinces");
+                ->on("ogs_provinces");
         });
 
         Schema::create('ogs_branches', function (Blueprint $table) {
@@ -40,7 +48,7 @@ class CreatePlansTable extends Migration
         //Kurumlar
         Schema::create('ogs_institutions', function (Blueprint $table) {
             $table->unsignedInteger('id');
-            $table->unsignedTinyInteger('district_id')->nullable();
+            $table->unsignedBigInteger('district_id')->nullable();
             $table->unsignedInteger('type')->nullable(); //10: İl MEM,11: İlçe MEM, 12:Okul
             $table->string('name', 500);
             $table->string('phone', 20)->nullable();
@@ -201,7 +209,7 @@ class CreatePlansTable extends Migration
 
             $table->foreign('institution_id')
                 ->references('id')
-                ->on('institutions');
+                ->on('ogs_institutions');
         });
 
         Schema::create('ogs_activity_members', function (Blueprint $table) {
@@ -256,7 +264,8 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_institution_facilities');
         Schema::dropIfExists('ogs_facilities');
         Schema::dropIfExists('ogs_institutions');
-        Schema::dropIfExists('ogs_districts');
         Schema::dropIfExists('ogs_branches');
+        Schema::dropIfExists('ogs_districts');
+        Schema::dropIfExists('ogs_provinces');
     }
 }

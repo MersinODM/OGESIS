@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class District extends Model
 {
@@ -11,4 +12,9 @@ class District extends Model
     protected $fillable = [
       "code", "name"
     ];
+
+    public function institutions(): HasMany
+    {
+        return $this->hasMany(Institution::class, 'district_id');
+    }
 }
