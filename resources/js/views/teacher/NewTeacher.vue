@@ -134,12 +134,42 @@
 <script>
 import Page from '../../components/Page'
 import Multiselect from '@vueform/multiselect'
+import { number, object, ref as yupRef, string } from 'yup'
+import { useField, useForm } from 'vee-validate'
+import Messenger from '../../utils/messenger'
+import PlanService from '../../services/PlanService'
 
 export default {
   name: 'NewTeacher',
   components: { Page, Multiselect },
   setup () {
+    const schema = object({
+      firstName: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
+        .required(() => 'Ad bilgisi gereklidir!'),
+      lastName: string().typeError(() => 'Soyad yazı tipinde olmalıdır!')
+        .required(() => 'Soyad bilgisi gereklidir!'),
+      phone: string().typeError(() => 'Telefon yazı tipinde olmalıdır!')
+        .required(() => 'Telefon bilgisi gereklidir!'),
+      branchId: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
+        .required(() => 'Branş bilgisi seçilmelidir!')
+    })
 
+    const { handleSubmit, errors } = useForm({ validationSchema: schema })
+
+    const { value: firstName, errorMessage: firstNameEM } = useField('title')
+    const { value: lastName, errorMessage: lastNameEM } = useField('startDate')
+    const { value: , errorMessage: endDateEM } = useField('endDate')
+
+    const save = handleSubmit(async values => {
+      const result = await Messenger.showPrompt('Ayarladağınız tarih aralığında başka plan yoksa planlarınız oluşturulacaktır. Onaylıyor musunuz?')
+      if (result.isConfirmed) {
+        await PlanService.save({
+          start_date: values.startDate,
+          end_date: values.endDate,
+          description: values.title
+        })
+      }
+    })
   }
 }
 </script>

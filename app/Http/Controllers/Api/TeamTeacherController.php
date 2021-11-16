@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
-use App\Models\Teacher;
 use App\Models\Team;
 use Exception;
 use Illuminate\Http\Request;
