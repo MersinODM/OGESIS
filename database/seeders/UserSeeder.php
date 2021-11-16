@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
             $hkn = new User([
                 "full_name" => "Hakan GÜLEN",
                 "email" => "hgulen33@gmail.com",
-                "password" => Hash::make("Hakan.33")
+                "password" => Hash::make("Deneme.1234")
             ]);
             $hkn->save();
             $hkn->assignRole("admin");

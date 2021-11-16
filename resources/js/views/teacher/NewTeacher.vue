@@ -15,10 +15,21 @@
                       <div class="form-group col-md-12">
                         <label>Kurum Seçimi</label>
                         <multiselect
-                          v-model="selectedDistrict"
-                          :options="districts"
-                          label="name"
+                          v-model="branchId"
+                          name="branch_id"
+                          placeholder="Branş seçimi yapabilirsiniz"
+                          no-options-text="Bu liste boş!"
+                          no-result-text="Burada bişey bulamadık!"
+                          :close-on-select="true"
+                          :filterResults="false"
+                          :min-chars="2"
+                          :resolve-on-load="false"
                           value-prop="id"
+                          :delay="300"
+                          :searchable="true"
+                          label="name"
+                          track-by="id"
+                          :options="searchInstitution"
                         />
                       </div>
                     </div>
@@ -134,15 +145,19 @@
 <script>
 import Page from '../../components/Page'
 import Multiselect from '@vueform/multiselect'
-import { number, object, ref as yupRef, string } from 'yup'
+import { number, object, string } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
-import PlanService from '../../services/PlanService'
+import useTeacherApi from '../../services/useTeacherApi'
+import useInstitutionApi from '../../services/useInstitutionApi'
 
 export default {
   name: 'NewTeacher',
   components: { Page, Multiselect },
   setup () {
+    const { createTeacher } = useTeacherApi()
+    const { searchInstitution } = useInstitutionApi()
+
     const schema = object({
       firstName: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
         .required(() => 'Ad bilgisi gereklidir!'),
@@ -150,26 +165,40 @@ export default {
         .required(() => 'Soyad bilgisi gereklidir!'),
       phone: string().typeError(() => 'Telefon yazı tipinde olmalıdır!')
         .required(() => 'Telefon bilgisi gereklidir!'),
-      branchId: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
+      branch_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
+        .required(() => 'Branş bilgisi seçilmelidir!'),
+      institution_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
         .required(() => 'Branş bilgisi seçilmelidir!')
     })
 
-    const { handleSubmit, errors } = useForm({ validationSchema: schema })
+    const { handleSubmit } = useForm({ validationSchema: schema })
 
-    const { value: firstName, errorMessage: firstNameEM } = useField('title')
-    const { value: lastName, errorMessage: lastNameEM } = useField('startDate')
-    const { value: , errorMessage: endDateEM } = useField('endDate')
+    const { value: firstName, errorMessage: firstNameEM } = useField('first_name')
+    const { value: lastName, errorMessage: lastNameEM } = useField('last_name')
+    const { value: phone, errorMessage: phoneEM } = useField('phone')
+    const { value: branchId, errorMessage: branchEM } = useField('branch_id')
+    const { value: institutionId, errorMessage: institutionEM } = useField('institution_id')
 
     const save = handleSubmit(async values => {
-      const result = await Messenger.showPrompt('Ayarladağınız tarih aralığında başka plan yoksa planlarınız oluşturulacaktır. Onaylıyor musunuz?')
+      const result = await Messenger.showPrompt('Yeni öğretmen kaydınız yapılcaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        await PlanService.save({
-          start_date: values.startDate,
-          end_date: values.endDate,
-          description: values.title
-        })
+        await createTeacher(values)
       }
     })
+
+    return {
+      branchId,
+      branchEM,
+      firstName,
+      firstNameEM,
+      institutionId,
+      institutionEM,
+      lastName,
+      lastNameEM,
+      phone,
+      phoneEM,
+      searchInstitution
+    }
   }
 }
 </script>
