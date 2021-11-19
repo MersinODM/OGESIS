@@ -17,7 +17,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class InstitutionController extends ApiController
 {
-    public function importFromExcel(Request $request) {
+    public function importFromExcel(Request $request)
+    {
         $validationResult = $this->apiValidator($request, [
             'institutions' => 'required|file|mimes:xlsx',
         ]);
@@ -34,12 +35,13 @@ class InstitutionController extends ApiController
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => 'Okulları içeri aktarma başarılı.'
             ]);
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             return $this->apiException($exception);
         }
     }
 
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
         $validationResult = $this->apiValidator($request, [
             'district_id' => 'required',
             'name' => 'required',
@@ -60,12 +62,13 @@ class InstitutionController extends ApiController
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => 'Okul kaydı başarılı.'
             ]);
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             return $this->apiException($exception);
         }
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $validationResult = $this->apiValidator($request, [
             'institutions' => 'required|file|mimes:xlsx',
         ]);
@@ -84,26 +87,44 @@ class InstitutionController extends ApiController
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => 'Okul güncelleme başarılı.'
             ]);
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             return $this->apiException($exception);
         }
     }
 
-    public function delete(Request $request, $id) {
+    public function delete(Request $request, $id)
+    {
 
     }
 
-    public function getTable(Request $request) {
+    public function searchBy(Request $request)
+    {
+        if ($request->has('param')) {
+            $param = $request->get('param');
+            $results = Institution::where('name', 'like', '%' . $param . '%')
+                ->orWhere('id', 'like', $param . '%')
+                ->selectRaw('id, CONCAT(id, "-", name) as name')
+                ->get();
+            return response()->json($results);
+        }
+        return response()->json([
+            ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+            ResponseKeys::MESSAGE => 'Parametre gönderilmemiş!'
+        ], 400);
+    }
+
+    public function getTable(Request $request)
+    {
         $query = Institution::with('district');
         $user = Auth::user();
 
         // TODO refaktör gerekebilir
         // Kullanıcı 2 seviye ise yani ilçe Mem kullanıcısı ise sadece kendi ilçesini listeleyebilsin
-        if($user && $user->can('institution.list.level2') && !$user->can('institution.list.level3')){
+        if ($user && $user->can('institution.list.level2') && !$user->can('institution.list.level3')) {
             $query->where('ogs_districts.district_id', '=', $user->institution()->district_id);
         }
 
-        if ( $request->has('district_id') && !is_null($request->input('district_id'))) {
+        if ($request->has('district_id') && !is_null($request->input('district_id'))) {
             $query->where('district_id', '=', $request->input('district_id'));
         }
 

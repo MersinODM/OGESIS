@@ -53,7 +53,7 @@ class CreatePlansTable extends Migration
             $table->string('name', 500);
             $table->string('phone', 20)->nullable();
             $table->string('address', 100)->nullable();
-            $table->string('e_mail', 100)->nullable();
+            $table->string('email', 100)->nullable();
             $table->timestamps();
 
             $table->primary("id");
@@ -199,7 +199,7 @@ class CreatePlansTable extends Migration
             $table->string("first_name", 100);
             $table->string("last_name", 100);
             $table->string("phone", 15)->nullable();
-            $table->string("email", 15)->nullable();
+            $table->string("email", 50)->nullable();
             $table->timestamps();
 
 

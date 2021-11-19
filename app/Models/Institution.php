@@ -20,13 +20,14 @@ namespace App\Models;
 
 
 use App\Traits\SelfReferencing;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Institution extends Model
 {
-//    use SelfReferencing;
+    use HasFactory;
 
     protected $table = "ogs_institutions";
 
@@ -38,7 +39,7 @@ class Institution extends Model
         "name",
         "phone",
         "address",
-        "e_mail"
+        "email"
     ];
 
     public function teachers(): HasMany

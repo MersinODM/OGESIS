@@ -4,9 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Institution;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class InstitutionfactoryFactory extends Factory
+class InstitutionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
@@ -23,6 +22,7 @@ class InstitutionfactoryFactory extends Factory
     public function definition()
     {
         return [
+            'id' => $this->faker->unique()->buildingNumber(),
             'district_id' => $this->faker->numberBetween(407, 419),
             'type' => $this->faker->randomDigit(),
             'name' => $this->faker->streetName(),

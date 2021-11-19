@@ -24,12 +24,12 @@ const Constants = {
 }
 
 const ResponseCodes = {
-  CODE_SUCCESS: 1000,
-  CODE_UNAUTHORIZED: 1001,
-  CODE_NOT_FOUND: 1002,
-  CODE_INFO: 1003,
-  CODE_WARNING: 1004,
-  CODE_ERROR: 1005
+  SUCCESS: 1000,
+  UNAUTHORIZED: 1001,
+  NOT_FOUND: 1002,
+  INFO: 1003,
+  WARNING: 1004,
+  ERROR: 1005
 }
 
 const MessengerConstants = {

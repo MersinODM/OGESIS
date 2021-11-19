@@ -19,7 +19,7 @@ class InstitutionImport implements ToModel, WithHeadingRow
             'name' => $row['ad'],
             'phone'    => $row['telefon'],
             'address'    => $row['adres'],
-            'e_mail'    => $row['eposta'],
+            'email'    => $row['eposta'],
         ]);
     }
 }

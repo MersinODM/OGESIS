@@ -15,9 +15,40 @@
                       <div class="form-group col-md-12">
                         <label>Kurum Seçimi</label>
                         <multiselect
+                          v-model="institutionId"
+                          name="institution_id"
+                          placeholder="Kurum aramak için yazınız."
+                          no-options-text="Bu liste boş!"
+                          no-result-text="Burada bişey bulamadık!"
+                          :close-on-select="true"
+                          :filterResults="false"
+                          :min-chars="2"
+                          :resolve-on-load="false"
+                          value-prop="id"
+                          :delay="300"
+                          :searchable="true"
+                          label="name"
+                          :options="searchInstitution"
+                          class="form-control"
+                          :class="{'is-invalid': institutionEM != null}"
+                        />
+                        <div
+                          v-if="institutionEM"
+                          role="alert"
+                          class="invalid-feedback order-last"
+                          style="display: inline-block;"
+                        >
+                          {{ institutionEM }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row justify-content-md-center">
+                      <div class="form-group col-md-12">
+                        <label>Branş Seçimi</label>
+                        <multiselect
                           v-model="branchId"
                           name="branch_id"
-                          placeholder="Branş seçimi yapabilirsiniz"
+                          placeholder="Branş aramak için yazınız."
                           no-options-text="Bu liste boş!"
                           no-result-text="Burada bişey bulamadık!"
                           :close-on-select="true"
@@ -29,56 +60,55 @@
                           :searchable="true"
                           label="name"
                           track-by="id"
-                          :options="searchInstitution"
+                          :options="searchBranch"
+                          class="form-control"
+                          :class="{'is-invalid': branchEM != null}"
                         />
-                      </div>
-                    </div>
-                    <div class="row justify-content-md-center">
-                      <div class="form-group col-md-12">
-                        <label>Branş Seçimi</label>
-                        <multiselect
-                          v-model="selectedDistrict"
-                          :options="districts"
-                          label="name"
-                          value-prop="id"
-                        />
+                        <div
+                          v-if="branchEM"
+                          role="alert"
+                          class="invalid-feedback order-last"
+                          style="display: inline-block;"
+                        >
+                          {{ branchEM }}
+                        </div>
                       </div>
                     </div>
                     <div class="row justify-content-md-center">
                       <div class="form-group col-md-6">
                         <label>Ad</label>
                         <input
-                          v-model="title"
-                          name="title"
+                          v-model="firstName"
+                          name="first_name"
                           type="text"
                           class="form-control"
-                          :class="{'is-invalid': titleEM != null}"
+                          :class="{'is-invalid': firstNameEM != null}"
                         >
                         <div
-                          v-if="titleEM"
+                          v-if="firstNameEM"
                           role="alert"
                           class="invalid-feedback order-last"
                           style="display: inline-block;"
                         >
-                          {{ titleEM }}
+                          {{ firstNameEM }}
                         </div>
                       </div>
                       <div class="form-group col-md-6">
                         <label>Soyad</label>
                         <input
-                          v-model="title"
-                          name="title"
+                          v-model="lastName"
+                          name="last_name"
                           type="text"
                           class="form-control"
-                          :class="{'is-invalid': titleEM != null}"
+                          :class="{'is-invalid': lastNameEM != null}"
                         >
                         <div
-                          v-if="titleEM"
+                          v-if="lastNameEM"
                           role="alert"
                           class="invalid-feedback order-last"
                           style="display: inline-block;"
                         >
-                          {{ titleEM }}
+                          {{ lastNameEM }}
                         </div>
                       </div>
                     </div>
@@ -86,37 +116,39 @@
                       <div class="form-group col-md-6">
                         <label>Telefon</label>
                         <input
-                          v-model="title"
-                          name="title"
+                          v-model="phone"
+                          v-maska="'(###) ###-##-##'"
+                          name="phone"
                           type="text"
                           class="form-control"
-                          :class="{'is-invalid': titleEM != null}"
+                          placeholder="Başında 0 olmadan giriniz"
+                          :class="{'is-invalid': phoneEM }"
                         >
                         <div
-                          v-if="titleEM"
+                          v-if="phoneEM"
                           role="alert"
                           class="invalid-feedback order-last"
                           style="display: inline-block;"
                         >
-                          {{ titleEM }}
+                          {{ phoneEM }}
                         </div>
                       </div>
                       <div class="form-group col-md-6">
                         <label>E-Posta</label>
                         <input
-                          v-model="title"
-                          name="title"
+                          v-model="email"
+                          name="email"
                           type="text"
                           class="form-control"
-                          :class="{'is-invalid': titleEM != null}"
+                          :class="{'is-invalid': emailEM}"
                         >
                         <div
-                          v-if="titleEM"
+                          v-if="emailEM"
                           role="alert"
                           class="invalid-feedback order-last"
                           style="display: inline-block;"
                         >
-                          {{ titleEM }}
+                          {{ emailEM }}
                         </div>
                       </div>
                     </div>
@@ -150,6 +182,10 @@ import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
 import useInstitutionApi from '../../services/useInstitutionApi'
+import useBranchApi from '../../services/useBranchApi'
+import useNotifier from "../../utils/useNotifier";
+import router from "../../router";
+import {ResponseCodes} from "../../utils/constants";
 
 export default {
   name: 'NewTeacher',
@@ -157,14 +193,19 @@ export default {
   setup () {
     const { createTeacher } = useTeacherApi()
     const { searchInstitution } = useInstitutionApi()
+    const { searchBranch } = useBranchApi()
+    const notifier = useNotifier()
 
     const schema = object({
-      firstName: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
+      first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
         .required(() => 'Ad bilgisi gereklidir!'),
-      lastName: string().typeError(() => 'Soyad yazı tipinde olmalıdır!')
+      last_name: string().typeError(() => 'Soyad yazı tipinde olmalıdır!')
         .required(() => 'Soyad bilgisi gereklidir!'),
       phone: string().typeError(() => 'Telefon yazı tipinde olmalıdır!')
         .required(() => 'Telefon bilgisi gereklidir!'),
+      email: string().typeError(() => 'E-Posta yazı tipinde olmalıdır!')
+        .email(() => 'E-Posta geçerli olmalıdır!')
+        .required(() => 'E-Posta bilgisi gereklidir!'),
       branch_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
         .required(() => 'Branş bilgisi seçilmelidir!'),
       institution_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
@@ -176,19 +217,28 @@ export default {
     const { value: firstName, errorMessage: firstNameEM } = useField('first_name')
     const { value: lastName, errorMessage: lastNameEM } = useField('last_name')
     const { value: phone, errorMessage: phoneEM } = useField('phone')
+    const { value: email, errorMessage: emailEM } = useField('email')
     const { value: branchId, errorMessage: branchEM } = useField('branch_id')
     const { value: institutionId, errorMessage: institutionEM } = useField('institution_id')
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Yeni öğretmen kaydınız yapılcaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        await createTeacher(values)
+        const response = await createTeacher(values)
+        if (response?.code === ResponseCodes.SUCCESS) {
+          await notifier.success({ message: 'Öğretmen kaydı başarıyla oluşturuldu.', duration: 3000 })
+          await router.push({ name: 'listTeachers' })
+        } else {
+          await notifier.error({ message: 'Öğretmen kaydı oluşturalamadı!.', duration: 3000 })
+        }
       }
     })
 
     return {
       branchId,
       branchEM,
+      email,
+      emailEM,
       firstName,
       firstNameEM,
       institutionId,
@@ -197,7 +247,9 @@ export default {
       lastNameEM,
       phone,
       phoneEM,
-      searchInstitution
+      searchInstitution,
+      searchBranch,
+      save
     }
   }
 }

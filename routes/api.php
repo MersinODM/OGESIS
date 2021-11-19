@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\InstitutionController;
 use App\Http\Controllers\Api\PlanController;
@@ -37,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('institutions/import', [InstitutionController::class, 'importFromExcel']);
     Route::post('institutions/table', [InstitutionController::class, 'getTable']);
     Route::put('institutions/{id}', [InstitutionController::class, 'update']);
+    Route::get('institutions/search_by', [InstitutionController::class, 'searchBy']);
 
     // Tema endpoint tanımlamaları
     Route::post('themes', [ThemeController::class, 'create']);
@@ -52,6 +54,12 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('teachers', [TeacherController::class, 'create']);
     Route::put('teachers/{id}', [TeacherController::class, 'update']);
     Route::get('teachers', [TeacherController::class, 'list']);
+
+    //Branş endpoint tanımlamaları
+    Route::post('branches', [BranchController::class, 'create']);
+    Route::put('branches/{id}', [BranchController::class, 'update']);
+    Route::get('branches/search_by', [BranchController::class, 'searchBy']);
+
 });
 
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
