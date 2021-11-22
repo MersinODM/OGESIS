@@ -24,11 +24,13 @@ import can from './directives/can'
 import maska from 'maska'
 import uppercase from './directives/uppercase'
 import dateFormat from './directives/dateFormat'
+import store from './store'
 // import latex from './directives/katex'
 
 const app = createApp(App)
 app.use(router)
 app.use(maska)
+app.use(store)
 app.directive('can', can)
 // app.directive('katex', latex)
 app.directive('uppercase', uppercase)

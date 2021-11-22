@@ -17,31 +17,35 @@
 
 <template>
   <div class="wrapper">
-    <n-header />
+    <n-header @toggleMenuSideBar="toggleMenuSidebar" />
     <n-sidebar />
     <div
       class="content-wrapper"
-      style="min-height: 225.546px;"
     >
       <router-view />
     </div>
     <n-footer />
-<!--    <modal :name="curriculumModal">-->
-<!--      <template #modal-title>-->
-<!--        <h5>Kazanımlar</h5>-->
-<!--      </template>-->
-<!--      <template #modal-body>-->
-<!--        <preview-curriculums />-->
-<!--      </template>-->
-<!--    </modal>-->
-<!--    <modal :name="questionModal">-->
-<!--      <template #modal-title>-->
-<!--        <h5>Soru Önizleme</h5>-->
-<!--      </template>-->
-<!--      <template #modal-body>-->
-<!--        <preview-question />-->
-<!--      </template>-->
-<!--    </modal>-->
+    <div
+      v-if="screenSize === 'xs' && isSidebarMenuCollapsed"
+      id="sidebar-overlay"
+      @click="toggleMenuSidebar"
+    />
+    <!--    <modal :name="curriculumModal">-->
+    <!--      <template #modal-title>-->
+    <!--        <h5>Kazanımlar</h5>-->
+    <!--      </template>-->
+    <!--      <template #modal-body>-->
+    <!--        <preview-curriculums />-->
+    <!--      </template>-->
+    <!--    </modal>-->
+    <!--    <modal :name="questionModal">-->
+    <!--      <template #modal-title>-->
+    <!--        <h5>Soru Önizleme</h5>-->
+    <!--      </template>-->
+    <!--      <template #modal-body>-->
+    <!--        <preview-question />-->
+    <!--      </template>-->
+    <!--    </modal>-->
   </div>
 </template>
 
@@ -50,23 +54,62 @@ import NHeader from './HeaderView'
 import NSidebar from './MainSidebar'
 import NFooter from './FooterView'
 import SkinHelper from '../../utils/SkinHelper'
-// import { lessonStore } from '../../store/lessonStore'
-// import useCurriculumShower from '../../compositions/useCurriculumShower'
 import constants from '../../utils/constants'
 import Modal from '../../components/Modal'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'DashBoard',
   components: { NFooter, NHeader, NSidebar, Modal },
   setup () {
+    const store = useStore()
+    // const { IS_SIDE_BAR_MENU_COLLAPSED } = useUIMutationConstants()
     SkinHelper.MainSkin()
     // lessonStore.actions.setLessons()
     const { MODAL_CURRICULUM, MODAL_QUESTION } = constants()
     // const { curriculums } = useCurriculumShower()
+    let appElement = null
+
+    const isSidebarMenuCollapsed = computed(() => store.state.ui.isSidebarMenuCollapsed)
+    const screenSize = computed(() => store.state.ui.screenSize)
+    const toggleMenuSidebar = () => {
+      store.dispatch('ui/setToggleSideBar')
+    }
+
+    onMounted(() => {
+      appElement = document.body
+      appElement.classList.add('sidebar-mini')
+      appElement.classList.add('layout-fixed')
+    })
+
+    onUnmounted(() => {
+      appElement.classList.remove('sidebar-mini')
+      appElement.classList.remove('layout-fixed')
+    })
+
+    watch([isSidebarMenuCollapsed, screenSize], () => {
+      appElement.classList.remove('sidebar-closed')
+      appElement.classList.remove('sidebar-collapse')
+      appElement.classList.remove('sidebar-open')
+      if (isSidebarMenuCollapsed.value && screenSize.value === 'lg') {
+        appElement.classList.add('sidebar-collapse')
+      } else if (isSidebarMenuCollapsed.value && screenSize.value === 'xs') {
+        appElement.classList.add('sidebar-open')
+      } else if (!isSidebarMenuCollapsed.value && screenSize.value !== 'lg') {
+        appElement.classList.add('sidebar-closed')
+        appElement.classList.add('sidebar-collapse')
+      }
+      // return appElement.classList.value
+    })
+
     return {
       // curriculums,
       curriculumModal: MODAL_CURRICULUM,
-      questionModal: MODAL_QUESTION
+      questionModal: MODAL_QUESTION,
+      toggleMenuSidebar,
+      isSidebarMenuCollapsed,
+      screenSize
     }
   }
 }

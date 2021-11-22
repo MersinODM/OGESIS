@@ -41,16 +41,31 @@ const MessageKeys = {
   CODE: 'code'
 }
 
+export const useUIMutationConstants = () => {
+  return {
+    DARK_MODE: 'ui/darkMode',
+    IS_SIDE_BAR_MENU_COLLAPSED: 'ui/isSidebarMenuCollapsed',
+    SCREEN_SIZE: 'ui/screenSize'
+  }
+}
+
 export {
   MessengerConstants,
   ResponseCodes,
   MessageKeys,
   // Permissions
-  Constants
+  Constants,
 }
+
+
+
+
 
 export default function () {
   const CONSTANTS = {
+    DARK_MODE: 'ui/darkMode',
+    SCREEN_SIZE: 'ui/screenSize',
+    IS_SIDE_BAR_MENU_COLLAPSED: 'ui/isSidebarMenuCollapsed',
     STATUS: 'store/status',
     DISTRICT: 'store/district',
     DISTRICTS: 'store/districts',

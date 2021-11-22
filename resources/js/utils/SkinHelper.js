@@ -17,12 +17,14 @@
 
 const SkinHelper = {
   LoginSkin () {
+    // document.body.classList.remove('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed', 'layout-footer-fixed', 'register-page')
     document.body.classList.remove('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed', 'register-page')
     document.body.classList.add('login-page')
   },
   MainSkin () {
     document.body.classList.remove('login-page', 'register-page')
     document.body.classList.add('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed')
+    // document.body.classList.add('sidebar-mini', 'layout-fixed', 'layout-footer-fixed', 'layout-navbar-fixed')
   },
   OpenModalSkin () {
     document.body.classList.add('modal-open')

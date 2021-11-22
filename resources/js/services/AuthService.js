@@ -24,7 +24,7 @@ const AuthService = {
   async login (credentials) {
     try {
       const response = await http.post('auth/login', credentials)
-      if (response?.status === 200 && response?.data.code === ResponseCodes.CODE_SUCCESS) {
+      if (response?.status === 200 && response?.data.code === ResponseCodes.SUCCESS) {
         await router.push({ name: 'start' })
       }
     } catch (e) {

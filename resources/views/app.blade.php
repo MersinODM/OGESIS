@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" style="height: auto;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Parametrik Kurum Adı</title>
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
-{{--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />--}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {{--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.3/katex.min.css" integrity="sha512-j3Y0TJLzsVaZJ0duMfC+JTiY8alAIy6ElMsJJA5It6h4tVA22wSg5EeAhmvosZvYFSgE0zsFr9SQMykhMV/ixw==" crossorigin="anonymous" />--}}
 {{--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.3/contrib/copy-tex.min.css" integrity="sha512-zpYS5KnYzWXUCp2eKVtNDIBAVxhAGbhXOCnm4eZUDsYqcveMwokhfV5FpNT1r23pr3QLb1Xsw+zJ7eqAZAdBag==" crossorigin="anonymous" />--}}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.23/r-2.2.7/datatables.min.css"/>

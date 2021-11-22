@@ -43,160 +43,163 @@
       <nav class="mt-2">
         <ul
           class="nav nav-pills nav-sidebar nav-child-indent flex-column"
-          data-widget="treeview"
           role="menu"
-          data-accordion="true"
         >
-          <!-- Optionally, you can add icons to the links -->
-          <li class="nav-item has-treeview">
-            <router-link
-              :to="{name: 'start' }"
-              class="nav-link"
-            >
-              <i class="mdi mdi-account-question" />
-              <p>
-                Ana Sayfa
-                <i class="right mdi mdi-angle-left" />
-              </p>
-            </router-link>
-          </li>
-          <!-- Plan menuleri -->
-          <li class="nav-item has-treeview">
-            <a
-              href="#"
-              class="nav-link"
-            >
-              <i class="mdi mdi-account-question" />
-              <p>Planlama Modülü
-                <i class="right fas fa-angle-left" />
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <router-link
-                  :to="{name: 'newPlan' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Yeni Plan Oluştur</p>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  :to="{name: '' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Güncel Gelişim Planı</p>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  :to="{name: '' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Gelişim Planlarımız</p>
-                </router-link>
-              </li>
-            </ul>
-          </li>
-          <!-- Ekip menuleri -->
-          <li class="nav-item has-treeview">
-            <a
-              href="#"
-              class="nav-link"
-            >
-              <i class="mdi mdi-account-question" />
-              <p>Ekip Modülü
-                <i class="right fas fa-angle-left" />
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <router-link
-                  :to="{name: 'underConstruction' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Ekibi Listele</p>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  :to="{name: '' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-plus" />
-                  <p>Üye Ekle</p>
-                </router-link>
-              </li>
-            </ul>
-          </li>
-          <!-- Kurum menuleri -->
-          <li class="nav-item has-treeview">
-            <a
-              href="#"
-              class="nav-link"
-            >
-              <i class="mdi mdi-account-question" />
-              <p>Kurum Modülü
-                <i class="right fas fa-angle-left" />
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <router-link
-                  :to="{name: 'listInstitutions' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Kurum Listele</p>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                  :to="{name: '' }"
-                  class="nav-link"
-                >
-                  <i class="mdi mdi-book-plus" />
-                  <p>Kurum Ekle</p>
-                </router-link>
-              </li>
-            </ul>
-          </li>
-          <!-- Öğretmen menuleri -->
-          <li class="nav-item has-treeview">
-            <a
-                href="#"
-                class="nav-link"
-            >
-              <i class="mdi mdi-account-question" />
-              <p>Öğretmen Modülü
-                <i class="right fas fa-angle-left" />
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <router-link
-                    :to="{name: 'underConstruction' }"
-                    class="nav-link"
-                >
-                  <i class="mdi mdi-book-multiple" />
-                  <p>Öğretmen Listele</p>
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link
-                    :to="{name: 'newTeacher' }"
-                    class="nav-link"
-                >
-                  <i class="mdi mdi-book-plus" />
-                  <p>Öğretmen Ekle</p>
-                </router-link>
-              </li>
-            </ul>
-          </li>
+          <menu-item
+            v-for="(item, index) in menu"
+            :key="index"
+            :menu-item="item"
+          />
+          <!--          &lt;!&ndash; Optionally, you can add icons to the links &ndash;&gt;-->
+          <!--          <li class="nav-item has-treeview">-->
+          <!--            <router-link-->
+          <!--              :to="{name: 'start' }"-->
+          <!--              class="nav-link"-->
+          <!--            >-->
+          <!--              <i class="mdi mdi-account-question" />-->
+          <!--              <p>-->
+          <!--                Ana Sayfa-->
+          <!--                <i class="right mdi mdi-angle-left" />-->
+          <!--              </p>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
+          <!--          &lt;!&ndash; Plan menuleri &ndash;&gt;-->
+          <!--          <li class="nav-item has-treeview">-->
+          <!--            <a-->
+          <!--              href="#"-->
+          <!--              class="nav-link"-->
+          <!--            >-->
+          <!--              <i class="mdi mdi-account-question" />-->
+          <!--              <p>Planlama Modülü-->
+          <!--                <i class="right fas fa-angle-left" />-->
+          <!--              </p>-->
+          <!--            </a>-->
+          <!--            <ul class="nav nav-treeview">-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: 'newPlan' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Yeni Plan Oluştur</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: '' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Güncel Gelişim Planı</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: '' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Gelişim Planlarımız</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          &lt;!&ndash; Ekip menuleri &ndash;&gt;-->
+          <!--          <li class="nav-item has-treeview">-->
+          <!--            <a-->
+          <!--              href="#"-->
+          <!--              class="nav-link"-->
+          <!--            >-->
+          <!--              <i class="mdi mdi-account-question" />-->
+          <!--              <p>Ekip Modülü-->
+          <!--                <i class="right fas fa-angle-left" />-->
+          <!--              </p>-->
+          <!--            </a>-->
+          <!--            <ul class="nav nav-treeview">-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: 'underConstruction' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Ekibi Listele</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: '' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-plus" />-->
+          <!--                  <p>Üye Ekle</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          &lt;!&ndash; Kurum menuleri &ndash;&gt;-->
+          <!--          <li class="nav-item has-treeview">-->
+          <!--            <a-->
+          <!--              href="#"-->
+          <!--              class="nav-link"-->
+          <!--            >-->
+          <!--              <i class="mdi mdi-account-question" />-->
+          <!--              <p>Kurum Modülü-->
+          <!--                <i class="right fas fa-angle-left" />-->
+          <!--              </p>-->
+          <!--            </a>-->
+          <!--            <ul class="nav nav-treeview">-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: 'listInstitutions' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Kurum Listele</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                  :to="{name: '' }"-->
+          <!--                  class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-plus" />-->
+          <!--                  <p>Kurum Ekle</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
+          <!--          &lt;!&ndash; Öğretmen menuleri &ndash;&gt;-->
+          <!--          <li class="nav-item has-treeview">-->
+          <!--            <a-->
+          <!--                href="#"-->
+          <!--                class="nav-link"-->
+          <!--            >-->
+          <!--              <i class="mdi mdi-account-question" />-->
+          <!--              <p>Öğretmen Modülü-->
+          <!--                <i class="right fas fa-angle-left" />-->
+          <!--              </p>-->
+          <!--            </a>-->
+          <!--            <ul class="nav nav-treeview">-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                    :to="{name: 'underConstruction' }"-->
+          <!--                    class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-multiple" />-->
+          <!--                  <p>Öğretmen Listele</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--              <li class="nav-item">-->
+          <!--                <router-link-->
+          <!--                    :to="{name: 'newTeacher' }"-->
+          <!--                    class="nav-link"-->
+          <!--                >-->
+          <!--                  <i class="mdi mdi-book-plus" />-->
+          <!--                  <p>Öğretmen Ekle</p>-->
+          <!--                </router-link>-->
+          <!--              </li>-->
+          <!--            </ul>-->
+          <!--          </li>-->
         </ul>
       </nav>
     </div>
@@ -209,15 +212,86 @@
 // import { mapGetters } from 'vuex'
 import logo from '../../../images/svg/logo.svg'
 import { onMounted } from 'vue'
+import MenuItem from '../../components/MenuItem'
 
 export default {
   name: 'NMainSidebar',
+  components: { MenuItem },
   setup () {
     onMounted(() => {
-      $('body').Layout('fixLayoutHeight')
-      $('ul').Treeview('init')
+      // $('body').Layout('fixLayoutHeight')
+      // $('ul').Treeview('init')
     })
+    const menu = [
+      {
+        name: 'Ana Sayfa',
+        path: '',
+        routeName: 'start'
+      },
+      {
+        name: 'Planlama Modülü',
+        children: [
+          {
+            name: 'Yeni Plan Oluştur',
+            routeName: 'newPlan'
+          },
+          {
+            name: 'Güncel Gelişim Planı',
+            routeName: 'underConstruction'
+          },
+          {
+            name: 'Planlar',
+            routeName: 'underConstruction'
+          }
+        ]
+      },
+      {
+        name: 'Ekip Modülü',
+        children: [
+          {
+            name: 'Yeni Ekip Oluştur',
+            routeName: 'underConstruction'
+          },
+          {
+            name: 'Ekipler',
+            routeName: 'underConstruction'
+          }
+        ]
+      },
+      {
+        name: 'Öğretmen Modülü',
+        children: [
+          {
+            name: 'Yeni Öğretmen Kaydı',
+            routeName: 'newTeacher'
+          },
+          {
+            name: 'Öğretmenler',
+            routeName: 'listTeachers'
+          }
+        ]
+      },
+      {
+        name: 'Kurum Modülü',
+        children: [
+          {
+            name: 'Yeni Kurum',
+            routeName: 'newInstitution'
+          },
+          {
+            name: 'Toplu Kurum Ekle',
+            routeName: 'importInstitutions'
+          },
+          {
+            name: 'Kurum Listsi',
+            routeName: 'listInstitutions'
+          }
+        ]
+      }
+    ]
+
     return {
+      menu,
       logo
     }
   }
