@@ -60,7 +60,7 @@ import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
-  name: 'DashBoard',
+  name: 'MainView',
   components: { NFooter, NHeader, NSidebar, Modal },
   setup () {
     const store = useStore()
@@ -78,7 +78,7 @@ export default {
     }
 
     onMounted(() => {
-      appElement = document.body
+      appElement = document.getElementById('app')
       appElement.classList.add('sidebar-mini')
       appElement.classList.add('layout-fixed')
     })
@@ -100,7 +100,6 @@ export default {
         appElement.classList.add('sidebar-closed')
         appElement.classList.add('sidebar-collapse')
       }
-      // return appElement.classList.value
     })
 
     return {

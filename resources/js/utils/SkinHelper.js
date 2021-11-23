@@ -17,22 +17,26 @@
 
 const SkinHelper = {
   LoginSkin () {
+    const appElement = document.getElementById('app')
     // document.body.classList.remove('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed', 'layout-footer-fixed', 'register-page')
-    document.body.classList.remove('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed', 'register-page')
-    document.body.classList.add('login-page')
+    appElement.classList.remove('sidebar-mini', 'layout-fixed', 'register-page')
+    appElement.classList.add('login-page')
   },
   MainSkin () {
-    document.body.classList.remove('login-page', 'register-page')
-    document.body.classList.add('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed')
-    // document.body.classList.add('sidebar-mini', 'layout-fixed', 'layout-footer-fixed', 'layout-navbar-fixed')
+    const appElement = document.getElementById('app')
+    appElement.classList.remove('login-page', 'register-page')
+    appElement.classList.add('sidebar-mini', 'layout-fixed')
+    // appElement.classList.add('sidebar-mini', 'layout-fixed', 'layout-footer-fixed', 'layout-navbar-fixed')
   },
   OpenModalSkin () {
-    document.body.classList.add('modal-open')
-    document.body.style.paddingRight = '15px'
+    const appElement = document.getElementById('app')
+    appElement.classList.add('modal-open')
+    appElement.style.paddingRight = '15px'
   },
   CloseModalSkin () {
-    document.body.classList.remove('modal-open')
-    document.body.style.removeProperty('padding-right')
+    const appElement = document.getElementById('app')
+    appElement.classList.remove('modal-open')
+    appElement.style.removeProperty('padding-right')
   }
 }
 

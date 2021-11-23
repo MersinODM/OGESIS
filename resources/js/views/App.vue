@@ -12,9 +12,9 @@
 
 import mitt from 'mitt'
 import { watch } from 'vue'
-import useUIStore from '../store/useUIStore'
 import { useWindowSize } from 'vue-window-size'
 import { calculateScreenSize } from '../utils/calculateScreenSize'
+import { useStore } from 'vuex'
 
 // eslint-disable-next-line new-cap
 const eventBus = new mitt()
@@ -25,10 +25,10 @@ export default {
     eventBus
   },
   setup () {
-    const store = useUIStore()
+    const store = useStore()
     const { width: screenWidth } = useWindowSize()
     watch(screenWidth, () => {
-      store.actions.setScreenSize(calculateScreenSize(screenWidth.value))
+      store.dispatch('ui/setScreenSize', calculateScreenSize(screenWidth.value))
     })
   }
 }

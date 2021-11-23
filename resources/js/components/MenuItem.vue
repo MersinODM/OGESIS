@@ -8,7 +8,7 @@
       :class="{'active': isMainActive || isOneOfChildrenActive}"
       @click="handleMainMenuAction"
     >
-      <i class="nav-icon fas fa-tachometer-alt" />
+      <i :class="menuItem.icon" />
       <p>{{ menuItem.name }}</p>
       <i
         v-if="isExpandable"
@@ -40,11 +40,7 @@ export default {
       type: Object,
       required: false,
       default: null
-    },
-    icon: String,
-    type: String,
-    placeholder: String,
-    autocomplete: String
+    }
   },
   setup: function (props) {
     const menuItem = props.menuItem
