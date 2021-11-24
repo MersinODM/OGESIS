@@ -99,13 +99,18 @@ class InstitutionController extends ApiController
 
     public function searchBy(Request $request)
     {
-        if ($request->has('param')) {
-            $param = $request->get('param');
-            $results = Institution::where('name', 'like', '%' . $param . '%')
-                ->orWhere('id', 'like', $param . '%')
-                ->selectRaw('id, CONCAT(id, "-", name) as name')
-                ->get();
-            return response()->json($results);
+        // Query taslağı oluşturuluyor
+        $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
+        // Querystring'de content var mı diye bakılıyor yoksa bad request geri dönyor
+        if ($request->has('content')) {
+            // Querystring'de district_id(ilçe id) var mı diye bakılıyor yoksa sadece iceriğe göre arama yapılıyor
+            if($request->has('district_id')){
+                $query->where('district_id', $request->get('district_id'));
+            }
+            $content = $request->get('content');
+            $query->where('name', 'like', '%' . $content . '%')
+                ->orWhere('id', 'like', $content . '%');
+            return response()->json($query->get());
         }
         return response()->json([
             ResponseKeys::CODE => ResponseCodes::CODE_WARNING,

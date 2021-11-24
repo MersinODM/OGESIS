@@ -111,7 +111,7 @@ export default {
         .match(/(^\S|\S$)?/g)
         .join('')
         .toUpperCase()
-      document.getElementById('avatar').src = generateAvatar(initial, 'white', '#009578')
+      document.getElementById('avatar').src = generateAvatar(initial, 'black', '#40E0D0')
     })
     const menu = [
       {

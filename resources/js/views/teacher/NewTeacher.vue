@@ -28,7 +28,7 @@
                           :delay="300"
                           :searchable="true"
                           label="name"
-                          :options="searchInstitution"
+                          :options="(param) => searchInstitution({content: param})"
                           class="form-control"
                           :class="{'is-invalid': institutionEM != null}"
                         />
@@ -97,6 +97,7 @@
                         <label>Soyad</label>
                         <input
                           v-model="lastName"
+                          v-uppercase
                           name="last_name"
                           type="text"
                           class="form-control"
@@ -183,9 +184,9 @@ import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useBranchApi from '../../services/useBranchApi'
-import useNotifier from "../../utils/useNotifier";
-import router from "../../router";
-import {ResponseCodes} from "../../utils/constants";
+import useNotifier from '../../utils/useNotifier'
+import router from '../../router'
+import { ResponseCodes } from '../../utils/constants'
 
 export default {
   name: 'NewTeacher',

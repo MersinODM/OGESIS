@@ -13,9 +13,9 @@ export default function () {
 
   }
 
-  const searchBranch = async (param) => {
+  const searchBranch = async (params) => {
     try {
-      const response = await http.get('api/v1/branches/search_by', { params: { param: param } })
+      const response = await http.get('api/v1/branches/search_by', { params: params })
       return response.data
     } catch (e) {}
   }

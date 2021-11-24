@@ -1,5 +1,5 @@
 import NewTeacher from '../views/teacher/NewTeacher'
-import UnderConstruction from '../views/utils/UnderConstruction'
+import TeacherList from '../views/teacher/TeacherList'
 
 const teacherRoute = [
   {
@@ -10,7 +10,7 @@ const teacherRoute = [
   {
     path: 'teachers/table',
     name: 'listTeachers',
-    component: UnderConstruction
+    component: TeacherList
   }
 ]
 

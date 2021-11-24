@@ -13,9 +13,9 @@ export default function () {
 
   }
 
-  const searchInstitution = async (param) => {
+  const searchInstitution = async (params) => {
     try {
-      const response = await http.get('api/v1/institutions/search_by', { params: { param: param } })
+      const response = await http.get('api/v1/institutions/search_by', { params: params })
       return response.data
     } catch (e) {}
   }

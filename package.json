@@ -43,6 +43,7 @@
         "mitt": "^3.0.0",
         "notyf": "^3.10.0",
         "pace-progressbar": "^1.0.9",
+        "rxjs": "^7.4.0",
         "v-calendar": "^3.0.0-alpha.5",
         "vee-validate": "^4.4.11",
         "vue": "^3.2.22",

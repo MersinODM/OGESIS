@@ -41,11 +41,42 @@ const MessageKeys = {
   CODE: 'code'
 }
 
+// A prefix i vuex'te actionları M prefix i vuex'te Mutationları ifade eder
+
 export const useUIMutationConstants = () => {
   return {
-    DARK_MODE: 'ui/darkMode',
-    IS_SIDE_BAR_MENU_COLLAPSED: 'ui/isSidebarMenuCollapsed',
-    SCREEN_SIZE: 'ui/screenSize'
+    DARK_MODE: 'darkMode',
+    IS_SIDE_BAR_MENU_COLLAPSED: 'isSidebarMenuCollapsed',
+    SCREEN_SIZE: 'screenSize'
+  }
+}
+
+export const useDistrictConstants = () => {
+  return {
+    M_CURRENT_DISTRICT: 'currentDistrict',
+    M_DISTRICTS: 'allDistricts',
+    A_SET_CURRENT_DISTRICT: 'setCurrentDistrict',
+    A_SET_DISTRICTS: 'setDistricts'
+  }
+}
+
+export const useInstitutionConstants = () => {
+  return {
+    M_CURRENT_INSTITUTION: 'currentInstitution',
+    M_INSTITUTIONS: 'allInstitutions',
+    A_SET_CURRENT_INSTITUTION: 'setCurrentInstitution',
+    A_SET_INSTITUTIONS: 'setInstitutions',
+    A_SEARCH_INSTITUTIONS: 'searchInstitutions'
+  }
+}
+
+export const useBranchConstants = () => {
+  return {
+    M_CURRENT_BRANCH: 'currentBranch',
+    M_BRANCHES: 'allBranches',
+    A_SET_CURRENT_BRANCH: 'setCurrentBranch',
+    A_SET_BRANCHES: 'setBranches',
+    A_SEARCH_BRANCH: 'searchBranch'
   }
 }
 
@@ -54,12 +85,8 @@ export {
   ResponseCodes,
   MessageKeys,
   // Permissions
-  Constants,
+  Constants
 }
-
-
-
-
 
 export default function () {
   const CONSTANTS = {
