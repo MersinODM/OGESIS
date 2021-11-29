@@ -52,4 +52,12 @@ class ApiController extends Controller
             ResponseKeys::EXCEPTION => $exception->getMessage()
         ];
     }
+
+    public function unauthorized(): array
+    {
+        return [
+            ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
+            ResponseKeys::MESSAGE => ResponseContents::UNAUTHORIZED_MESSAGE
+        ];
+    }
 }

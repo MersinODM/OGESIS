@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('teachers', [TeacherController::class, 'create']);
     Route::put('teachers/{id}', [TeacherController::class, 'update']);
     Route::get('teachers', [TeacherController::class, 'list']);
+    Route::post('teachers/table', [TeacherController::class, 'getTable']);
 
     //Branş endpoint tanımlamaları
     Route::post('branches', [BranchController::class, 'create']);

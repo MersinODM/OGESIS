@@ -30,6 +30,6 @@ class Teacher extends Model
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class, "branch_id");
+        return $this->belongsTo(Branch::class, "branch_id");
     }
 }

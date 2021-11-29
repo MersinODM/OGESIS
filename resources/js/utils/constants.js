@@ -53,6 +53,7 @@ export const useUIMutationConstants = () => {
 
 export const useDistrictConstants = () => {
   return {
+    DISTRICT_PREFIX: 'district/',
     M_CURRENT_DISTRICT: 'currentDistrict',
     M_DISTRICTS: 'allDistricts',
     A_SET_CURRENT_DISTRICT: 'setCurrentDistrict',
@@ -62,6 +63,7 @@ export const useDistrictConstants = () => {
 
 export const useInstitutionConstants = () => {
   return {
+    INSTITUTION_PREFIX: 'institution/',
     M_CURRENT_INSTITUTION: 'currentInstitution',
     M_INSTITUTIONS: 'allInstitutions',
     A_SET_CURRENT_INSTITUTION: 'setCurrentInstitution',
@@ -72,6 +74,7 @@ export const useInstitutionConstants = () => {
 
 export const useBranchConstants = () => {
   return {
+    BRANCH_PREFIX: 'branch/',
     M_CURRENT_BRANCH: 'currentBranch',
     M_BRANCHES: 'allBranches',
     A_SET_CURRENT_BRANCH: 'setCurrentBranch',

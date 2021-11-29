@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Branch;
+use App\Models\Lesson;
 use App\Models\District;
 use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -13,7 +13,7 @@ class BranchImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        return new Branch([
+        return new Lesson([
             'name'    => $row['brans'],
             'levels'    => $row['seviye']
         ]);

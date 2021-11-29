@@ -6,7 +6,6 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Branch;
-use App\Models\Institution;
 use Illuminate\Http\Request;
 
 class BranchController extends ApiController
@@ -24,10 +23,10 @@ class BranchController extends ApiController
     }
 
     public function searchBy(Request $request) {
-        if ($request->has('param')) {
-            $param = $request->get('param');
-            $results = Branch::where('name', 'like', '%' . $param . '%')
-                ->orWhere('code', 'like', $param . '%')
+        if ($request->has('content')) {
+            $content = $request->get('content');
+            $results = Branch::where('name', 'like', '%' . $content . '%')
+                ->orWhere('code', 'like', $content . '%')
                 ->select('id', 'name')
                 ->get();
             return response()->json($results);

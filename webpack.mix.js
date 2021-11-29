@@ -4,6 +4,7 @@ require('laravel-mix-bundle-analyzer')
 require('laravel-mix-purgecss')
 // const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
 
 /*
  |--------------------------------------------------------------------------
@@ -27,13 +28,22 @@ const CompressionPlugin = require('compression-webpack-plugin')
 //     ]
 // })
 
+
+
 mix.webpackConfig({
-    externals: {
-        jquery: 'jQuery',
-        'jquery.dataTables': 'jquery.dataTables',
-        bootstrap: 'bootstrap',
-        // ckeditor: 'ckeditor'
-    }
+  externals: {
+    jquery: 'jQuery',
+    'jquery.dataTables': 'jquery.dataTables',
+    bootstrap: 'bootstrap'
+    // ckeditor: 'ckeditor'
+  },
+  plugins: [
+    new LodashModuleReplacementPlugin({
+      caching: true,
+      cloning: true,
+      memoizing: true
+    })
+  ]
 })
 
 // mix.autoload({
@@ -51,7 +61,7 @@ mix.js('resources/js/app.js', 'public/js')
   .vue({ version: 3 })
   .sass('resources/css/app.sass', 'public/css')
   .options({
-      processCssUrls: false
+    processCssUrls: false
   })
   .extract()
   // .mergeManifest()
@@ -66,20 +76,20 @@ mix.js('resources/js/app.js', 'public/js')
 //   .extract()
 
 if (!mix.inProduction()) {
-    mix.sourceMaps()
+  mix.sourceMaps()
 }
 
 if (mix.inProduction()) {
-    // mix.setResourceRoot('/otomasyon')
-    mix.webpackConfig({
-        plugins: [
-            new CompressionPlugin({
-                algorithm: 'gzip',
-                test: /\.js$|\.css$|\.html$|\.svg$/,
-                minRatio: 0.8
-            })
-        ]
-    })
+  // mix.setResourceRoot('/otomasyon')
+  mix.webpackConfig({
+    plugins: [
+      new CompressionPlugin({
+        algorithm: 'gzip',
+        test: /\.js$|\.css$|\.html$|\.svg$/,
+        minRatio: 0.8
+      })
+    ]
+  })
 }
 
 mix.bundleAnalyzer()
