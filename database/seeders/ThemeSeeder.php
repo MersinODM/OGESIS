@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Imports\BranchImport;
+use App\Imports\ProvinceAndDistrictImport;
+use App\Imports\ThemeImport;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
-class BranchSeeder extends Seeder
+class ThemeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,6 +17,6 @@ class BranchSeeder extends Seeder
      */
     public function run()
     {
-        Excel::import(new BranchImport(), Storage::path('public/branslar.xlsx'));
+        Excel::import(new ThemeImport(), Storage::path('public/temalar.xlsx'));
     }
 }

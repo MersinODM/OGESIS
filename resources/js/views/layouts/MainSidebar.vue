@@ -142,17 +142,17 @@ export default {
         ]
       },
       {
-        name: 'Ekip Modülü',
+        name: 'Takım Modülü',
         icon: 'mdi mdi-human-greeting-variant',
         children: [
           {
-            name: 'Yeni Ekip Oluştur',
-            routeName: 'underConstruction',
+            name: 'Yeni Takım Oluştur',
+            routeName: 'newTeam',
             icon: 'mdi mdi-human-capacity-increase'
           },
           {
-            name: 'Ekipler',
-            routeName: 'underConstruction',
+            name: 'Takımlar',
+            routeName: 'listTeams',
             icon: 'mdi mdi-human-queue'
           }
         ]

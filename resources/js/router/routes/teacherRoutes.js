@@ -1,5 +1,5 @@
-import NewTeacher from '../views/teacher/NewTeacher'
-import TeacherList from '../views/teacher/TeacherList'
+import NewTeacher from '../../views/teacher/NewTeacher'
+import TeacherList from '../../views/teacher/TeacherList'
 
 const teacherRoute = [
   {

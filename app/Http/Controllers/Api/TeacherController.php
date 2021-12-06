@@ -107,6 +107,19 @@ class TeacherController extends ApiController
 
     }
 
+    public function list(): JsonResponse
+    {
+        $institutionId = Auth::user()->institution_id;
+        $teachers = Teacher::with(['branch' => static function ($query) {
+            $query->select('id', 'name');
+        }])
+            ->select('id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'))
+//            ->where('institution_id', $institutionId)
+            ->get();
+
+        return response()->json($teachers);
+    }
+
 
     public function getTable(Request $request): JsonResponse
     {

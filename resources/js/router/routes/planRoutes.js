@@ -1,4 +1,4 @@
-import CreatePlan from '../views/plan/CreatePlan'
+import CreatePlan from '../../views/plan/CreatePlan'
 
 const planRoutes = [
   {

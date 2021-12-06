@@ -184,7 +184,7 @@ class CreatePlansTable extends Migration
         Schema::create('ogs_teams', function (Blueprint $table) {
             $table->id()->startingValue(1000);;
             $table->unsignedBigInteger('plan_id');
-            $table->string("team_name");
+            $table->string("name");
             $table->timestamps();
 
             $table->foreign('plan_id')

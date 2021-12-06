@@ -15,9 +15,9 @@
  *
  */
 
-import ImportInstitutions from '../views/institution/ImportInstitutions'
-import NewInstitution from '../views/institution/NewInstitution'
-import InstitutionList from '../views/institution/InstitutionList'
+import ImportInstitutions from '../../views/institution/ImportInstitutions'
+import NewInstitution from '../../views/institution/NewInstitution'
+import InstitutionList from '../../views/institution/InstitutionList'
 
 const institutionRoutes = [
   {

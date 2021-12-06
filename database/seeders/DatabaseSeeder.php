@@ -17,8 +17,10 @@ class DatabaseSeeder extends Seeder
             RoleAndPermissionSeeder::class,
             UserSeeder::class,
             ProvinceSeeder::class,
-            InstitutionSeeder::class,
             BranchSeeder::class,
+            InstitutionSeeder::class,
+            ThemeSeeder::class,
+            TeacherSeeder::class,
         ]);
     }
 }

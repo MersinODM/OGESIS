@@ -3,10 +3,13 @@
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
-// import 'admin-lte/plugins/jquery/jquery.min'
+// import jquery from 'admin-lte/plugins/jquery/jquery.slim.min'
+// import 'admin-lte/plugins/datatables-bs4/js/dataTables.bootstrap4.min'
 // import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min'
 // import 'admin-lte/dist/js/adminlte.min'
 import router from './router'
+
+// window.Jquery = window.$ = jquery
 
 $.fn.dataTable.ext.errMode = async (settings, tn, msg) => {
   if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
