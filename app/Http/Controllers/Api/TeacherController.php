@@ -107,13 +107,38 @@ class TeacherController extends ApiController
 
     }
 
-    public function list(): JsonResponse
+    public function list(Request $request): JsonResponse
     {
+        $user = Auth::user();
+        $query = Teacher::with(['branch:id,name'])
+            ->select('id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
+
+        if ($user && $user->can('teacher.list.level3')) {
+            $validationResult = $this->apiValidator($request, [
+                'district_id' => 'required',
+                'institution_id' => 'required',
+            ]);
+            if ($validationResult) {
+                return response()->json($validationResult, 422);
+            }
+
+            $query->where('institution_id', $request->query('institution_id'))
+                ->where('district_id', $request->query('district_id'));
+        } else if ($user && $user->can('teacher.list.level2')) {
+            $validationResult = $this->apiValidator($request, [
+                'institution_id' => 'required',
+            ]);
+            if ($validationResult) {
+                return response()->json($validationResult, 422);
+            }
+
+            $query->where('institution_id', $request->query('institution_id'))
+                ->where('district_id', $request->query('district_id'));
+        }
         $institutionId = Auth::user()->institution_id;
         $teachers = Teacher::with(['branch' => static function ($query) {
             $query->select('id', 'name');
         }])
-            ->select('id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'))
 //            ->where('institution_id', $institutionId)
             ->get();
 
@@ -129,11 +154,11 @@ class TeacherController extends ApiController
         // TODO refaktör gerekebilir
         // Kullanıcı 2i seviye(leve2) ise yani ilçe Mem kullanıcısı ise sadece kendi ilçesini listeleyebilsin
         // Yetkiye en üst seviyeden başlayarak bakabiliriz böylece üst else if yapısı amacına uygun çalışmış olur
-        if ($user && $user->can('teacher.list.level3')){
+        if ($user && $user->can('teacher.list.level3')) {
             $this->checkDistrict($request, $query);
             $this->checkInstitution($request, $query);
             $this->checkBranch($request, $query);
-        } else if ($user && $user->can('teacher.list.level2')){
+        } else if ($user && $user->can('teacher.list.level2')) {
             $query->whereHas('institution', static function (Builder $q) use ($user) {
                 $q->where('district_id', $user->institution()->district_id);
             });
@@ -145,7 +170,7 @@ class TeacherController extends ApiController
             });
             $query->where('institution_id', '=', $user->institution()->id);
             $this->checkBranch($request, $query);
-        } else  {
+        } else {
             return response()->json($this->unauthorized());
         }
 

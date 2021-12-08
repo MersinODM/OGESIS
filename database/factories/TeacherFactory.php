@@ -24,7 +24,7 @@ class TeacherFactory extends Factory
     {
         return [
             'branch_id' => $this->faker->numberBetween(100, 209),
-            'institution_id' => Institution::select('id')->inRandomOrder()->first()->value('id'),
+            'institution_id' => Institution::select('id')->inRandomOrder()->limit(1)->value('id'),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'phone' => $this->faker->e164PhoneNumber(),
