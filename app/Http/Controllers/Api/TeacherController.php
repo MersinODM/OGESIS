@@ -121,7 +121,6 @@ class TeacherController extends ApiController
             if ($validationResult) {
                 return response()->json($validationResult, 422);
             }
-
             $query->where('institution_id', $request->query('institution_id'))
                 ->where('district_id', $request->query('district_id'));
         } else if ($user && $user->can('teacher.list.level2')) {

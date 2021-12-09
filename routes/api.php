@@ -26,6 +26,10 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function () {
 
+    // Rol ve izinler api endpoint tanımlamaları
+    Route::get('me', [AuthController::class, 'me']);
+
+
     // İlçeler api endpoint tanımları
     Route::get('districts', [DistrictController::class, 'list']);
 

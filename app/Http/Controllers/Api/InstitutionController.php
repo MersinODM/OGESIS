@@ -6,7 +6,6 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Imports\InstitutionImport;
-use App\Imports\MultipleImport;
 use App\Models\Institution;
 use Exception;
 use Illuminate\Http\Request;
