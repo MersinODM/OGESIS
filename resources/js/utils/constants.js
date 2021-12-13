@@ -83,6 +83,22 @@ export const useBranchConstants = () => {
   }
 }
 
+export const useAuthMutationTypes = () => {
+  return {
+    AUT_PREFIX: 'auth/',
+    SET_USER: 'setUser',
+    REMOVE_USER: 'removeUser'
+  }
+}
+
+export const useAuthActionTypes = () => {
+  return {
+    AUT_PREFIX: 'auth/',
+    LOGIN: 'login',
+    LOGOUT: 'logout'
+  }
+}
+
 export const usePermissionConstants = () => {
   return {
     // Öğretmen işlemleri ile ilgili yetkiler

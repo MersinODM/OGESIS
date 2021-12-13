@@ -93,17 +93,21 @@ import LicenceInfo from '../../components/LicenceInfo'
 import SkinHelper from '../../utils/SkinHelper'
 import { ref } from 'vue'
 import AuthService from '../../services/AuthService'
+import { useStore } from 'vuex'
+import { useAuthActionTypes } from '../../utils/constants';
 // import router from "../../router";
 
 export default {
   name: 'Login',
   components: { LicenceInfo },
   setup (props) {
+    const store = useStore()
+    const { AUT_PREFIX, LOGIN } = useAuthActionTypes()
     SkinHelper.LoginSkin()
     const email = ref()
     const password = ref()
     const loginToSys = async () => {
-      await AuthService.login({ email: email.value, password: password.value })
+      await store.dispatch(LOGIN.withPrefix(AUT_PREFIX), { email: email.value, password: password.value })
     }
 
     // const getCsrfToken = async () => {

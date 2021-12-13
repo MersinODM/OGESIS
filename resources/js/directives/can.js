@@ -1,10 +1,15 @@
+import { useStore } from 'vuex'
+
 const can = {
   mounted (el, binding, vnode) {
-    if (!JSON.parse(sessionStorage.getItem('permissions'))
-      ?.includes(binding.expression
-        ?.replace(/'/g, '')
-        ?.replace(/"/g, ''))) {
+    const store = useStore()
+    const permissions = store.getters.auth.user.permissions
+    if (!permissions?.includes(binding.expression
+      ?.replace(/'/g, '')
+      ?.replace(/"/g, ''))) {
       el.parentNode.removeChild(el)
+    } else {
+      console.error('Yetki hatası meydana geldi!')
     }
   }
 }
