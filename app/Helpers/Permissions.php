@@ -77,7 +77,7 @@ class Permissions
     {
         return [
             //name                          // slug
-            //Öğetmen yetkileri
+            // Öğetmen yetkileri
             self::TEACHER_CREATE_LEVEL_3 => 'Öğretmen Oluşturma(İl Yetkisi)',
             self::TEACHER_CREATE_LEVEL_2 => 'Öğretmen Oluşturma(İlçe Yetkisi)',
             self::TEACHER_CREATE_LEVEL_1 => 'Öğretmen Oluşturma(Okul Yetkisi)',
@@ -136,7 +136,7 @@ class Permissions
             self::ACTIVITY_LIST_LEVEL_3 => 'Aktivite Listeleme(İl Yetkisi)',
             self::ACTIVITY_LIST_LEVEL_2 => 'Aktivite Listeleme(İlçe Yetkisi)',
             self::ACTIVITY_LIST_LEVEL_1 => 'Aktivite Listeleme(Okul Yetkisi)',
-            //Rapor izinleri
+            // Rapor izinleri
             self::REPORT_DELETE_LEVEL_3 => 'Rapor Silme(İl Yetkisi)',
             self::REPORT_DELETE_LEVEL_2 => 'Rapor Silme(İlçe Yetkisi)',
             self::REPORT_DELETE_LEVEL_1 => 'Rapor Silme(Okul Yetkisi)',
