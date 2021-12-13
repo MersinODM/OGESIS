@@ -4,12 +4,10 @@ const can = {
   mounted (el, binding, vnode) {
     const store = useStore()
     const permissions = store.getters.auth.user.permissions
-    if (!permissions?.includes(binding.expression
+    if (!permissions?.filter(permission => permission.name === binding.expression
       ?.replace(/'/g, '')
       ?.replace(/"/g, ''))) {
       el.parentNode.removeChild(el)
-    } else {
-      console.error('Yetki hatası meydana geldi!')
     }
   }
 }
