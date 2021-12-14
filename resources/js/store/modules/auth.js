@@ -14,9 +14,7 @@ const ability = new Ability()
 export default {
   namespaced: true,
   state: () => ({
-    user: null,
-    roles: [],
-    permissions: []
+    user: null
   }),
   getters: {
     user: (state) => state.user,
@@ -44,7 +42,7 @@ export default {
     },
     async [LOGOUT] ({ commit }) {
       try {
-        const response = logout()
+        await logout()
         commit(REMOVE_USER)
         await router.push({ name: 'login' })
       } catch (e) {}
