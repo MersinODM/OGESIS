@@ -1,4 +1,4 @@
-#OGESIS-Okul Gelişim Sistemi
+# OGESIS-Okul Gelişim Sistemi
 
 ## OGESIS Hakkında
 
