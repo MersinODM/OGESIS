@@ -46,6 +46,40 @@
                       </div>
                     </div>
                     <div class="row justify-content-md-center">
+                      <div
+                        v-if="can(TEACHER_CREATE_LEVEL_3) || can(TEACHER_CREATE_LEVEL_2)"
+                        class="form-group col-md-12"
+                      >
+                        <label>Kurum Seçimi</label>
+                        <multiselect
+                          v-model="institutionId"
+                          name="institution_id"
+                          placeholder="Kurum aramak için yazınız."
+                          no-options-text="Bu liste boş!"
+                          no-result-text="Burada bişey bulamadık!"
+                          :close-on-select="true"
+                          :filterResults="false"
+                          :min-chars="2"
+                          :resolve-on-load="false"
+                          value-prop="id"
+                          :delay="300"
+                          :searchable="true"
+                          label="name"
+                          :options="(param) => searchInstitution({content: param})"
+                          class="form-control"
+                          :class="{'is-invalid': institutionEM != null}"
+                        />
+                        <div
+                          v-if="institutionEM"
+                          role="alert"
+                          class="invalid-feedback order-last"
+                          style="display: inline-block;"
+                        >
+                          {{ institutionEM }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row justify-content-md-center">
                       <div class="form-group col-md-12">
                         <label>Branş Seçimi</label>
                         <multiselect

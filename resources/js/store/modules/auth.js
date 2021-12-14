@@ -5,7 +5,7 @@ import Messenger from '../../utils/messenger'
 import { Ability } from '@casl/ability'
 
 const { REMOVE_USER, SET_USER } = useAuthMutationTypes()
-const { LOGIN, LOGOUT } = useAuthActionTypes()
+const { LOGIN, LOGOUT, GET_ME } = useAuthActionTypes()
 const { login, logout, me } = useAuthApi()
 // Burada oluşturulmalı ability örneği değilse getter her çağrıldığığında yeni
 // örnek çağrılıyor bu yüzden casl doğru çalışmıyor
@@ -48,6 +48,12 @@ export default {
         commit(REMOVE_USER)
         await router.push({ name: 'login' })
       } catch (e) {}
+    },
+    async [GET_ME] ({ commit, state }) {
+      if (!state.user) {
+        const user = await me()
+        commit(SET_USER, user)
+      }
     }
   }
 }

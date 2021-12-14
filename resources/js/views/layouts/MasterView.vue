@@ -54,7 +54,7 @@ import NHeader from './HeaderView'
 import NSidebar from './MainSidebar'
 import NFooter from './FooterView'
 import SkinHelper from '../../utils/SkinHelper'
-import constants from '../../utils/constants'
+import constants, { useAuthActionTypes } from '../../utils/constants'
 import Modal from '../../components/Modal'
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
@@ -64,12 +64,13 @@ export default {
   components: { NFooter, NHeader, NSidebar, Modal },
   setup () {
     const store = useStore()
-    // const { IS_SIDE_BAR_MENU_COLLAPSED } = useUIMutationConstants()
+    const { GET_ME, AUTH } = useAuthActionTypes()
     SkinHelper.MainSkin()
-    // lessonStore.actions.setLessons()
     const { MODAL_CURRICULUM, MODAL_QUESTION } = constants()
-    // const { curriculums } = useCurriculumShower()
     let appElement = null
+
+    // Burada kullanıcıyı yeniden alıyoruz apilerden
+    store.dispatch(AUTH.withSuffix(GET_ME))
 
     const isSidebarMenuCollapsed = computed(() => store.state.ui.isSidebarMenuCollapsed)
     const screenSize = computed(() => store.state.ui.screenSize)

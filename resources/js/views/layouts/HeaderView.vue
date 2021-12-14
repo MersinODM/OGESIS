@@ -93,11 +93,11 @@ export default {
   emits: ['toggleMenuSideBar'],
   setup () {
     const store = useStore()
-    const { AUT_PREFIX, LOGOUT } = useAuthActionTypes()
+    const { AUTH, LOGOUT } = useAuthActionTypes()
     const logout = async () => {
       const result = await Messenger.showPrompt('Oturumu kapatmak istediğinize emin misiniz?')
       if (result.isConfirmed) {
-        await store.dispatch(LOGOUT.withPrefix(AUT_PREFIX))
+        await store.dispatch(LOGOUT.withPrefix(AUTH))
       }
     }
     return {

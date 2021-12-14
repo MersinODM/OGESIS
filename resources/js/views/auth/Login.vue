@@ -102,12 +102,12 @@ export default {
   components: { LicenceInfo },
   setup (props) {
     const store = useStore()
-    const { AUT_PREFIX, LOGIN } = useAuthActionTypes()
+    const { AUTH, LOGIN } = useAuthActionTypes()
     SkinHelper.LoginSkin()
     const email = ref()
     const password = ref()
     const loginToSys = async () => {
-      await store.dispatch(LOGIN.withPrefix(AUT_PREFIX), { email: email.value, password: password.value })
+      await store.dispatch(LOGIN.withPrefix(AUTH), { email: email.value, password: password.value })
     }
 
     // const getCsrfToken = async () => {

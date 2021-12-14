@@ -85,7 +85,7 @@ export const useBranchConstants = () => {
 
 export const useAuthMutationTypes = () => {
   return {
-    AUT_PREFIX: 'auth/',
+    AUTH: 'auth/',
     SET_USER: 'setUser',
     REMOVE_USER: 'removeUser'
   }
@@ -93,9 +93,10 @@ export const useAuthMutationTypes = () => {
 
 export const useAuthActionTypes = () => {
   return {
-    AUT_PREFIX: 'auth/',
+    AUTH: 'auth/',
     LOGIN: 'login',
-    LOGOUT: 'logout'
+    LOGOUT: 'logout',
+    GET_ME: 'getMe'
   }
 }
 
