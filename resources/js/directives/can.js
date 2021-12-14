@@ -3,7 +3,7 @@ import { useStore } from 'vuex'
 const can = {
   mounted (el, binding, vnode) {
     const store = useStore()
-    const permissions = store.getters.auth.user.permissions
+    const permissions = store.state.auth.user.permissions
     if (!permissions?.filter(permission => permission.name === binding.expression
       ?.replace(/'/g, '')
       ?.replace(/"/g, ''))) {

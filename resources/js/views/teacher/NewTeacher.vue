@@ -12,7 +12,10 @@
                 <div class="col-md-6">
                   <form @submit.prevent>
                     <div class="row justify-content-md-center">
-                      <div class="form-group col-md-12">
+                      <div
+                        v-if="can(TEACHER_CREATE_LEVEL_3)"
+                        class="form-group col-md-12"
+                      >
                         <label>Kurum Seçimi</label>
                         <multiselect
                           v-model="institutionId"
@@ -186,7 +189,8 @@ import useInstitutionApi from '../../services/useInstitutionApi'
 import useBranchApi from '../../services/useBranchApi'
 import useNotifier from '../../utils/useNotifier'
 import router from '../../router'
-import { ResponseCodes } from '../../utils/constants'
+import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
+import { useAbility } from '@casl/vue'
 
 export default {
   name: 'NewTeacher',
@@ -196,6 +200,9 @@ export default {
     const { searchInstitution } = useInstitutionApi()
     const { searchBranch } = useBranchApi()
     const notifier = useNotifier()
+    const { can } = useAbility()
+    // const { TEACHER_DELETE_LEVEL_2 } = usePermissionConstants()
+    // const val = can(TEACHER_DELETE_LEVEL_2)
 
     const schema = object({
       first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
@@ -250,7 +257,9 @@ export default {
       phoneEM,
       searchInstitution,
       searchBranch,
-      save
+      can,
+      save,
+      ...usePermissionConstants()
     }
   }
 }

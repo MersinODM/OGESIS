@@ -34,3 +34,8 @@ $.ajaxSetup({
 String.prototype.withPrefix = function (prefix) {
   return prefix + this
 }
+
+// eslint-disable-next-line no-extend-native
+String.prototype.withSuffix = function (suffix) {
+  return this + suffix
+}

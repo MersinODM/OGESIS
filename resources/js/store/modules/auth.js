@@ -2,10 +2,14 @@ import { ResponseCodes, useAuthActionTypes, useAuthMutationTypes } from '../../u
 import useAuthApi from '../../services/useAuthApi'
 import router from '../../router'
 import Messenger from '../../utils/messenger'
+import { Ability } from '@casl/ability'
 
 const { REMOVE_USER, SET_USER } = useAuthMutationTypes()
 const { LOGIN, LOGOUT } = useAuthActionTypes()
 const { login, logout, me } = useAuthApi()
+// Burada oluşturulmalı ability örneği değilse getter her çağrıldığığında yeni
+// örnek çağrılıyor bu yüzden casl doğru çalışmıyor
+const ability = new Ability()
 
 export default {
   namespaced: true,
@@ -15,7 +19,8 @@ export default {
     permissions: []
   }),
   getters: {
-    user: (state) => state.user
+    user: (state) => state.user,
+    ability: () => ability
   },
   mutations: {
     [SET_USER] (state, user) { state.user = user },

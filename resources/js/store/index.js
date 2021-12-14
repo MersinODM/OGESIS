@@ -4,6 +4,7 @@ import institution from './modules/institutions'
 import branch from './modules/branches'
 import ui from './modules/ui'
 import auth from './modules/auth'
+import ability from './plugins/ability'
 
 const debug = process.env.NODE_ENV !== 'production'
 
@@ -16,5 +17,5 @@ export default createStore({
     branch
   },
   strict: debug,
-  plugins: debug ? [createLogger()] : []
+  plugins: debug ? [createLogger(), ability] : [ability]
 })
