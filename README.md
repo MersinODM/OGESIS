@@ -7,6 +7,7 @@ ve yönetişim yetkinliklerini desteklemek amacıyla Mersin Ölçme Değerlendir
 çalışanlarınca oluşturulmuştur.
 
 ##Kullanılan bazı teknolojiler
+
 ![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
