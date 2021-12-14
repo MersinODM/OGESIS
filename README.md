@@ -6,7 +6,7 @@ Bu yazılım okullarımızın iç süreçlerini geliştirmek veriye dayalı yön
 ve yönetişim yetkinliklerini desteklemek amacıyla Mersin Ölçme Değerlendirme Merkezi Müdürlüğü
 çalışanlarınca oluşturulmuştur.
 
-##Kullanılan bazı teknolojiler
+## Kullanılan bazı teknolojiler
 
 ![Laravel](https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
