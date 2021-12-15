@@ -16,32 +16,29 @@
                         v-if="can(TEACHER_CREATE_LEVEL_3)"
                         class="form-group col-md-12"
                       >
-                        <label>Kurum Seçimi</label>
+                        <label>İlçe Seçimi</label>
                         <multiselect
-                          v-model="institutionId"
-                          name="institution_id"
-                          placeholder="Kurum aramak için yazınız."
+                          v-model="districtId"
+                          name="district_id"
+                          placeholder="İlçe seçebilirsiniz"
                           no-options-text="Bu liste boş!"
                           no-result-text="Burada bişey bulamadık!"
                           :close-on-select="true"
-                          :filterResults="false"
                           :min-chars="2"
-                          :resolve-on-load="false"
                           value-prop="id"
-                          :delay="300"
                           :searchable="true"
                           label="name"
-                          :options="(param) => searchInstitution({content: param})"
+                          :options="getDistricts"
                           class="form-control"
-                          :class="{'is-invalid': institutionEM != null}"
+                          :class="{'is-invalid': districtEM != null}"
                         />
                         <div
-                          v-if="institutionEM"
+                          v-if="districtEM"
                           role="alert"
                           class="invalid-feedback order-last"
                           style="display: inline-block;"
                         >
-                          {{ institutionEM }}
+                          {{ districtEM }}
                         </div>
                       </div>
                     </div>
@@ -54,18 +51,15 @@
                         <multiselect
                           v-model="institutionId"
                           name="institution_id"
-                          placeholder="Kurum aramak için yazınız."
+                          placeholder="Önce ilçe seçiniz."
                           no-options-text="Bu liste boş!"
                           no-result-text="Burada bişey bulamadık!"
-                          :close-on-select="true"
-                          :filterResults="false"
-                          :min-chars="2"
-                          :resolve-on-load="false"
-                          value-prop="id"
-                          :delay="300"
-                          :searchable="true"
                           label="name"
-                          :options="(param) => searchInstitution({content: param})"
+                          value-prop="id"
+                          :searchable="true"
+                          :close-on-select="true"
+                          :loading="false"
+                          :options="institutions"
                           class="form-control"
                           :class="{'is-invalid': institutionEM != null}"
                         />
@@ -85,21 +79,21 @@
                         <multiselect
                           v-model="branchId"
                           name="branch_id"
-                          placeholder="Branş aramak için yazınız."
+                          :options="branches"
+                          label="name"
+                          value-prop="id"
+                          :searchable="true"
+                          :filterResults="false"
+                          :resolve-on-load="true"
+                          :close-on-select="true"
+                          :loading="false"
+                          track-by="name"
+                          placeholder="Branş araması/seçimi yapabilirsiniz."
                           no-options-text="Bu liste boş!"
                           no-result-text="Burada bişey bulamadık!"
-                          :close-on-select="true"
-                          :filterResults="false"
-                          :min-chars="2"
-                          :resolve-on-load="false"
-                          value-prop="id"
-                          :delay="300"
-                          :searchable="true"
-                          label="name"
-                          track-by="id"
-                          :options="searchBranch"
                           class="form-control"
                           :class="{'is-invalid': branchEM != null}"
+                          @search-change="findBranch"
                         />
                         <div
                           v-if="branchEM"
@@ -221,22 +215,24 @@ import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useBranchApi from '../../services/useBranchApi'
+import useDistrictApi from '../../services/useDistrictApi'
 import useNotifier from '../../utils/useNotifier'
 import router from '../../router'
 import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useAbility } from '@casl/vue'
+import { debounce, interval, Subject } from 'rxjs'
+import { ref, watch } from 'vue'
 
 export default {
   name: 'NewTeacher',
   components: { Page, Multiselect },
   setup () {
     const { createTeacher } = useTeacherApi()
-    const { searchInstitution } = useInstitutionApi()
+    const { getInstitution } = useInstitutionApi()
     const { searchBranch } = useBranchApi()
+    const { getDistricts } = useDistrictApi()
     const notifier = useNotifier()
     const { can } = useAbility()
-    // const { TEACHER_DELETE_LEVEL_2 } = usePermissionConstants()
-    // const val = can(TEACHER_DELETE_LEVEL_2)
 
     const schema = object({
       first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
@@ -248,10 +244,9 @@ export default {
       email: string().typeError(() => 'E-Posta yazı tipinde olmalıdır!')
         .email(() => 'E-Posta geçerli olmalıdır!')
         .required(() => 'E-Posta bilgisi gereklidir!'),
-      branch_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
-        .required(() => 'Branş bilgisi seçilmelidir!'),
-      institution_id: number().typeError(() => 'Branş sayı tipinde olmalıdır!')
-        .required(() => 'Branş bilgisi seçilmelidir!')
+      branch_id: number().required(() => 'Branş bilgisi seçilmelidir!'),
+      institution_id: number().required(() => 'Branş bilgisi seçilmelidir!'),
+      district_id: number().required(() => 'Branş bilgisi seçilmelidir!')
     })
 
     const { handleSubmit } = useForm({ validationSchema: schema })
@@ -262,21 +257,44 @@ export default {
     const { value: email, errorMessage: emailEM } = useField('email')
     const { value: branchId, errorMessage: branchEM } = useField('branch_id')
     const { value: institutionId, errorMessage: institutionEM } = useField('institution_id')
+    const { value: districtId, errorMessage: districtEM } = useField('district_id')
+    const branches = ref([])
+    const institutions = ref([])
+
+    const branchSubject = new Subject()
+    branchSubject.pipe(debounce(() => interval(1000)))
+      .subscribe(async param => {
+        branches.value = await searchBranch({ content: param })
+      })
+
+    // Bu fonksiyon ui dan aldığı aranacak parametreyi subjeye geçirir
+    // Subje reaktif operatörlere göre değerleri işler subscribe'a aktarır
+    const findBranch = (param) => {
+      if (param) {
+        branchSubject.next(param)
+      }
+    }
+
+    watch(districtId, async () => {
+      institutions.value = await getInstitution(districtId.value)
+    })
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Yeni öğretmen kaydınız yapılcaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
         const response = await createTeacher(values)
         if (response?.code === ResponseCodes.SUCCESS) {
-          await notifier.success({ message: 'Öğretmen kaydı başarıyla oluşturuldu.', duration: 3000 })
+          await notifier.success({ message: 'Öğretmen kaydı başarıyla oluşturuldu.', duration: 3200 })
           await router.push({ name: 'listTeachers' })
         } else {
-          await notifier.error({ message: 'Öğretmen kaydı oluşturalamadı!.', duration: 3000 })
+          await notifier.error({ message: 'Öğretmen kaydı oluşturalamadı!.', duration: 3200 })
         }
       }
     })
 
     return {
+      districtId,
+      districtEM,
       branchId,
       branchEM,
       email,
@@ -289,8 +307,10 @@ export default {
       lastNameEM,
       phone,
       phoneEM,
-      searchInstitution,
-      searchBranch,
+      branches,
+      institutions,
+      getDistricts,
+      findBranch,
       can,
       save,
       ...usePermissionConstants()

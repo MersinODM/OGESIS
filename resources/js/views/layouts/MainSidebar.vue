@@ -47,7 +47,7 @@
             :to="{ name: 'underConstruction' }"
             class="d-block"
           >
-            DENEME KULLANICISI
+            {{ user?.full_name }}
           </router-link>
         </div>
       </div>
@@ -74,13 +74,15 @@
 // import img from '../../../images/Logo.png'
 // import { mapGetters } from 'vuex'
 import logo from '../../../images/svg/logo.svg'
-import { onMounted } from 'vue'
+import { computed, watch } from 'vue'
 import MenuItem from '../../components/MenuItem'
+import { useStore } from 'vuex'
 
 export default {
   name: 'NMainSidebar',
   components: { MenuItem },
   setup () {
+    const store = useStore()
     const generateAvatar = (text, foregroundColor, backgroundColor) => {
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
@@ -102,17 +104,22 @@ export default {
       return canvas.toDataURL('image/png')
     }
 
-    onMounted(() => {
+    const user = computed(() => store.state.auth.user)
+
+    watch(user, () => {
       // TODO Burada kullanıcı adı verilecek fonksiyona
-      const name = 'DENEME KULLANICISI'
+      const name = store.getters['auth/user']?.full_name
       // Adımızın başharfini ve soyadımızın başharfini buluyoruz
-      const initial = name.match(/(\b\S)?/g)
-        .join('')
-        .match(/(^\S|\S$)?/g)
-        .join('')
+      const initial = name.split(' ')
+        .map(s => s[0])
+        .reduce((t, cv, ci, arr) => arr[0] + arr[arr.length - 1])
         .toUpperCase()
       document.getElementById('avatar').src = generateAvatar(initial, 'black', '#40E0D0')
     })
+
+    // onMounted(() => {
+
+    // })
     const menu = [
       {
         name: 'Ana Sayfa',
@@ -198,7 +205,8 @@ export default {
 
     return {
       menu,
-      logo
+      logo,
+      user
     }
   }
 }

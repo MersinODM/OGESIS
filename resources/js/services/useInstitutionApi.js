@@ -20,10 +20,18 @@ export default function () {
     } catch (e) {}
   }
 
+  const getInstitution = async (districtId) => {
+    try {
+      const response = await http.get(`api/v1/districts/${districtId}/institutions`)
+      return response.data
+    } catch (e) {}
+  }
+
   return {
     createInstitution,
     updateInstitution,
     deleteInstitution,
-    searchInstitution
+    searchInstitution,
+    getInstitution
   }
 }

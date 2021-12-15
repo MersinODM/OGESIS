@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('institutions/table', [InstitutionController::class, 'getTable']);
     Route::put('institutions/{id}', [InstitutionController::class, 'update']);
     Route::get('institutions/search_by', [InstitutionController::class, 'searchBy']);
+    Route::get('districts/{id}/institutions', [InstitutionController::class, 'get']);
 
     // Tema endpoint tanımlamaları
     Route::post('themes', [ThemeController::class, 'create']);

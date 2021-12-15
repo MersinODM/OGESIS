@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Imports\InstitutionImport;
 use App\Models\Institution;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -96,43 +98,84 @@ class InstitutionController extends ApiController
 
     }
 
-    public function searchBy(Request $request)
+    public function searchBy(Request $request): JsonResponse
     {
+        $user = Auth::user();
         // Query taslağı oluşturuluyor
         $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
-        // Querystring'de content var mı diye bakılıyor yoksa bad request geri dönyor
-        if ($request->has('content')) {
-            // Querystring'de district_id(ilçe id) var mı diye bakılıyor yoksa sadece iceriğe göre arama yapılıyor
-            if($request->has('district_id')){
-                $query->where('district_id', $request->get('district_id'));
+        if ($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+            if (!($request->has('content')
+                && $request->has('district_id'))) {
+                return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                    ResponseKeys::MESSAGE => 'Parametre gönderilmemiş!'
+                ], 400);
             }
             $content = $request->get('content');
+            $query->where('district_id', $request->get('district_id'));
             $query->where('name', 'like', '%' . $content . '%')
                 ->orWhere('id', 'like', $content . '%');
             return response()->json($query->get());
         }
+        // Burada else if bloğuna gerek yok çünkü yukarıda if içine girerse
+        // fonk return ediliyor aşağı inmiyor akış
+        if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2)) {
+            if (!$request->has('content')) {
+                return response()->json([
+                    ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                    ResponseKeys::MESSAGE => 'Parametre gönderilmemiş!'
+                ], 400);
+            }
+            $content = $request->get('content');
+            $query->where('district_id', $user->institution()->district_id);
+            $query->where('name', 'like', '%' . $content . '%')
+                ->orWhere('id', 'like', $content . '%');
+            return response()->json($query->get());
+        }
+
         return response()->json([
             ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-            ResponseKeys::MESSAGE => 'Parametre gönderilmemiş!'
+            ResponseKeys::MESSAGE => 'Yetkisiz istek!'
         ], 400);
     }
 
-    public function getTable(Request $request)
+    public function get($id): JsonResponse {
+        $user = Auth::user();
+        // Query taslağı oluşturuluyor
+        $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
+        if ($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+            $query->where('district_id', $id);
+            return response()->json($query->get());
+        }
+        // Burada else if bloğuna gerek yok çünkü yukarıda if içine girerse
+        // fonk return ediliyor aşağı inmiyor akış
+        if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2)) {
+            $query->where('district_id', $user->institution()->district_id);
+            return response()->json($query->get());
+        }
+
+        return response()->json([
+            ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+            ResponseKeys::MESSAGE => 'Yetkisiz istek!'
+        ], 400);
+    }
+
+    public function getTable(Request $request): JsonResponse
     {
         $query = Institution::with('district');
         $user = Auth::user();
 
-        // TODO refaktör gerekebilir
-        // Kullanıcı 2 seviye ise yani ilçe Mem kullanıcısı ise sadece kendi ilçesini listeleyebilsin
-        if ($user && $user->can('institution.list.level2') && !$user->can('institution.list.level3')) {
+        // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
+        if($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+            if ($request->has('district_id') && !is_null($request->input('district_id'))) {
+                $query->where('district_id', '=', $request->input('district_id'));
+            }
+        }
+        else if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2) && !$user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
             $query->where('ogs_districts.district_id', '=', $user->institution()->district_id);
         }
 
-        if ($request->has('district_id') && !is_null($request->input('district_id'))) {
-            $query->where('district_id', '=', $request->input('district_id'));
-        }
-
         return Datatables::eloquent($query)
-            ->make(true);
+            ->toJson();
     }
 }
