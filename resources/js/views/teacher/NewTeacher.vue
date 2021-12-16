@@ -245,8 +245,8 @@ export default {
         .email(() => 'E-Posta geçerli olmalıdır!')
         .required(() => 'E-Posta bilgisi gereklidir!'),
       branch_id: number().required(() => 'Branş bilgisi seçilmelidir!'),
-      institution_id: number().required(() => 'Branş bilgisi seçilmelidir!'),
-      district_id: number().required(() => 'Branş bilgisi seçilmelidir!')
+      institution_id: number().required(() => 'Kurum seçilmelidir!'),
+      district_id: number().required(() => 'İlçe seçilmelidir!')
     })
 
     const { handleSubmit } = useForm({ validationSchema: schema })

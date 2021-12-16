@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
-use App\Models\Activity;
-use App\Models\Institution;
 use App\Models\Teacher;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,11 +17,17 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TeacherController extends ApiController
 {
+    /*
+     * İl ve ilçe seviyelerinde kurum id gelmek zorunda
+     * Okul seviyesinde gerekli değil okul yetkilisinin kendi kurum id sini vererek
+     * öğretmen kaydını yapıyoruz
+     */
     public function create(Request $request)
     {
         $user = Auth::user();
-        $validationResult = null;
-        if ($user && $user->can('teacher.create.admin')) {
+        $teacher = new Teacher();
+        if ($user && ($user->can(Permissions::TEACHER_CREATE_LEVEL_3)
+                || $user->can(Permissions::TEACHER_CREATE_LEVEL_2))) {
             $validationResult = $this->apiValidator($request, [
                 'branch_id' => 'required',
                 'institution_id' => 'required',
@@ -31,7 +36,11 @@ class TeacherController extends ApiController
 //            'phone' => 'required',
 //            'email' => 'required',
             ]);
-        } else if ($user && $user->can('teacher.create.manager')) {
+            if ($validationResult) {
+                return response()->json($validationResult, 422);
+            }
+            $teacher->fill($request->all());
+        } else if ($user && $user->can(Permissions::TEACHER_CREATE_LEVEL_1)) {
             $validationResult = $this->apiValidator($request, [
                 'branch_id' => 'required',
                 'first_name' => 'required',
@@ -39,16 +48,20 @@ class TeacherController extends ApiController
 //            'phone' => 'required',
 //            'email' => 'required',
             ]);
-        }
-
-
-        if ($validationResult) {
-            return response()->json($validationResult, 422);
+            if ($validationResult) {
+                return response()->json($validationResult, 422);
+            }
+            $teacher->fill($request->all());
+            $teacher->institution_id = $user->institution_id;
+        } else{
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => 'Yetkisiz istek!'
+            ], 400);
         }
 
         try {
             DB::beginTransaction();
-            $teacher = new Teacher($request->all());
             $teacher->save();
             DB::commit();
             return response()->json([

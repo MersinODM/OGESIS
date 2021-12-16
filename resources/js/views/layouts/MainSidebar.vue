@@ -109,12 +109,14 @@ export default {
     watch(user, () => {
       // TODO Burada kullanıcı adı verilecek fonksiyona
       const name = store.getters['auth/user']?.full_name
-      // Adımızın başharfini ve soyadımızın başharfini buluyoruz
-      const initial = name.split(' ')
-        .map(s => s[0])
-        .reduce((t, cv, ci, arr) => arr[0] + arr[arr.length - 1])
-        .toUpperCase()
-      document.getElementById('avatar').src = generateAvatar(initial, 'black', '#40E0D0')
+      if (name) {
+        // Adımızın başharfini ve soyadımızın başharfini buluyoruz
+        const initial = name.split(' ')
+          .map(s => s[0])
+          .reduce((t, cv, ci, arr) => arr[0] + arr[arr.length - 1])
+          .toUpperCase()
+        document.getElementById('avatar').src = generateAvatar(initial, 'black', '#40E0D0')
+      }
     })
 
     // onMounted(() => {
