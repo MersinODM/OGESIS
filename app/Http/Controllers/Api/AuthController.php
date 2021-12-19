@@ -51,7 +51,7 @@ class AuthController extends ApiController
      */
     public function me(): JsonResponse {
         $user = Auth::user()
-            ->with('roles:id,name,slug', 'institution:id,name')
+            ->with('roles:id,name,slug', 'institution:id,district_id,name','institution.district:id,name')
             ->select('id', 'institution_id', 'full_name', 'phone', 'email')
             ->first();
         $user['permissions'] = Auth::user()->getAllPermissions();

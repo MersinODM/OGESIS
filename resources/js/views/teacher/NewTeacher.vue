@@ -51,7 +51,7 @@
                         <multiselect
                           v-model="institutionId"
                           name="institution_id"
-                          placeholder="Önce ilçe seçiniz."
+                          placeholder="Kurum seçebilirsiniz."
                           no-options-text="Bu liste boş!"
                           no-result-text="Burada bişey bulamadık!"
                           label="name"
@@ -221,7 +221,8 @@ import router from '../../router'
 import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useAbility } from '@casl/vue'
 import { debounce, interval, Subject } from 'rxjs'
-import { ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'NewTeacher',
@@ -233,7 +234,14 @@ export default {
     const { getDistricts } = useDistrictApi()
     const notifier = useNotifier()
     const { can } = useAbility()
-
+    const { TEACHER_CREATE_LEVEL_2, TEACHER_CREATE_LEVEL_3 } = usePermissionConstants()
+    const store = useStore()
+    const user = computed(() => store.state.auth.user)
+    //
+    // Validasyon bilgileri
+    const branchValidationMessage = 'Branş bilgisi seçilmelidir!'
+    const institutionValidationMessage = 'Kurum seçilmelidir!'
+    const districtValidationMessage = 'İlçe seçimi yapılmalıdır!'
     const schema = object({
       first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
         .required(() => 'Ad bilgisi gereklidir!'),
@@ -244,13 +252,18 @@ export default {
       email: string().typeError(() => 'E-Posta yazı tipinde olmalıdır!')
         .email(() => 'E-Posta geçerli olmalıdır!')
         .required(() => 'E-Posta bilgisi gereklidir!'),
-      branch_id: number().required(() => 'Branş bilgisi seçilmelidir!'),
-      institution_id: number().required(() => 'Kurum seçilmelidir!'),
-      district_id: number().required(() => 'İlçe seçilmelidir!')
+      branch_id: number().typeError(() => branchValidationMessage)
+        .required(() => branchValidationMessage),
+      institution_id: number().typeError(() => institutionValidationMessage)
+        .required(() => institutionValidationMessage),
+      ...(can(TEACHER_CREATE_LEVEL_3) && {
+        district_id: number().typeError(() => districtValidationMessage)
+          .required(() => districtValidationMessage)
+      })
     })
 
     const { handleSubmit } = useForm({ validationSchema: schema })
-
+    // Validasyon değişken tanımlamaları
     const { value: firstName, errorMessage: firstNameEM } = useField('first_name')
     const { value: lastName, errorMessage: lastNameEM } = useField('last_name')
     const { value: phone, errorMessage: phoneEM } = useField('phone')
@@ -261,6 +274,7 @@ export default {
     const branches = ref([])
     const institutions = ref([])
 
+    // Burada debouncing ile alanbranş araması yaptırıyoruz
     const branchSubject = new Subject()
     branchSubject.pipe(debounce(() => interval(1000)))
       .subscribe(async param => {
@@ -275,10 +289,32 @@ export default {
       }
     }
 
+    // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
       institutions.value = await getInstitution(districtId.value)
     })
 
+    nextTick(() => {
+      if (can(TEACHER_CREATE_LEVEL_2)) {
+        getInstitution(store.getters['auth/user']?.institution.district_id)
+          .then(res => {
+            institutions.value = res
+          })
+      }
+    })
+
+    // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
+    // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
+    watch(user, () => {
+      if (can(TEACHER_CREATE_LEVEL_2)) {
+        getInstitution(store.getters['auth/user']?.institution.district_id)
+          .then(res => {
+            institutions.value = res
+          })
+      }
+    })
+
+    // Kayıt işlemini yapalım
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Yeni öğretmen kaydınız yapılcaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {

@@ -63,9 +63,12 @@ mix.js('resources/js/app.js', 'public/js')
   .options({
     processCssUrls: false
   })
-  .extract()
-  // .mergeManifest()
-  .purgeCss()
+
+mix.options({ runtimeChunkPath: '/js' }) // manifest için gerekli
+mix.extract(['@vue', 'vuex'], 'js/vendor~utils-1.js')
+mix.extract(['v-calendar'], 'js/vendor~utils-2.js')
+mix.extract(['vue-router', 'vee-validate'], 'js/vendor~utils-3.js')
+mix.extract()
 
 // mix.js('resources/js/exam/exam.js', 'public/js/exam')
 //   .vue({ version: 3 })
@@ -81,6 +84,7 @@ if (!mix.inProduction()) {
 
 if (mix.inProduction()) {
   // mix.setResourceRoot('/otomasyon')
+  mix.version()
   mix.webpackConfig({
     plugins: [
       new CompressionPlugin({

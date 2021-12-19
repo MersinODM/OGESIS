@@ -100,6 +100,7 @@ export const useAuthActionTypes = () => {
   }
 }
 
+// TODO Object.freeze() implemantasyonu yapılabilir
 export const usePermissionConstants = () => {
   return {
     // Öğretmen işlemleri ile ilgili yetkiler

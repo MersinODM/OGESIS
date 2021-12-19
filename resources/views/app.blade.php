@@ -23,8 +23,11 @@
 {{--<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.3/contrib/auto-render.min.js" integrity="sha512-CzIEOUs11SQ7tekLhEe5gil9kDip4RTJZVf7pSjlxOdVaYYHEcQflhunPz2Q/onNC4slL9jpKjvNgzPAAxEpew==" crossorigin="anonymous"></script>--}}
 {{--<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.3/contrib/copy-tex.min.js" integrity="sha512-69oQlJyjN7VLQDagAaaOrUfgp66VdWTi0ZBy7aoAraAH8H2C13YM+JAPR0N3KBW7G82gDnvcb0l953DOi0GyoQ==" crossorigin="anonymous"></script>--}}
 {{--<script defer src="{{ asset('js/app/ckeditor/ckeditor.js') }}" type="application/javascript"></script>--}}
-<script defer src="{{ asset('js/manifest.js') }}" type="application/javascript"></script>
-<script defer src="{{ asset('js/vendor.js') }}" type="application/javascript"></script>
-<script defer src="{{ asset('js/app.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/manifest.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/vendor.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/vendor~utils-1.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/vendor~utils-2.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/vendor~utils-3.js') }}" type="application/javascript"></script>
+<script defer src="{{ mix('js/app.js') }}" type="application/javascript"></script>
 </body>
 </html>
