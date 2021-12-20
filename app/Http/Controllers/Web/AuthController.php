@@ -8,6 +8,7 @@ use App\Http\Controllers\Utils\ResponseKeys;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -16,8 +17,6 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            session()->regenerate();
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
                 ResponseKeys::MESSAGE => "Oturum açma başarılı"
@@ -32,7 +31,7 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         return response()->json([
             ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
             ResponseKeys::MESSAGE => "Oturum kapatıldı"

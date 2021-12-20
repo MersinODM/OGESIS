@@ -1,13 +1,13 @@
 {
-    "/js/app.js": "/js/app.js?id=cbc31c9514e96cbba4e9",
-    "/js/manifest.js": "/js/manifest.js?id=57969d632d29c21e04ab",
-    "/js/vendor~utils-2.js": "/js/vendor~utils-2.js?id=830427f5e979f2e38526",
-    "/js/vendor~utils-1.js": "/js/vendor~utils-1.js?id=25348dc23adc38ebcd30",
-    "/css/app.css": "/css/app.css?id=0ef28688d04f2f3d31e7",
-    "/js/vendor~utils-3.js": "/js/vendor~utils-3.js?id=d7fa088954a7e82ed845",
-    "/js/vendor.js": "/js/vendor.js?id=31132a92945d772cf80c",
-    "/fonts/materialdesignicons-webfont.eot": "/fonts/materialdesignicons-webfont.eot?id=18ca3545d4fe9b5a9570",
-    "/fonts/materialdesignicons-webfont.ttf": "/fonts/materialdesignicons-webfont.ttf?id=84969647c9de82fa3833",
-    "/fonts/materialdesignicons-webfont.woff": "/fonts/materialdesignicons-webfont.woff?id=4726f10b900e888a36c2",
-    "/fonts/materialdesignicons-webfont.woff2": "/fonts/materialdesignicons-webfont.woff2?id=75528a5cf3efa339c424"
+    "/js/app.js": "/js/app.js",
+    "/js/manifest.js": "/js/manifest.js",
+    "/js/vendor~utils-1.js": "/js/vendor~utils-1.js",
+    "/js/vendor~utils-2.js": "/js/vendor~utils-2.js",
+    "/css/app.css": "/css/app.css",
+    "/js/vendor~utils-3.js": "/js/vendor~utils-3.js",
+    "/js/vendor.js": "/js/vendor.js",
+    "/fonts/materialdesignicons-webfont.eot": "/fonts/materialdesignicons-webfont.eot",
+    "/fonts/materialdesignicons-webfont.ttf": "/fonts/materialdesignicons-webfont.ttf",
+    "/fonts/materialdesignicons-webfont.woff": "/fonts/materialdesignicons-webfont.woff",
+    "/fonts/materialdesignicons-webfont.woff2": "/fonts/materialdesignicons-webfont.woff2"
 }

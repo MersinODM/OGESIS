@@ -16,20 +16,20 @@
                     <div class="form-group has-feedback">
                       <div class="form-row">
                         <div class="form-group col-md-12">
-                          <label>Takım Seçimi</label>
+                          <label>İlçe Seçimi</label>
                           <multiselect
-                              v-model="selectedTeachers"
-                              :options="teachers"
-                              label="full_name"
-                              name="teachers"
-                              mode="tags"
-                              track-by="id"
-                              value-prop="id"
-                              placeholder="Öğretmen seçimi yapabilirsiniz."
-                              no-options-text="Bu liste boş!"
-                              no-result-text="Burada bişey bulamadık!"
-                              class="form-control h-auto"
-                              :class="{'is-invalid': teachersEM != null}"
+                            v-model="selectedTeachers"
+                            :options="teachers"
+                            label="full_name"
+                            name="teachers"
+                            mode="tags"
+                            track-by="id"
+                            value-prop="id"
+                            placeholder="Öğretmen seçimi yapabilirsiniz."
+                            no-options-text="Bu liste boş!"
+                            no-result-text="Burada bişey bulamadık!"
+                            class="form-control h-auto"
+                            :class="{'is-invalid': teachersEM != null}"
                           >
                             <template #option="{ option }">
                               {{ option.full_name }} - {{ option.branch.name }}
@@ -38,9 +38,9 @@
                               <span class="multiselect-tag">
                                 {{ option.full_name }} - {{ option.branch.name }}
                                 <span
-                                    v-if="!disabled"
-                                    class="multiselect-tag-remove"
-                                    @mousedown.prevent="handleTagRemove(option, $event)"
+                                  v-if="!disabled"
+                                  class="multiselect-tag-remove"
+                                  @mousedown.prevent="handleTagRemove(option, $event)"
                                 >
                                   <span class="multiselect-tag-remove-icon" />
                                 </span>
@@ -48,10 +48,10 @@
                             </template>
                           </multiselect>
                           <div
-                              v-if="teachersEM"
-                              role="alert"
-                              class="invalid-feedback order-last"
-                              style="display: inline-block;"
+                            v-if="teachersEM"
+                            role="alert"
+                            class="invalid-feedback order-last"
+                            style="display: inline-block;"
                           >
                             {{ teachersEM }}
                           </div>
@@ -61,18 +61,18 @@
                         <div class="form-group col-md-12">
                           <label>Takım Seçimi</label>
                           <multiselect
-                              v-model="selectedTeachers"
-                              :options="teachers"
-                              label="full_name"
-                              name="teachers"
-                              mode="tags"
-                              track-by="id"
-                              value-prop="id"
-                              placeholder="Öğretmen seçimi yapabilirsiniz."
-                              no-options-text="Bu liste boş!"
-                              no-result-text="Burada bişey bulamadık!"
-                              class="form-control h-auto"
-                              :class="{'is-invalid': teachersEM != null}"
+                            v-model="selectedTeachers"
+                            :options="teachers"
+                            label="full_name"
+                            name="teachers"
+                            mode="tags"
+                            track-by="id"
+                            value-prop="id"
+                            placeholder="Öğretmen seçimi yapabilirsiniz."
+                            no-options-text="Bu liste boş!"
+                            no-result-text="Burada bişey bulamadık!"
+                            class="form-control h-auto"
+                            :class="{'is-invalid': teachersEM != null}"
                           >
                             <template #option="{ option }">
                               {{ option.full_name }} - {{ option.branch.name }}
@@ -81,9 +81,9 @@
                               <span class="multiselect-tag">
                                 {{ option.full_name }} - {{ option.branch.name }}
                                 <span
-                                    v-if="!disabled"
-                                    class="multiselect-tag-remove"
-                                    @mousedown.prevent="handleTagRemove(option, $event)"
+                                  v-if="!disabled"
+                                  class="multiselect-tag-remove"
+                                  @mousedown.prevent="handleTagRemove(option, $event)"
                                 >
                                   <span class="multiselect-tag-remove-icon" />
                                 </span>
@@ -91,10 +91,10 @@
                             </template>
                           </multiselect>
                           <div
-                              v-if="teachersEM"
-                              role="alert"
-                              class="invalid-feedback order-last"
-                              style="display: inline-block;"
+                            v-if="teachersEM"
+                            role="alert"
+                            class="invalid-feedback order-last"
+                            style="display: inline-block;"
                           >
                             {{ teachersEM }}
                           </div>

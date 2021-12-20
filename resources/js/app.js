@@ -26,6 +26,8 @@ import uppercase from './directives/uppercase'
 import dateFormat from './directives/dateFormat'
 import store from './store'
 import { abilitiesPlugin } from '@casl/vue'
+import { constantMixin } from './mixins/constantMixin'
+
 // import latex from './directives/katex'
 
 const app = createApp(App)
@@ -35,6 +37,8 @@ app.use(store)
 app.use(abilitiesPlugin, store.getters['auth/ability'], {
   useGlobalProperties: true
 })
+app.mixin(constantMixin)
+
 // app.directive('can', can)
 // app.directive('katex', latex)
 app.directive('uppercase', uppercase)

@@ -234,7 +234,7 @@ export default {
     const { getDistricts } = useDistrictApi()
     const notifier = useNotifier()
     const { can } = useAbility()
-    const { TEACHER_CREATE_LEVEL_2, TEACHER_CREATE_LEVEL_3 } = usePermissionConstants()
+    const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
     const store = useStore()
     const user = computed(() => store.state.auth.user)
     //
@@ -254,9 +254,13 @@ export default {
         .required(() => 'E-Posta bilgisi gereklidir!'),
       branch_id: number().typeError(() => branchValidationMessage)
         .required(() => branchValidationMessage),
-      institution_id: number().typeError(() => institutionValidationMessage)
-        .required(() => institutionValidationMessage),
-      ...(can(TEACHER_CREATE_LEVEL_3) && {
+      // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
+      ...(can(TEACHER_LIST_LEVEL_2) && {
+        institution_id: number().typeError(() => institutionValidationMessage)
+          .required(() => institutionValidationMessage)
+      }),
+      // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
+      ...(can(TEACHER_LIST_LEVEL_3) && {
         district_id: number().typeError(() => districtValidationMessage)
           .required(() => districtValidationMessage)
       })
@@ -274,7 +278,7 @@ export default {
     const branches = ref([])
     const institutions = ref([])
 
-    // Burada debouncing ile alanbranş araması yaptırıyoruz
+    // Burada debouncing ile alan/branş araması yaptırıyoruz
     const branchSubject = new Subject()
     branchSubject.pipe(debounce(() => interval(1000)))
       .subscribe(async param => {
@@ -294,8 +298,9 @@ export default {
       institutions.value = await getInstitution(districtId.value)
     })
 
+    // Sayfa ilk defa açıldığında çalıştırmamız gerekiyor değilse kurumları dolduramıyoruz
     nextTick(() => {
-      if (can(TEACHER_CREATE_LEVEL_2)) {
+      if (can(TEACHER_LIST_LEVEL_3)) {
         getInstitution(store.getters['auth/user']?.institution.district_id)
           .then(res => {
             institutions.value = res
@@ -306,7 +311,7 @@ export default {
     // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
     // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
     watch(user, () => {
-      if (can(TEACHER_CREATE_LEVEL_2)) {
+      if (can(TEACHER_LIST_LEVEL_2)) {
         getInstitution(store.getters['auth/user']?.institution.district_id)
           .then(res => {
             institutions.value = res
@@ -321,7 +326,7 @@ export default {
         const response = await createTeacher(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Öğretmen kaydı başarıyla oluşturuldu.', duration: 3200 })
-          await router.push({ name: 'listTeachers' })
+          await router.replace({ name: 'listTeachers' })
         } else {
           await notifier.error({ message: 'Öğretmen kaydı oluşturalamadı!.', duration: 3200 })
         }
@@ -348,8 +353,7 @@ export default {
       getDistricts,
       findBranch,
       can,
-      save,
-      ...usePermissionConstants()
+      save
     }
   }
 }

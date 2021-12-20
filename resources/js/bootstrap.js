@@ -11,24 +11,29 @@ import router from './router'
 
 // window.Jquery = window.$ = jquery
 
-$.fn.dataTable.ext.errMode = async (settings, tn, msg) => {
+$.fn.dataTable.ext.errMode = async (settings) => {
   if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
     await router.push({ name: 'login' })
   }
   if (settings.jqXHR?.status === 419) {
-    location.reload()
+    // location.reload()
   }
 }// Datatables için err mode kapatılıyor tüm hataları biz yakalayacağız
 $.fn.DataTable.ext.pager.numbers_length = 6 // Sayfalama genişliği
 
+// $(document).ajaxStart(() => {
 $.ajaxSetup({
+  cache: false,
   xhrFields: {
     withCredentials: true
   },
   headers: {
-    'X-CSRF-TOKEN': document.getElementsByName('csrf-token')[0].getAttribute('content')
+    'X-CSRF-TOKEN': document.getElementsByName('csrf-token')[0].getAttribute('content'),
+    Accept: 'application/json'
   }
 })
+
+// })
 
 // eslint-disable-next-line no-extend-native
 String.prototype.withPrefix = function (prefix) {

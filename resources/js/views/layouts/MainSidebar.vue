@@ -74,7 +74,7 @@
 // import img from '../../../images/Logo.png'
 // import { mapGetters } from 'vuex'
 import logo from '../../../images/svg/logo.svg'
-import { computed, watch } from 'vue'
+import { computed, nextTick, watch } from 'vue'
 import MenuItem from '../../components/MenuItem'
 import { useStore } from 'vuex'
 
@@ -106,8 +106,7 @@ export default {
 
     const user = computed(() => store.state.auth.user)
 
-    watch(user, () => {
-      // TODO Burada kullanıcı adı verilecek fonksiyona
+    function crateAvatar () {
       const name = store.getters['auth/user']?.full_name
       if (name) {
         // Adımızın başharfini ve soyadımızın başharfini buluyoruz
@@ -117,11 +116,17 @@ export default {
           .toUpperCase()
         document.getElementById('avatar').src = generateAvatar(initial, 'black', '#40E0D0')
       }
+    }
+
+    watch(user, () => {
+      // TODO Burada kullanıcı adı verilecek fonksiyona
+      crateAvatar()
     })
 
-    // onMounted(() => {
+    nextTick(() => {
+      crateAvatar()
+    })
 
-    // })
     const menu = [
       {
         name: 'Ana Sayfa',

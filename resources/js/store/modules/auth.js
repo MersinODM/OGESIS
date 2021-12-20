@@ -31,7 +31,7 @@ export default {
         if (response?.status === 200 && response?.data.code === ResponseCodes.SUCCESS) {
           const user = await me()
           commit(SET_USER, user)
-          await router.push({ name: 'start' })
+          await router.replace({ name: 'start' })
         } else {
           await Messenger.showWarning('Oturumunuz açılamadı, e-posta ve şifreyi kontrol ediniz')
         }
@@ -44,8 +44,10 @@ export default {
       try {
         await logout()
         commit(REMOVE_USER)
-        await router.push({ name: 'login' })
-      } catch (e) {}
+        await router.replace({ name: 'login' })
+      } catch (e) {
+        console.error(e)
+      }
     },
     async [GET_ME] ({ commit, state }) {
       if (!state.user) {

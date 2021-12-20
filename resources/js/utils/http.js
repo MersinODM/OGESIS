@@ -45,20 +45,6 @@ const http = axios.create({
   withCredentials: true
 })
 
-// istek interceptor u ekleniyor
-http.interceptors.request.use((config) => {
-  // Her istekte gönderilercek http başlıkları ayarlanıyor
-  // eslint-disable-next-line no-undef
-  config.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  // const token = localStorage.getItem(Constants.ACCESS_TOKEN)
-  // if (token !== null) {
-  //   config.headers.Authorization = `Bearer ${token}`
-  // }
-  return config
-}, (error) => {
-  // pace.stop()
-  return Promise.reject(error)
-})
 
 http.interceptors.response.use((response) => {
   // pace.stop()
@@ -68,7 +54,8 @@ http.interceptors.response.use((response) => {
     return Promise.reject(error)
   }
   if (error.response.status === 419) {
-    location.reload()
+    // location.reload()
+    console.error(error)
   }
   if (error.response.status === 401) {
     Swal.fire({
@@ -76,9 +63,9 @@ http.interceptors.response.use((response) => {
       text: 'Kullanıcı giriş sayfasına yönlendirileceksiniz',
       icon: 'warning',
       confirmButtonText: 'Tamam'
-    }).then((value) => {
+    }).then(async (value) => {
       pace.stop()
-      router.push({ name: 'login' })
+      await router.push({ name: 'login' })
     })
   } else {
     pace.stop()
