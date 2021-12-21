@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             DB::beginTransaction();
             $hkn = new User([
                 "full_name" => "Hakan GÜLEN",
-                "email" => "hgulen33@gmail.com",
+                "email" => "haki33@gmail.com",
                 "password" => Hash::make("Deneme.1234")
             ]);
             $hkn->save();

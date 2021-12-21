@@ -217,7 +217,7 @@ export default {
     const { value: title, errorMessage: titleEM } = useField('title')
     const { value: selectedTeachers, errorMessage: teachersEM } = useField('teachers')
     const teachers = ref()
-    getTeachers().then(values => { teachers.value = values })
+    // getTeachers().then(values => { teachers.value = values })
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
