@@ -1,0 +1,73 @@
+<template>
+  <div
+    v-if="$can(TEACHER_CREATE_LEVEL_3) || $can(TEACHER_CREATE_LEVEL_2)"
+    class="form-group col-md-12"
+  >
+    <label>Kurum Seçimi</label>
+    <multiselect
+      v-model="institution"
+      :name="name"
+      placeholder="Kurum seçebilirsiniz."
+      no-options-text="Bu liste boş!"
+      no-result-text="Burada bişey bulamadık!"
+      label="name"
+      value-prop="id"
+      :searchable="true"
+      :close-on-select="true"
+      :loading="false"
+      :options="institutionList"
+      class="form-control"
+      :class="{'is-invalid': isValidated && errorMessage != null}"
+    />
+    <validation-error
+      v-if="isValidated"
+      v-model="errorMessage"
+    />
+  </div>
+</template>
+
+<script>
+import ValidationError from './ValidationError'
+import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
+import { useModelWrapper } from '../compositions/useModelWrapper'
+import Multiselect from '@vueform/multiselect'
+
+export default {
+  name: 'InstitutionSelector',
+  components: { ValidationError, Multiselect },
+  props: {
+    modelValue: {
+      type: Object,
+      default: () => ({})
+    },
+    institutions: {
+      type: Array,
+      default: () => ([])
+    },
+    validationMessage: {
+      type: String,
+      default: null,
+      required: false
+    },
+    validationRequired: {
+      type: Boolean,
+      default: false
+    },
+    name: {
+      type: String,
+      default: ''
+    }
+  },
+  setup (props, { emit }) {
+    return {
+      institution: useModelWrapper(props, emit),
+      institutionList: useModelWrapper(props, emit, 'institutions'),
+      ...useComponentValidationWrapper(props)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

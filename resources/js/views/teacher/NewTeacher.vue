@@ -12,98 +12,29 @@
                 <div class="col-md-6">
                   <form @submit.prevent>
                     <div class="row justify-content-md-center">
-                      <div
-                        v-if="can(TEACHER_CREATE_LEVEL_3)"
-                        class="form-group col-md-12"
-                      >
-                        <label>İlçe Seçimi</label>
-                        <multiselect
-                          v-model="districtId"
-                          name="district_id"
-                          placeholder="İlçe seçebilirsiniz"
-                          no-options-text="Bu liste boş!"
-                          no-result-text="Burada bişey bulamadık!"
-                          :close-on-select="true"
-                          :min-chars="2"
-                          value-prop="id"
-                          :searchable="true"
-                          label="name"
-                          :options="getDistricts"
-                          class="form-control"
-                          :class="{'is-invalid': districtEM != null}"
-                        />
-                        <div
-                          v-if="districtEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ districtEM }}
-                        </div>
-                      </div>
+                      <district-selector
+                        v-model="districtId"
+                        name="district_id"
+                        :validation-required="true"
+                        :validation-message="districtEM"
+                      />
                     </div>
                     <div class="row justify-content-md-center">
-                      <div
-                        v-if="can(TEACHER_CREATE_LEVEL_3) || can(TEACHER_CREATE_LEVEL_2)"
-                        class="form-group col-md-12"
-                      >
-                        <label>Kurum Seçimi</label>
-                        <multiselect
-                          v-model="institutionId"
-                          name="institution_id"
-                          placeholder="Kurum seçebilirsiniz."
-                          no-options-text="Bu liste boş!"
-                          no-result-text="Burada bişey bulamadık!"
-                          label="name"
-                          value-prop="id"
-                          :searchable="true"
-                          :close-on-select="true"
-                          :loading="false"
-                          :options="institutions"
-                          class="form-control"
-                          :class="{'is-invalid': institutionEM != null}"
-                        />
-                        <div
-                          v-if="institutionEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ institutionEM }}
-                        </div>
-                      </div>
+                      <institution-selector
+                        v-model="institutionId"
+                        name="institution_id"
+                        :institutions="institutions"
+                        :validation-required="true"
+                        :validation-message="institutionEM"
+                      />
                     </div>
                     <div class="row justify-content-md-center">
-                      <div class="form-group col-md-12">
-                        <label>Branş Seçimi</label>
-                        <multiselect
-                          v-model="branchId"
-                          name="branch_id"
-                          :options="branches"
-                          label="name"
-                          value-prop="id"
-                          :searchable="true"
-                          :filterResults="false"
-                          :resolve-on-load="true"
-                          :close-on-select="true"
-                          :loading="false"
-                          track-by="name"
-                          placeholder="Branş araması/seçimi yapabilirsiniz."
-                          no-options-text="Bu liste boş!"
-                          no-result-text="Burada bişey bulamadık!"
-                          class="form-control"
-                          :class="{'is-invalid': branchEM != null}"
-                          @search-change="findBranch"
-                        />
-                        <div
-                          v-if="branchEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ branchEM }}
-                        </div>
-                      </div>
+                      <branch-selector
+                        v-model="branchId"
+                        name="branch_id"
+                        :validation-required="true"
+                        :validation-message="branchEM"
+                      />
                     </div>
                     <div class="row justify-content-md-center">
                       <div class="form-group col-md-6">
@@ -208,40 +139,38 @@
 
 <script>
 import Page from '../../components/Page'
-import Multiselect from '@vueform/multiselect'
 import { number, object, string } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
 import useInstitutionApi from '../../services/useInstitutionApi'
-import useBranchApi from '../../services/useBranchApi'
-import useDistrictApi from '../../services/useDistrictApi'
 import useNotifier from '../../utils/useNotifier'
 import router from '../../router'
 import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useAbility } from '@casl/vue'
-import { debounce, interval, Subject } from 'rxjs'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import DistrictSelector from '../../components/DistrictSelector'
+import InstitutionSelector from '../../components/InstitutionSelector'
+import BranchSelector from '../../components/BranchSelector'
 
 export default {
   name: 'NewTeacher',
-  components: { Page, Multiselect },
+  components: { BranchSelector, InstitutionSelector, DistrictSelector, Page },
   setup () {
-    const { createTeacher } = useTeacherApi()
-    const { getInstitution } = useInstitutionApi()
-    const { searchBranch } = useBranchApi()
-    const { getDistricts } = useDistrictApi()
     const notifier = useNotifier()
-    const { can } = useAbility()
+    const { can, cannot } = useAbility()
     const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
     const store = useStore()
+    const { getInstitution } = useInstitutionApi()
+    const { createTeacher } = useTeacherApi()
     const user = computed(() => store.state.auth.user)
     //
     // Validasyon bilgileri
     const branchValidationMessage = 'Branş bilgisi seçilmelidir!'
     const institutionValidationMessage = 'Kurum seçilmelidir!'
     const districtValidationMessage = 'İlçe seçimi yapılmalıdır!'
+
     const schema = object({
       first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
         .required(() => 'Ad bilgisi gereklidir!'),
@@ -278,21 +207,6 @@ export default {
     const branches = ref([])
     const institutions = ref([])
 
-    // Burada debouncing ile alan/branş araması yaptırıyoruz
-    const branchSubject = new Subject()
-    branchSubject.pipe(debounce(() => interval(1000)))
-      .subscribe(async param => {
-        branches.value = await searchBranch({ content: param })
-      })
-
-    // Bu fonksiyon ui dan aldığı aranacak parametreyi subjeye geçirir
-    // Subje reaktif operatörlere göre değerleri işler subscribe'a aktarır
-    const findBranch = (param) => {
-      if (param) {
-        branchSubject.next(param)
-      }
-    }
-
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
       institutions.value = await getInstitution(districtId.value)
@@ -300,7 +214,7 @@ export default {
 
     // Sayfa ilk defa açıldığında çalıştırmamız gerekiyor değilse kurumları dolduramıyoruz
     nextTick(() => {
-      if (can(TEACHER_LIST_LEVEL_3)) {
+      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
         getInstitution(store.getters['auth/user']?.institution.district_id)
           .then(res => {
             institutions.value = res
@@ -311,7 +225,7 @@ export default {
     // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
     // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
     watch(user, () => {
-      if (can(TEACHER_LIST_LEVEL_2)) {
+      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3))  {
         getInstitution(store.getters['auth/user']?.institution.district_id)
           .then(res => {
             institutions.value = res
@@ -350,8 +264,6 @@ export default {
       phoneEM,
       branches,
       institutions,
-      getDistricts,
-      findBranch,
       can,
       save
     }

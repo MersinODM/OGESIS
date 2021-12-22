@@ -1,16 +1,12 @@
-import { watch, ref } from 'vue'
-import useDistrictStore from '../store/useDistrictStore'
+import { ref } from 'vue'
 
-export default function () {
-  const store = useDistrictStore()
-  const selectedDistrict = ref(store.getters.lesson)
 
-  watch(selectedDistrict, () => {
-    store.actions.setCurrentDistrict(selectedDistrict)
-  })
+export function useDistrictFilter () {
+  const districts = ref([])
+  const selectedDistrict = ref()
 
   return {
     selectedDistrict,
-    districts: store.getters.lessons
+    districts
   }
 }
