@@ -9,10 +9,9 @@
       value-prop="id"
       :searchable="true"
       :filterResults="false"
-      :resolve-on-load="true"
+      :resolve-on-load="false"
       :close-on-select="true"
       :loading="isSearching"
-      track-by="name"
       placeholder="Branş araması/seçimi yapabilirsiniz."
       no-options-text="Bu liste boş!"
       no-result-text="Burada bişey bulamadık!"
@@ -39,8 +38,8 @@ export default {
   components: { ValidationError, Multiselect },
   props: {
     modelValue: {
-      type: Object,
-      default: () => ({})
+      type: Number,
+      default: null
     },
     validationMessage: {
       type: String,
@@ -57,9 +56,10 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const branch = useModelWrapper(props, emit) // Buradan model için gerekenler yapılıyor
     return {
-      branch: useModelWrapper(props, emit), // Buradan model için gerekenler yapılıyor
-      ...useSearchBranches(), // Burada aramayla ilgili lojik var
+      branch,
+      ...useSearchBranches(branch), // Burada aramayla ilgili lojik var
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
     }
   }

@@ -22,9 +22,9 @@ export default function () {
     } catch (e) {}
   }
 
-  const getTeachers = async () => {
+  const getTeachers = async (institutionId) => {
     try {
-      const response = await http.get('api/v1/teachers')
+      const response = await http.get(`api/v1/institutions/${institutionId}/teachers`)
       return response.data
     } catch (e) {}
   }

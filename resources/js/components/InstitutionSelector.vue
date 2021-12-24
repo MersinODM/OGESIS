@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$can(TEACHER_CREATE_LEVEL_3) || $can(TEACHER_CREATE_LEVEL_2)"
+    v-if="$can(TEACHER_LIST_LEVEL_3) || $can(TEACHER_LIST_LEVEL_2)"
     class="form-group"
   >
     <label>Kurum Seçimi</label>
@@ -13,6 +13,7 @@
       label="name"
       value-prop="id"
       :searchable="true"
+      track-by="name"
       :close-on-select="true"
       :loading="false"
       :options="institutionList"
@@ -37,8 +38,7 @@ export default {
   components: { ValidationError, Multiselect },
   props: {
     modelValue: {
-      type: Object,
-      default: () => ({})
+      default: null
     },
     institutions: {
       type: Array,

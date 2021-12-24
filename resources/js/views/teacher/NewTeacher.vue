@@ -17,7 +17,7 @@
                         name="district_id"
                         class="col-md-12"
                         :validation-required="true"
-                        :validation-message="districtEM"
+                        :validation-message="errors.district_id"
                       />
                     </div>
                     <div class="row justify-content-md-center">
@@ -27,7 +27,7 @@
                         class="col-md-12"
                         :institutions="institutions"
                         :validation-required="true"
-                        :validation-message="institutionEM"
+                        :validation-message="errors.institution_id"
                       />
                     </div>
                     <div class="row justify-content-md-center">
@@ -36,14 +36,14 @@
                         name="branch_id"
                         class="col-md-12"
                         :validation-required="true"
-                        :validation-message="branchEM"
+                        :validation-message="errors.branch_id"
                       />
                     </div>
                     <div class="row justify-content-md-center">
                       <text-box
                         v-model="firstName"
                         :validation-required="true"
-                        :validation-message="firstNameEM"
+                        :validation-message="errors.first_name"
                         class="col-md-6"
                         label="Ad"
                         name="first_name"
@@ -51,7 +51,7 @@
                       <text-box
                         v-model="lastName"
                         :validation-required="true"
-                        :validation-message="lastNameEM"
+                        :validation-message="errors.last_name"
                         :uppercase="true"
                         class="col-md-6"
                         label="Soyad"
@@ -62,36 +62,26 @@
                       <text-box
                         v-model="phone"
                         :validation-required="true"
+                        :validation-message="errors.phone"
                         :mask="'### ### ## ##'"
-                        :validation-message="phoneEM"
                         class="col-md-6"
                         label="Telefon"
                         name="phone"
                       />
-                      <div class="form-group col-md-6">
-                        <label>E-Posta</label>
-                        <input
-                          v-model="email"
-                          name="email"
-                          type="text"
-                          class="form-control"
-                          :class="{'is-invalid': emailEM}"
-                        >
-                        <div
-                          v-if="emailEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ emailEM }}
-                        </div>
-                      </div>
+                      <text-box
+                        v-model="email"
+                        :validation-required="true"
+                        :validation-message="errors.email"
+                        class="col-md-6"
+                        name="email"
+                        label="E-Posta"
+                      />
                     </div>
                     <div class="row justify-content-md-center">
                       <div class="col-md-6">
                         <button
                           type="submit"
-                          class="btn btn-primary btn-block btn-flat"
+                          class="btn btn-primary btn-block"
                           @click="save"
                         >
                           Kaydet
@@ -111,7 +101,7 @@
 
 <script>
 import Page from '../../components/Page'
-import { number, object, string } from 'yup'
+import { object, string } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
@@ -120,12 +110,14 @@ import useNotifier from '../../utils/useNotifier'
 import router from '../../router'
 import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useAbility } from '@casl/vue'
-import { computed, nextTick, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import DistrictSelector from '../../components/DistrictSelector'
 import InstitutionSelector from '../../components/InstitutionSelector'
 import BranchSelector from '../../components/BranchSelector'
 import TextBox from '../../components/TextBox'
+import { useRuleBranch, useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
+
 
 export default {
   name: 'NewTeacher',
@@ -137,13 +129,8 @@ export default {
     const store = useStore()
     const { getInstitution } = useInstitutionApi()
     const { createTeacher } = useTeacherApi()
-    const user = computed(() => store.state.auth.user)
-    //
-    // Validasyon bilgileri
-    const branchValidationMessage = 'Branş bilgisi seçilmelidir!'
-    const institutionValidationMessage = 'Kurum seçilmelidir!'
-    const districtValidationMessage = 'İlçe seçimi yapılmalıdır!'
 
+    // Validasyon bilgileri
     const schema = object({
       first_name: string().typeError(() => 'Ad yazı tipinde olmalıdır!')
         .required(() => 'Ad bilgisi gereklidir!'),
@@ -154,29 +141,22 @@ export default {
       email: string().typeError(() => 'E-Posta yazı tipinde olmalıdır!')
         .email(() => 'E-Posta geçerli olmalıdır!')
         .required(() => 'E-Posta bilgisi gereklidir!'),
-      branch_id: number().typeError(() => branchValidationMessage)
-        .required(() => branchValidationMessage),
+      ...useRuleBranch(),
       // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
-      ...(can(TEACHER_LIST_LEVEL_2) && {
-        institution_id: number().typeError(() => institutionValidationMessage)
-          .required(() => institutionValidationMessage)
-      }),
+      ...useRuleInstitution(),
       // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
-      ...(can(TEACHER_LIST_LEVEL_3) && {
-        district_id: number().typeError(() => districtValidationMessage)
-          .required(() => districtValidationMessage)
-      })
+      ...useRuleDistrict()
     })
 
-    const { handleSubmit } = useForm({ validationSchema: schema })
+    const { handleSubmit, errors } = useForm({ validationSchema: schema })
     // Validasyon değişken tanımlamaları
-    const { value: firstName, errorMessage: firstNameEM } = useField('first_name')
-    const { value: lastName, errorMessage: lastNameEM } = useField('last_name')
-    const { value: phone, errorMessage: phoneEM } = useField('phone')
-    const { value: email, errorMessage: emailEM } = useField('email')
-    const { value: branchId, errorMessage: branchEM } = useField('branch_id')
-    const { value: institutionId, errorMessage: institutionEM } = useField('institution_id')
-    const { value: districtId, errorMessage: districtEM } = useField('district_id')
+    const { value: firstName } = useField('first_name')
+    const { value: lastName } = useField('last_name')
+    const { value: phone } = useField('phone')
+    const { value: email } = useField('email')
+    const { value: branchId } = useField('branch_id')
+    const { value: institutionId } = useField('institution_id')
+    const { value: districtId } = useField('district_id')
     const branches = ref([])
     const institutions = ref([])
 
@@ -189,26 +169,14 @@ export default {
       }
     })
 
-    // Sayfa ilk defa açıldığında çalıştırmamız gerekiyor değilse kurumları dolduramıyoruz
-    // nextTick(() => {
+    // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
+    // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
     if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
       getInstitution(store.getters['auth/user']?.institution.district_id)
         .then(res => {
           institutions.value = res
         })
     }
-    // })
-
-    // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
-    // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
-    watch(user, () => {
-      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
-        getInstitution(store.getters['auth/user']?.institution.district_id)
-          .then(res => {
-            institutions.value = res
-          })
-      }
-    })
 
     // Kayıt işlemini yapalım
     const save = handleSubmit(async values => {
@@ -225,20 +193,14 @@ export default {
     })
 
     return {
+      errors,
       districtId,
-      districtEM,
       branchId,
-      branchEM,
       email,
-      emailEM,
       firstName,
-      firstNameEM,
       institutionId,
-      institutionEM,
       lastName,
-      lastNameEM,
       phone,
-      phoneEM,
       branches,
       institutions,
       can,

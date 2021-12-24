@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="can(TEACHER_CREATE_LEVEL_3)"
+    v-if="can(TEACHER_LIST_LEVEL_3)"
     class="form-group"
   >
     <label>İlçe Seçimi</label>
@@ -11,6 +11,7 @@
       no-options-text="Bu liste boş!"
       no-result-text="Burada bişey bulamadık!"
       :close-on-select="true"
+      track-by="name"
       :min-chars="2"
       value-prop="id"
       :searchable="true"
@@ -39,8 +40,7 @@ export default {
   components: { ValidationError, Multiselect },
   props: {
     modelValue: {
-      type: Object,
-      default: () => ({})
+      default: null
     },
     validationMessage: {
       type: String,

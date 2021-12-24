@@ -15,66 +15,23 @@
                   <form @submit.prevent>
                     <div class="form-group has-feedback">
                       <div class="form-row justify-content-md-center">
-                        <div
-                          v-if="can(TEACHER_CREATE_LEVEL_3)"
-                          class="form-group col-md-12"
-                        >
-                          <label>İlçe Seçimi</label>
-                          <multiselect
-                            v-model="districtId"
-                            name="district_id"
-                            placeholder="İlçe seçebilirsiniz"
-                            no-options-text="Bu liste boş!"
-                            no-result-text="Burada bişey bulamadık!"
-                            :close-on-select="true"
-                            :min-chars="2"
-                            value-prop="id"
-                            :searchable="true"
-                            label="name"
-                            :options="getDistricts"
-                            class="form-control"
-                            :class="{'is-invalid': districtEM != null}"
-                          />
-                          <div
-                            v-if="districtEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ districtEM }}
-                          </div>
-                        </div>
+                        <district-selector
+                          v-model="districtId"
+                          name="district_id"
+                          class="col-md-12"
+                          :validation-required="true"
+                          :validation-message="errors.district_id"
+                        />
                       </div>
                       <div class="form-row justify-content-md-center">
-                        <div
-                          v-if="can(TEACHER_CREATE_LEVEL_3) || can(TEACHER_CREATE_LEVEL_2)"
-                          class="form-group col-md-12"
-                        >
-                          <label>Kurum Seçimi</label>
-                          <multiselect
-                            v-model="institutionId"
-                            name="institution_id"
-                            placeholder="Kurum seçebilirsiniz."
-                            no-options-text="Bu liste boş!"
-                            no-result-text="Burada bişey bulamadık!"
-                            label="name"
-                            value-prop="id"
-                            :searchable="true"
-                            :close-on-select="true"
-                            :loading="false"
-                            :options="institutions"
-                            class="form-control"
-                            :class="{'is-invalid': institutionEM != null}"
-                          />
-                          <div
-                            v-if="institutionEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ institutionEM }}
-                          </div>
-                        </div>
+                        <institution-selector
+                          v-model="institutionId"
+                          name="institution_id"
+                          class="col-md-12"
+                          :institutions="institutions"
+                          :validation-required="true"
+                          :validation-message="errors.institution_id"
+                        />
                       </div>
                       <div class="form-row">
                         <div class="form-group col-md-12">
@@ -164,11 +121,11 @@
 <script>
 import Page from '../../components/Page'
 import Multiselect from '@vueform/multiselect'
-import { object, array, string } from 'yup'
+import { object, array, string, number } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
-import { nextTick, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import useTeamApi from '../../services/useTeamApi'
 import useNotifier from '../../utils/useNotifier'
 import { useAbility } from '@casl/vue'
@@ -176,13 +133,18 @@ import { usePermissionConstants } from '../../utils/constants'
 import { useStore } from 'vuex'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useDistrictApi from '../../services/useDistrictApi'
+import DistrictSelector from '../../components/DistrictSelector'
+import InstitutionSelector from '../../components/InstitutionSelector'
+import BranchSelector from '../../components/BranchSelector'
+import TextBox from '../../components/TextBox'
+import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
 
 export default {
   name: 'NewTeam',
-  components: { Page, Multiselect },
+  components: { Page, Multiselect, DistrictSelector, InstitutionSelector },
   setup () {
     const notifier = useNotifier()
-    const { can } = useAbility()
+    const { can, cannot } = useAbility()
     const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
     const store = useStore()
     const { getInstitution } = useInstitutionApi()
@@ -198,41 +160,47 @@ export default {
         .required(() => 'Takım adı gereklidir!'),
       teachers: array().typeError(() => TEAM_VALIDATION_EM)
         .min(2, () => 'En az iki öğretmen seçilmelidir')
-        .required(() => TEAM_VALIDATION_EM)
+        .required(() => TEAM_VALIDATION_EM),
+      // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
+      ...useRuleInstitution(),
+      // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
+      ...useRuleDistrict()
     })
 
-    const { handleSubmit } = useForm({ validationSchema: schema })
+    const { handleSubmit, errors } = useForm({ validationSchema: schema })
 
-    const { value: title, errorMessage: titleEM } = useField('title')
-    const { value: selectedTeachers, errorMessage: teachersEM } = useField('teachers')
-    const teachers = ref()
+    const { value: title } = useField('title')
+    const { value: selectedTeachers } = useField('teachers')
+    const { value: institutionId } = useField('institution_id')
+    const { value: districtId } = useField('district_id')
+    const teachers = ref([])
     // getTeachers().then(values => { teachers.value = values })
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
-      institutions.value = await getInstitution(districtId.value)
+      if (districtId.value) {
+        institutions.value = await getInstitution(districtId.value)
+      } else {
+        institutions.value = []
+      }
     })
 
-    // Sayfa ilk defa açıldığında çalıştırmamız gerekiyor değilse kurumları dolduramıyoruz
-    nextTick(() => {
-      if (can(TEACHER_LIST_LEVEL_3)) {
-        getInstitution(store.getters['auth/user']?.institution.district_id)
-          .then(res => {
-            institutions.value = res
-          })
+    watch(institutionId, async () => {
+      if (institutionId.value) {
+        teachers.value = await getTeachers(institutionId.value)
+      } else {
+        teachers.value = []
       }
     })
 
     // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
     // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
-    watch(user, () => {
-      if (can(TEACHER_LIST_LEVEL_2)) {
-        getInstitution(store.getters['auth/user']?.institution.district_id)
-          .then(res => {
-            institutions.value = res
-          })
-      }
-    })
+    if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
+      getInstitution(store.getters['auth/user']?.institution.district_id)
+        .then(res => {
+          institutions.value = res
+        })
+    }
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
@@ -242,11 +210,13 @@ export default {
     })
 
     return {
+      errors,
       save,
+      districtId,
+      institutionId,
+      institutions,
       title,
-      titleEM,
       selectedTeachers,
-      teachersEM,
       teachers,
       getDistricts,
       can

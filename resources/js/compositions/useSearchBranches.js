@@ -2,7 +2,7 @@ import { debounce, interval, Subject } from 'rxjs'
 import useBranchApi from '../services/useBranchApi'
 import { ref } from 'vue'
 
-export function useSearchBranches () {
+export function useSearchBranches (branch) {
   const { searchBranch } = useBranchApi()
   const branches = ref([])
   const isSearching = ref(false)
@@ -19,6 +19,7 @@ export function useSearchBranches () {
   // Subje reaktif operatörlere göre değerleri işler subscribe'a aktarır
   const findBranch = (param) => {
     if (param) {
+      branch.value = null // Bunu yapmak zorunlu değilse hata veriyor herhangi bir branş seçiliyken
       isSearching.value = true
       branchSubject.next(param)
     }
