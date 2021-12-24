@@ -20,27 +20,21 @@ import './bootstrap'
 import App from './views/App.vue'
 import { createApp } from 'vue'
 import router from './router'
-// import can from './directives/can'
-import maska from 'maska'
 import uppercase from './directives/uppercase'
 import dateFormat from './directives/dateFormat'
 import store from './store'
 import { abilitiesPlugin } from '@casl/vue'
 import { constantMixin } from './mixins/constantMixin'
-
-// import latex from './directives/katex'
+import { maska } from 'maska'
 
 const app = createApp(App)
 app.use(router)
-app.use(maska)
 app.use(store)
 app.use(abilitiesPlugin, store.getters['auth/ability'], {
   useGlobalProperties: true
 })
 app.mixin(constantMixin)
-
-// app.directive('can', can)
-// app.directive('katex', latex)
+app.directive('mask', maska)
 app.directive('uppercase', uppercase)
 app.directive('date-format', dateFormat)
 router.isReady().then(() => app.mount('#app'))

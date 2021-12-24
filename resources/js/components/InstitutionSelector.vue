@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="$can(TEACHER_CREATE_LEVEL_3) || $can(TEACHER_CREATE_LEVEL_2)"
-    class="form-group col-md-12"
+    class="form-group"
   >
     <label>Kurum Seçimi</label>
     <multiselect

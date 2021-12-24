@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group col-md-12">
+  <div class="form-group">
     <label>Branş Seçimi</label>
     <multiselect
       v-model="branch"

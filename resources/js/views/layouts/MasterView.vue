@@ -16,7 +16,10 @@
   -->
 
 <template>
-  <div class="wrapper">
+  <div
+    v-if="userLoaded"
+    class="wrapper"
+  >
     <n-header @toggleMenuSideBar="toggleMenuSidebar" />
     <n-sidebar />
     <div
@@ -71,6 +74,7 @@ export default {
 
     // Burada kullanıcıyı yeniden alıyoruz apilerden
     store.dispatch(AUTH.withSuffix(GET_ME))
+    const userLoaded = computed(() => store.state.auth.user != null)
 
     const isSidebarMenuCollapsed = computed(() => store.state.ui.isSidebarMenuCollapsed)
     const screenSize = computed(() => store.state.ui.screenSize)
@@ -104,7 +108,7 @@ export default {
     })
 
     return {
-      // curriculums,
+      userLoaded,
       curriculumModal: MODAL_CURRICULUM,
       questionModal: MODAL_QUESTION,
       toggleMenuSidebar,

@@ -62,7 +62,7 @@
 import Page from '../../components/Page'
 import Multiselect from '@vueform/multiselect'
 import { useRouter } from 'vue-router'
-import useDistrictFilter from '../../compositions/useDistrictFilter'
+import { useDistrictFilter } from '../../compositions/useDistrictFilter'
 import useDistrictStore from '../../store/useDistrictStore'
 import { onMounted, onUnmounted, watch } from 'vue'
 import tr from '../../utils/dataTablesTurkish'

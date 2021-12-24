@@ -15,6 +15,7 @@
                       <district-selector
                         v-model="districtId"
                         name="district_id"
+                        class="col-md-12"
                         :validation-required="true"
                         :validation-message="districtEM"
                       />
@@ -23,6 +24,7 @@
                       <institution-selector
                         v-model="institutionId"
                         name="institution_id"
+                        class="col-md-12"
                         :institutions="institutions"
                         :validation-required="true"
                         :validation-message="institutionEM"
@@ -32,70 +34,40 @@
                       <branch-selector
                         v-model="branchId"
                         name="branch_id"
+                        class="col-md-12"
                         :validation-required="true"
                         :validation-message="branchEM"
                       />
                     </div>
                     <div class="row justify-content-md-center">
-                      <div class="form-group col-md-6">
-                        <label>Ad</label>
-                        <input
-                          v-model="firstName"
-                          name="first_name"
-                          type="text"
-                          class="form-control"
-                          :class="{'is-invalid': firstNameEM != null}"
-                        >
-                        <div
-                          v-if="firstNameEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ firstNameEM }}
-                        </div>
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label>Soyad</label>
-                        <input
-                          v-model="lastName"
-                          v-uppercase
-                          name="last_name"
-                          type="text"
-                          class="form-control"
-                          :class="{'is-invalid': lastNameEM != null}"
-                        >
-                        <div
-                          v-if="lastNameEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ lastNameEM }}
-                        </div>
-                      </div>
+                      <text-box
+                        v-model="firstName"
+                        :validation-required="true"
+                        :validation-message="firstNameEM"
+                        class="col-md-6"
+                        label="Ad"
+                        name="first_name"
+                      />
+                      <text-box
+                        v-model="lastName"
+                        :validation-required="true"
+                        :validation-message="lastNameEM"
+                        :uppercase="true"
+                        class="col-md-6"
+                        label="Soyad"
+                        name="last_name"
+                      />
                     </div>
                     <div class="row justify-content-md-center">
-                      <div class="form-group col-md-6">
-                        <label>Telefon</label>
-                        <input
-                          v-model="phone"
-                          v-maska="'(###) ###-##-##'"
-                          name="phone"
-                          type="text"
-                          class="form-control"
-                          placeholder="Başında 0 olmadan giriniz"
-                          :class="{'is-invalid': phoneEM }"
-                        >
-                        <div
-                          v-if="phoneEM"
-                          role="alert"
-                          class="invalid-feedback order-last"
-                          style="display: inline-block;"
-                        >
-                          {{ phoneEM }}
-                        </div>
-                      </div>
+                      <text-box
+                        v-model="phone"
+                        :validation-required="true"
+                        :mask="'### ### ## ##'"
+                        :validation-message="phoneEM"
+                        class="col-md-6"
+                        label="Telefon"
+                        name="phone"
+                      />
                       <div class="form-group col-md-6">
                         <label>E-Posta</label>
                         <input
@@ -153,10 +125,11 @@ import { useStore } from 'vuex'
 import DistrictSelector from '../../components/DistrictSelector'
 import InstitutionSelector from '../../components/InstitutionSelector'
 import BranchSelector from '../../components/BranchSelector'
+import TextBox from '../../components/TextBox'
 
 export default {
   name: 'NewTeacher',
-  components: { BranchSelector, InstitutionSelector, DistrictSelector, Page },
+  components: { TextBox, BranchSelector, InstitutionSelector, DistrictSelector, Page },
   setup () {
     const notifier = useNotifier()
     const { can, cannot } = useAbility()
@@ -209,23 +182,27 @@ export default {
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
-      institutions.value = await getInstitution(districtId.value)
+      if (districtId.value) {
+        institutions.value = await getInstitution(districtId.value)
+      } else {
+        institutions.value = []
+      }
     })
 
     // Sayfa ilk defa açıldığında çalıştırmamız gerekiyor değilse kurumları dolduramıyoruz
-    nextTick(() => {
-      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
-        getInstitution(store.getters['auth/user']?.institution.district_id)
-          .then(res => {
-            institutions.value = res
-          })
-      }
-    })
+    // nextTick(() => {
+    if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
+      getInstitution(store.getters['auth/user']?.institution.district_id)
+        .then(res => {
+          institutions.value = res
+        })
+    }
+    // })
 
     // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
     // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
     watch(user, () => {
-      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3))  {
+      if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
         getInstitution(store.getters['auth/user']?.institution.district_id)
           .then(res => {
             institutions.value = res
