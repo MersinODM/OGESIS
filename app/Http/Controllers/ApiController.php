@@ -22,6 +22,7 @@ use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseContents;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Traits\ValidationTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -53,11 +54,12 @@ class ApiController extends Controller
         ];
     }
 
-    public function unauthorized(): array
+    public function unauthorized(): JsonResponse
     {
-        return [
+        return response()->json([
             ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
             ResponseKeys::MESSAGE => ResponseContents::UNAUTHORIZED_MESSAGE
-        ];
+        ], 400);
     }
+
 }

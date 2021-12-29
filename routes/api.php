@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\InstitutionController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ThemeController;
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -58,8 +59,13 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     // Öğretmen endpoint tanımlamaları
     Route::post('teachers', [TeacherController::class, 'create']);
     Route::put('teachers/{id}', [TeacherController::class, 'update']);
-    Route::get('teachers', [TeacherController::class, 'list']);
     Route::post('teachers/table', [TeacherController::class, 'getTable']);
+    Route::get('districts/{district_id}/institutions/{institution_id}/teachers', [TeacherController::class, 'get']);
+
+    // Takım endpoint tanımlamaları
+    Route::post('teams', [TeamController::class, 'create']);
+    Route::put('teams/{id}', [TeamController::class, 'update']);
+    Route::post('teams/table', [TeamController::class, 'getTable']);
 
     //Branş endpoint tanımlamaları
     Route::post('branches', [BranchController::class, 'create']);

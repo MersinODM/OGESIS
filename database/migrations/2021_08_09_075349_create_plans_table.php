@@ -14,14 +14,12 @@ class CreatePlansTable extends Migration
      */
     public function up()
     {
-
         Schema::create('ogs_provinces', function (Blueprint $table) {
             $table->id();
             $table->string('code', 50)->nullable();
             $table->string('name', 1000);
             $table->timestamps();
         });
-
         //İlçeler
         Schema::create('ogs_districts', function (Blueprint $table) {
             $table->id();
@@ -44,7 +42,6 @@ class CreatePlansTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
         //Kurumlar
         Schema::create('ogs_institutions', function (Blueprint $table) {
             $table->unsignedInteger('id');
@@ -63,7 +60,6 @@ class CreatePlansTable extends Migration
                 ->on("ogs_districts");
         });
 
-
         Schema::create('ogs_facilities', function (Blueprint $table) {
             $table->id()->startingValue(100);
             $table->string("name", 500)->nullable();
@@ -79,7 +75,6 @@ class CreatePlansTable extends Migration
 
             $table->primary(['institution_id', 'facility_id']);
 
-
             $table->foreign('institution_id')
                 ->references('id')
                 ->on('ogs_institutions');
@@ -89,22 +84,60 @@ class CreatePlansTable extends Migration
                 ->on('ogs_facilities');
         });
 
-
         Schema::create('ogs_dev_plans', function (Blueprint $table) {
-            $table->id()->startingValue(10000);
-            $table->unsignedInteger("institution_id");
-            $table->string("description", 5000)->nullable();
-            $table->string('report_name')->nullable();
-            $table->binary('report_file')->nullable();
+            $table->id()->startingValue(1000);
+            $table->string("name", 500)->nullable();
+            $table->string("code", 50)->nullable();
             $table->date("start_date")->nullable();
             $table->date("end_date")->nullable();
             $table->boolean("is_open")->default(true);
+            $table->unsignedBigInteger("creator_id")->nullable();
+            $table->string("description", 5000)->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('ogs_institution_plans', function (Blueprint $table) {
+            $table->unsignedInteger('institution_id');
+            $table->unsignedBigInteger('plan_id');
+            $table->timestamps();
+            $table->primary(['institution_id', 'plan_id']);
+            $table->foreign('institution_id')
+                ->references('id')
+                ->on('ogs_institutions');
+
+            $table->foreign('plan_id')
+                ->references('id')
+                ->on('ogs_dev_plans');
+        });
+
+        Schema::create('ogs_reports', function (Blueprint $table) {
+            $table->id()->startingValue(10000);
+            // Polimorfik ilişki kullanıyoruz
+            $table->unsignedInteger('institution_id');
+            $table->unsignedBigInteger('plan_id');
+            $table->string('name')->nullable();
+            $table->binary('file')->nullable();
             $table->timestamps();
 
             $table->foreign('institution_id')
                 ->references('id')
                 ->on('ogs_institutions');
+
+            $table->foreign('plan_id')
+                ->references('id')
+                ->on('ogs_dev_plans');
         });
+
+//        Schema::create('ogs_attachments', function (Blueprint $table) {
+//            $table->id()->startingValue(10000);
+//            // Polimorfik ilişki kullanıyoruz
+//            $table->unsignedBigInteger('attachable_id');
+//            $table->string('attachable_type');
+//            $table->tinyInteger('type')->nullable();
+//            $table->string('name')->nullable();
+//            $table->binary('file')->nullable();
+//            $table->timestamps();
+//        });
 
         Schema::create('ogs_institution_infos', function (Blueprint $table) {
             $table->id()->startingValue(1000);;
@@ -182,14 +215,14 @@ class CreatePlansTable extends Migration
         });
 
         Schema::create('ogs_teams', function (Blueprint $table) {
-            $table->id()->startingValue(1000);;
-            $table->unsignedBigInteger('plan_id');
+            $table->id()->startingValue(1000);
+            $table->unsignedInteger('institution_id');
             $table->string("name");
             $table->timestamps();
 
-            $table->foreign('plan_id')
+            $table->foreign('institution_id')
                 ->references('id')
-                ->on('ogs_dev_plans');
+                ->on('ogs_institutions');
         });
 
         Schema::create('ogs_teachers', function (Blueprint $table) {
@@ -260,6 +293,8 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_activity_types');
         Schema::dropIfExists('ogs_activity_themes');
         Schema::dropIfExists('ogs_institution_infos');
+        Schema::dropIfExists('ogs_reports');
+        Schema::dropIfExists('ogs_institution_plans');
         Schema::dropIfExists('ogs_dev_plans');
         Schema::dropIfExists('ogs_institution_facilities');
         Schema::dropIfExists('ogs_facilities');

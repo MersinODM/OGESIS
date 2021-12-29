@@ -33,8 +33,6 @@ class TeacherController extends ApiController
                 'institution_id' => 'required',
                 'first_name' => 'required',
                 'last_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
             ]);
             if ($validationResult) {
                 return response()->json($validationResult, 422);
@@ -45,19 +43,14 @@ class TeacherController extends ApiController
                 'branch_id' => 'required',
                 'first_name' => 'required',
                 'last_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
             ]);
             if ($validationResult) {
                 return response()->json($validationResult, 422);
             }
             $teacher->fill($request->all());
             $teacher->institution_id = $user->institution_id;
-        } else{
-            return response()->json([
-                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-                ResponseKeys::MESSAGE => 'Yetkisiz istek!'
-            ], 400);
+        } else {
+           return $this->unauthorized();
         }
 
         try {
@@ -123,10 +116,10 @@ class TeacherController extends ApiController
     public function list(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $query = Teacher::with(['branch:id,name'])
+        $query = Teacher::with(['branch:id,name', 'institution:id,district_id,name'])
             ->select('id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
 
-        if ($user && $user->can('teacher.list.level3')) {
+        if ($user && $user->can(Permissions::TEACHER_LIST_LEVEL_3)) {
             $validationResult = $this->apiValidator($request, [
                 'district_id' => 'required',
                 'institution_id' => 'required',
@@ -134,9 +127,15 @@ class TeacherController extends ApiController
             if ($validationResult) {
                 return response()->json($validationResult, 422);
             }
+            // kurumun bağlı olduğu ilçeyi de kontrol edelim
             $query->where('institution_id', $request->query('institution_id'))
-                ->where('district_id', $request->query('district_id'));
-        } else if ($user && $user->can('teacher.list.level2')) {
+                ->whereHas('institution', static function (Builder $q) use ($request) {
+                    $q->where('district_id', $request->query('district_id'));
+                });
+            return response()->json($query->get());
+        }
+
+        if ($user && $user->can(Permissions::TEACHER_LIST_LEVEL_2)) {
             $validationResult = $this->apiValidator($request, [
                 'institution_id' => 'required',
             ]);
@@ -146,6 +145,7 @@ class TeacherController extends ApiController
 
             $query->where('institution_id', $request->query('institution_id'))
                 ->where('district_id', $request->query('district_id'));
+            return response()->json($query->get());
         }
         $institutionId = Auth::user()->institution_id;
         $teachers = Teacher::with(['branch' => static function ($query) {
@@ -155,6 +155,41 @@ class TeacherController extends ApiController
             ->get();
 
         return response()->json($teachers);
+    }
+
+    /*
+     * Tüm öğretmenleri getiren api endpoint
+     */
+    public function get($district_id, $institution_id): JsonResponse
+    {
+        $user = Auth::user();
+        if ($user && $user->cannot([Permissions::TEACHER_LIST_LEVEL_2, Permissions::TEACHER_LIST_LEVEL_3])) {
+            return $this->unauthorized();
+        }
+        $query = Teacher::with(['branch:id,name'])
+            ->select('id', 'branch_id', 'institution_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
+        if ($user->can(Permissions::TEAM_ADD_MEMBER_LEVEL_3)) {
+            $query->where('institution_id', $institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($district_id) {
+                    $q->where('district_id', $district_id);
+                });
+            return response()->json($query->get());
+        }
+        if ($user->can(Permissions::TEACHER_CREATE_LEVEL_2)) {
+            $query->where('institution_id', $institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($user) {
+                    $q->where('district_id', $user->institution()->district_id);
+                });
+            return response()->json($query->get());
+        }
+        if ($user->can(Permissions::TEACHER_CREATE_LEVEL_1)) {
+            $query->where('institution_id', $user->institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($user) {
+                    $q->where('district_id', $user->institution()->district_id);
+                });
+            return response()->json($query->get());
+        }
+        return $this->unauthorized();
     }
 
 
@@ -183,7 +218,7 @@ class TeacherController extends ApiController
             $query->where('institution_id', '=', $user->institution()->id);
             $this->checkBranch($request, $query);
         } else {
-            return response()->json($this->unauthorized());
+            return $this->unauthorized();
         }
 
         return Datatables::eloquent($query)

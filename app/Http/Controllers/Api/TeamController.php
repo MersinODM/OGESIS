@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
@@ -14,49 +15,40 @@ use Illuminate\Support\Facades\DB;
 
 class TeamController extends ApiController
 {
+    /*
+     *
+     */
     public function create(Request $request)
     {
         $user = Auth::user();
-//        $validationResult = null;
-//        if($user && $user->can('team.create.admin')) {
-//            $validationResult = $this->apiValidator($request, [
-//                'institution_id' => 'required',
-//                'team_name' => 'required',
-////            'phone' => 'required',
-////            'email' => 'required',
-//            ]);
-//        }
-//        else
-//        if ($user && $user->can('team.create.manager')) {
+        if ($user && $user->can([Permissions::TEAM_CREATE_LEVEL_3, Permissions::TEAM_CREATE_LEVEL_2])) {
+            $validationResult = $this->apiValidator($request, [
+                'institution_id' => 'required',
+                'name' => 'required',
+                'teachers' => 'required|array|min:2'
+            ]);
+        } else if($user && $user->can(Permissions::TEAM_CREATE_LEVEL_1)) {
             $validationResult = $this->apiValidator($request, [
                 'name' => 'required',
                 'teachers' => 'required|array|min:2'
-//            'phone' => 'required',
-//            'email' => 'required',
             ]);
-//        }
+        } else {
+            return $this->unauthorized();
+        }
 
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
 
         try {
-            $planId = DevPlan::where('is_open', true)
-                ->where('institution_id', $user->institution_id)
-                ->orderBy('created_at')
-                ->select('id')->first();
-            if (!$planId) {
-                return response()->json([
-                    ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-                    ResponseKeys::MESSAGE => 'Açık plan bulunamadı!'
-                ], 400);
-            }
             DB::beginTransaction();
-            // En son aluşturulan açık plana atanıyor takım
-            // TODO Her planda takımlar yeniden oluşturulmalı mı?
-            $team = new Team(['name' => $request->input('name'), 'plan_id' => $planId]);
+            $team = new Team([
+                'name' => $request->input('name'),
+                'institution_id' => $request->has('institution_id') ? $request->input('institution_id') : $user->institution_id,
+            ]);
             $team->save();
-            $team->teachers()->attach($request->input('teachers'));
+            // Oluşturduğumuz takıma öğretmenleri atıyoruz
+            $team->teachers()->attach($request->get('teachers'));
             DB::commit();
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,

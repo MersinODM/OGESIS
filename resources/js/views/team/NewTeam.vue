@@ -34,24 +34,14 @@
                         />
                       </div>
                       <div class="form-row">
-                        <div class="form-group col-md-12">
-                          <label>Takım Adı</label>
-                          <input
-                            v-model="title"
-                            name="title"
-                            type="text"
-                            class="form-control"
-                            :class="{'is-invalid': titleEM != null}"
-                          >
-                          <div
-                            v-if="titleEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ titleEM }}
-                          </div>
-                        </div>
+                        <text-box
+                          v-model="name"
+                          name="name"
+                          label="Takım Adı"
+                          class="col-md-12"
+                          :validation-required="true"
+                          :validation-message="errors.name"
+                        />
                       </div>
                       <div class="form-row">
                         <div class="form-group col-md-12">
@@ -68,13 +58,13 @@
                             no-options-text="Bu liste boş!"
                             no-result-text="Burada bişey bulamadık!"
                             class="form-control h-auto"
-                            :class="{'is-invalid': teachersEM != null}"
+                            :class="{'is-invalid': errors.teachers != null}"
                           >
                             <template #option="{ option }">
                               {{ option.full_name }} - {{ option.branch.name }}
                             </template>
                             <template #tag="{ option, handleTagRemove, disabled }">
-                              <span class="multiselect-tag">
+                              <span class="multiselect-tag text-wrap">
                                 {{ option.full_name }} - {{ option.branch.name }}
                                 <span
                                   v-if="!disabled"
@@ -87,12 +77,12 @@
                             </template>
                           </multiselect>
                           <div
-                            v-if="teachersEM"
+                            v-if="errors.teachers"
                             role="alert"
                             class="invalid-feedback order-last"
                             style="display: inline-block;"
                           >
-                            {{ teachersEM }}
+                            {{ errors.teachers }}
                           </div>
                         </div>
                       </div>
@@ -121,7 +111,7 @@
 <script>
 import Page from '../../components/Page'
 import Multiselect from '@vueform/multiselect'
-import { object, array, string, number } from 'yup'
+import { object, array, string } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import useTeacherApi from '../../services/useTeacherApi'
@@ -129,23 +119,23 @@ import { ref, watch } from 'vue'
 import useTeamApi from '../../services/useTeamApi'
 import useNotifier from '../../utils/useNotifier'
 import { useAbility } from '@casl/vue'
-import { usePermissionConstants } from '../../utils/constants'
+import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useStore } from 'vuex'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useDistrictApi from '../../services/useDistrictApi'
 import DistrictSelector from '../../components/DistrictSelector'
 import InstitutionSelector from '../../components/InstitutionSelector'
-import BranchSelector from '../../components/BranchSelector'
 import TextBox from '../../components/TextBox'
 import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
+import router from '../../router'
 
 export default {
   name: 'NewTeam',
-  components: { Page, Multiselect, DistrictSelector, InstitutionSelector },
+  components: { TextBox, Page, Multiselect, DistrictSelector, InstitutionSelector },
   setup () {
     const notifier = useNotifier()
     const { can, cannot } = useAbility()
-    const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
+    const { TEACHER_LIST_LEVEL_1, TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
     const store = useStore()
     const { getInstitution } = useInstitutionApi()
     const { getDistricts } = useDistrictApi()
@@ -155,7 +145,7 @@ export default {
     const institutions = ref([])
 
     const schema = object({
-      title: string().typeError(() => 'Takım adı yazı tipinde olmalıdır!')
+      name: string().typeError(() => 'Takım adı yazı tipinde olmalıdır!')
         .min(2, () => 'En az 2 karakter uzunluğunda olmalıdır!')
         .required(() => 'Takım adı gereklidir!'),
       teachers: array().typeError(() => TEAM_VALIDATION_EM)
@@ -169,7 +159,7 @@ export default {
 
     const { handleSubmit, errors } = useForm({ validationSchema: schema })
 
-    const { value: title } = useField('title')
+    const { value: name } = useField('name')
     const { value: selectedTeachers } = useField('teachers')
     const { value: institutionId } = useField('institution_id')
     const { value: districtId } = useField('district_id')
@@ -178,6 +168,7 @@ export default {
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
+      institutionId.value = null
       if (districtId.value) {
         institutions.value = await getInstitution(districtId.value)
       } else {
@@ -185,9 +176,11 @@ export default {
       }
     })
 
+    // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
     watch(institutionId, async () => {
+      selectedTeachers.value = null
       if (institutionId.value) {
-        teachers.value = await getTeachers(institutionId.value)
+        teachers.value = await getTeachers(districtId.value, institutionId.value)
       } else {
         teachers.value = []
       }
@@ -202,10 +195,23 @@ export default {
         })
     }
 
+    // Sadece 1.seviye öğretmen listeleme yetkisi varsa(Okul yetkilisi ise)
+    if (cannot(TEACHER_LIST_LEVEL_3) && cannot(TEACHER_LIST_LEVEL_2) && can(TEACHER_LIST_LEVEL_1)) {
+      const user = store.getters['auth/user']
+      getTeachers(user?.institution.district_id, user.institution_id)
+        .then(res => { teachers.value = res })
+    }
+
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        await createTeam(values)
+        const response = await createTeam(values)
+        if (response?.code === ResponseCodes.SUCCESS) {
+          await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })
+          await router.replace({ name: 'listTeams' })
+        } else {
+          await notifier.error({ message: 'Takım kaydı oluşturalamadı!.', duration: 3200 })
+        }
       }
     })
 
@@ -215,7 +221,7 @@ export default {
       districtId,
       institutionId,
       institutions,
-      title,
+      name,
       selectedTeachers,
       teachers,
       getDistricts,

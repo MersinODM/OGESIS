@@ -11,8 +11,9 @@ class Team extends Model
     protected $table = "ogs_teams";
 
     protected $fillable = [
-        "team_name",
-        "plan_id"
+        "name",
+        "institution_id",
+
     ];
 
     public function plan():BelongsTo {
