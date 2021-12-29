@@ -12,8 +12,7 @@ class Team extends Model
 
     protected $fillable = [
         "name",
-        "institution_id",
-
+        "institution_id"
     ];
 
     public function plan():BelongsTo {
