@@ -192,10 +192,13 @@ class CreatePlansTable extends Migration
             $table->unsignedBigInteger("type_id")->nullable();
             $table->string("title", 500);
             $table->string("description", 5000);
-            // $table->tinyInteger("interlocutor")->comment('Öğrenci:0, Öğretmen:1, Veli:2'); //'aktivetinin muhatapları'
+            $table->date("planned_start_date");
             $table->date("start_date")->nullable();
+            $table->date("planned_end_date");
             $table->date("end_date")->nullable();
-            $table->unsignedSmallInteger('status')->nullable()->comment('0: Planlanıyor, 1:Başlandı, 2:Tamamlandı, 3:İptal Edildi ');
+            $table->unsignedSmallInteger('status')
+                ->nullable()
+                ->comment('0: Planlanıyor, 1:Başlandı, 2:Tamamlandı, 3:İptal Edildi ');
             $table->string('cancel_reason', 1000)->nullable();
             $table->timestamps();
 
@@ -215,6 +218,28 @@ class CreatePlansTable extends Migration
                 ->references('id')
                 ->on('ogs_institutions');
 
+        });
+
+        Schema::create('ogs_partners', function (Blueprint $table) {
+            $table->id()->startingValue(100);
+            $table->string('code')->nullable();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('ogs_activity_partners', function (Blueprint $table) {
+            $table->unsignedBigInteger('activity_id');
+            $table->unsignedBigInteger('partner_id');
+            $table->timestamps();
+            $table->primary(['activity_id', 'partner_id']);
+
+            $table->foreign('activity_id')
+                ->references('id')
+                ->on('ogs_activities');
+
+            $table->foreign('partner_id')
+                ->references('id')
+                ->on('ogs_partners');
         });
 
         Schema::create('ogs_activity_comments', function (Blueprint $table) {
@@ -306,6 +331,8 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_teachers');
         Schema::dropIfExists('ogs_teams');
         Schema::dropIfExists('ogs_activity_comments');
+        Schema::dropIfExists('ogs_activity_partners');
+        Schema::dropIfExists('ogs_partners');
         Schema::dropIfExists('ogs_activities');
         Schema::dropIfExists('ogs_activity_types');
         Schema::dropIfExists('ogs_activity_themes');

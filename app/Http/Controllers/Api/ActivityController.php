@@ -18,12 +18,10 @@ class ActivityController  extends ApiController
         $validationResult = $this->apiValidator($request, [
             'plan_id' => 'required',
             'institution_id' => Rule::requiredIf($request->user()->can([Permissions::ACTIVITY_CREATE_LEVEL_3, Permissions::ACTIVITY_CREATE_LEVEL_2])),
-            'type' => 'required',
             'theme_id' => 'required',
             'title' => 'required',
-            'interlocutor' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'planned_start_date' => 'required',
+            'planned_end_date' => 'required',
             'description' => 'required|max:5000'
         ]);
 
@@ -34,6 +32,10 @@ class ActivityController  extends ApiController
         try {
             DB::beginTransaction();
             $activity = new Activity($request->all());
+            // Okul kullanıcısı ise burada aktivite id otomatik kullanıcıdan gelecek
+            if($request->user()->cannot([Permissions::ACTIVITY_CREATE_LEVEL_3, Permissions::ACTIVITY_CREATE_LEVEL_2])){
+                $activity->institution_id = $request->user()->institution_id;
+            }
             $activity->save();
             DB::commit();
             return response()->json([
