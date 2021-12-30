@@ -60,6 +60,16 @@ class CreatePlansTable extends Migration
                 ->on("ogs_districts");
         });
 
+        Schema::create('ogs_notifications', function (Blueprint $table) {
+            $table->id()->startingValue(10000);
+            $table->unsignedInteger('notifiable_id');
+            $table->unsignedInteger('notifiable_type');
+            $table->string("title", 500)->nullable();
+            $table->string("content", 5000)->nullable();
+            $table->boolean('is_read')->default(false);
+            $table->timestamps();
+        });
+
         Schema::create('ogs_facilities', function (Blueprint $table) {
             $table->id()->startingValue(100);
             $table->string("name", 500)->nullable();
@@ -116,6 +126,7 @@ class CreatePlansTable extends Migration
             $table->unsignedInteger('institution_id');
             $table->unsignedBigInteger('plan_id');
             $table->string('name')->nullable();
+            $table->json('report')->nullable(); // Bu önemli ileride raporları bunun içine json olarak koyucaz
             $table->binary('file')->nullable();
             $table->timestamps();
 
@@ -176,14 +187,16 @@ class CreatePlansTable extends Migration
         Schema::create('ogs_activities', function (Blueprint $table) {
             $table->id()->startingValue(10000);;
             $table->unsignedBigInteger("plan_id");
-            $table->unsignedBigInteger("type_id");
+            $table->unsignedInteger("institution_id");
             $table->unsignedBigInteger("theme_id");
+            $table->unsignedBigInteger("type_id")->nullable();
             $table->string("title", 500);
             $table->string("description", 5000);
-            $table->tinyInteger("interlocutor")->comment('Öğrenci:0, Öğretmen:1, Veli:2'); //'aktivetinin muhatapları'
+            // $table->tinyInteger("interlocutor")->comment('Öğrenci:0, Öğretmen:1, Veli:2'); //'aktivetinin muhatapları'
             $table->date("start_date")->nullable();
             $table->date("end_date")->nullable();
-            $table->unsignedSmallInteger('status')->nullable();
+            $table->unsignedSmallInteger('status')->nullable()->comment('0: Planlanıyor, 1:Başlandı, 2:Tamamlandı, 3:İptal Edildi ');
+            $table->string('cancel_reason', 1000)->nullable();
             $table->timestamps();
 
             $table->foreign('theme_id')
@@ -197,6 +210,10 @@ class CreatePlansTable extends Migration
             $table->foreign('plan_id')
                 ->references('id')
                 ->on('ogs_dev_plans');
+
+            $table->foreign('institution_id')
+                ->references('id')
+                ->on('ogs_institutions');
 
         });
 
@@ -298,6 +315,7 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_dev_plans');
         Schema::dropIfExists('ogs_institution_facilities');
         Schema::dropIfExists('ogs_facilities');
+        Schema::dropIfExists('ogs_notifications');
         Schema::dropIfExists('ogs_institutions');
         Schema::dropIfExists('ogs_branches');
         Schema::dropIfExists('ogs_districts');

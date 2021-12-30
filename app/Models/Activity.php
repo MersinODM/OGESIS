@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Activity extends Model
 {
     protected $table = "ogs_activities";
 
     protected $fillable = [
-        "plan_id", "type_id", "theme_id",
+        'institution_id',"plan_id", "type_id", "theme_id",
         "title", "description", "status", "creator_id",
         "start_date", "end_date"
     ];
@@ -19,6 +20,11 @@ class Activity extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(DevPlan::class, "plan_id");
+    }
+
+    public function institution(): BelongsTo
+    {
+        return $this->belongsTo(Institution::class, "institution_id");
     }
 
     public function type(): BelongsTo
@@ -34,5 +40,10 @@ class Activity extends Model
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'ogs_activity_members', "activity_id", "teacher_id");
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

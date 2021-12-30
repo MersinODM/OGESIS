@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
@@ -9,13 +10,14 @@ use App\Models\Activity;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class ActivityController  extends ApiController
 {
     public function create(Request $request) {
         $validationResult = $this->apiValidator($request, [
             'plan_id' => 'required',
+            'institution_id' => Rule::requiredIf($request->user()->can([Permissions::ACTIVITY_CREATE_LEVEL_3, Permissions::ACTIVITY_CREATE_LEVEL_2])),
             'type' => 'required',
             'theme_id' => 'required',
             'title' => 'required',

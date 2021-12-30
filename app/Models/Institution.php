@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Institution extends Model
 {
@@ -55,5 +56,14 @@ class Institution extends Model
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class, 'district_id');
+    }
+
+    public function activities(): BelongsTo {
+        return $this->belongsTo(Activity::class, 'institution_id');
+    }
+
+    public function notifications(): MorphMany
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 }
