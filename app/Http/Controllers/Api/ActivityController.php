@@ -22,7 +22,8 @@ class ActivityController  extends ApiController
             'title' => 'required',
             'planned_start_date' => 'required',
             'planned_end_date' => 'required',
-            'description' => 'required|max:5000'
+            'description' => 'required|max:5000',
+            'partners' => 'required|min:1'
         ]);
 
         if ($validationResult) {
@@ -37,6 +38,7 @@ class ActivityController  extends ApiController
                 $activity->institution_id = $request->user()->institution_id;
             }
             $activity->save();
+            $activity->partners()->attach($request->input('partners'));
             DB::commit();
             return response()->json([
                ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,

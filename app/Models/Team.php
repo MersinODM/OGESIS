@@ -15,12 +15,13 @@ class Team extends Model
         "institution_id"
     ];
 
-    public function plan():BelongsTo {
-        return $this->belongsTo(DevPlan::class, "plan_id");
-    }
-
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'ogs_team_teachers', "team_id", "teacher_id");
+    }
+
+    public function institution(): BelongsTo
+    {
+        return $this->belongsTo(Institution::class, 'institution_id');
     }
 }

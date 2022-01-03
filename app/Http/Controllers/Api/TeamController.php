@@ -7,11 +7,13 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\DevPlan;
+use App\Models\Institution;
 use App\Models\Team;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class TeamController extends ApiController
 {
@@ -104,8 +106,38 @@ class TeamController extends ApiController
 
     }
 
-    public function list(Request $request)
+    public function getTable(Request $request)
     {
+        $query = Team::with('institution:id,district_id,name', 'institution.district:id,name')
+        ->select('id', 'name', 'institution_id');
+        $user = Auth::user();
 
+        // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
+        if($user && $user->can(Permissions::TEAM_LIST_LEVEL_3)) {
+            if ($request->has('district_id') && !is_null($request->input('district_id'))) {
+                $query->whereRelation('institution', 'district_id', '=', $request->input('district_id'));
+            }
+            if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
+                $query->where('institution_id', '=', $request->input('institution_id'));
+            }
+            return Datatables::eloquent($query)
+                ->toJson();
+        }
+
+        if ($user->can(Permissions::TEAM_LIST_LEVEL_2) && $user->cannot(Permissions::TEAM_LIST_LEVEL_3)) {
+            $query->whereRelation('institution', 'district_id', '=',  $user->institution()->district_id);
+            if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
+                $query->where('institution_id', '=', $request->input('institution_id'));
+            }
+            return Datatables::eloquent($query)
+                ->toJson();
+        }
+
+        if ($user->cannot([Permissions::TEAM_LIST_LEVEL_3, Permissions::TEAM_LIST_LEVEL_2]) && $user->can(Permissions::TEAM_LIST_LEVEL_1)) {
+            $query->where('institution_id', '=', $user->institution_id);
+            return Datatables::eloquent($query)
+                ->toJson();
+        }
+        return $this->unauthorized();
     }
 }
