@@ -2,8 +2,7 @@
   <page>
     <template #header>
       <h4>
-        <span class="text-bold text-blue"> Okul/Kurum</span> Listesi, Seçilen İlçe:
-        <span class="text-bold">{{ selectedDistrict!=null ? selectedDistrict : 'Hepsi' }}</span>
+        <span class="text-bold text-blue">Takım</span> Listesi
       </h4>
     </template>
     <template #content>

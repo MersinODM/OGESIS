@@ -132,7 +132,8 @@ export default {
         .required(() => 'Plan başlangıç tarihi seçilmelidir!'),
       endDate: date().typeError(() => 'Plan bitiş tarihi seçilmelidir!')
         .required(() => 'Plan bitiş tarihi seçilmelidir!')
-        .min(yupRef('startDate'), () => 'Plan tarihi başlangıç tarihinden sonra olmalıdır')
+        .min(yupRef('startDate'), () => 'Plan tarihi başlangıç tarihinden sonra olmalıdır'),
+      description: string().required(() => 'Açıklama gereklidir!')
     })
 
     const { handleSubmit, errors } = useForm({ validationSchema: schema })
