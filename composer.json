@@ -1,9 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "mersin/ogesis",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
-    "license": "MIT",
+    "description": "Okul gelişim sistemi.",
+    "keywords": ["mersin", "ogesis"],
+    "license": "Apache-2.0",
     "require": {
         "ext-pdo": "*",
         "php": "^7.3|^8.0",
