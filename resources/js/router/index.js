@@ -24,7 +24,8 @@ import NotFound from '../views/utils/NotFound'
 import planRoutes from './routes/planRoutes'
 import institutionRoutes from './routes/institutionRoutes'
 import teacherRoute from './routes/teacherRoutes'
-import teamRoutes from "./routes/teamRoutes";
+import teamRoutes from './routes/teamRoutes'
+import reportRoutes from './routes/reportRoutes'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -51,7 +52,8 @@ const router = createRouter({
         ...planRoutes,
         ...institutionRoutes,
         ...teacherRoute,
-        ...teamRoutes
+        ...teamRoutes,
+        ...reportRoutes
       ]
     },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }

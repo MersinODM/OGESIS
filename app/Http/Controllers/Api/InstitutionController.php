@@ -144,7 +144,7 @@ class InstitutionController extends ApiController
         // Query taslağı oluşturuluyor
         $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
         if ($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
-            $query->where('district_id', $id);
+            if ($id != -1) { $query->where('district_id', $id); }
             return response()->json($query->get());
         }
         // Burada else if bloğuna gerek yok çünkü yukarıda if içine girerse

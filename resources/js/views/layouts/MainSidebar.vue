@@ -156,6 +156,22 @@ export default {
         ]
       },
       {
+        name: 'Rapor Modülü',
+        icon: 'mdi mdi-poll',
+        children: [
+          {
+            name: 'Yeni Rapor Talebi',
+            routeName: 'requestNewReport',
+            icon: 'mdi mdi-chart-box-plus-outline'
+          },
+          {
+            name: 'Raporlar',
+            routeName: 'reportList',
+            icon: 'mdi mdi-chart-gantt'
+          }
+        ]
+      },
+      {
         name: 'Takım Modülü',
         icon: 'mdi mdi-human-greeting-variant',
         children: [

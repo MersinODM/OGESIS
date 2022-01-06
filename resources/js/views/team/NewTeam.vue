@@ -52,49 +52,6 @@
                           :validation-required="true"
                           :validation-message="errors.teachers"
                         />
-                        <!--                        <div class="form-group col-md-12">-->
-                        <!--                          <label>Takım Seçimi</label>-->
-                        <!--                          <multiselect-->
-                        <!--                            v-model="selectedTeachers"-->
-                        <!--                            :options="teachers"-->
-                        <!--                            label="full_name"-->
-                        <!--                            name="teachers"-->
-                        <!--                            mode="tags"-->
-                        <!--                            :searchable="true"-->
-                        <!--                            :create-option="false"-->
-                        <!--                            track-by="full_name"-->
-                        <!--                            value-prop="id"-->
-                        <!--                            placeholder="Öğretmen seçimi yapabilirsiniz."-->
-                        <!--                            no-options-text="Bu liste boş!"-->
-                        <!--                            no-result-text="Burada bişey bulamadık!"-->
-                        <!--                            class="form-control h-auto"-->
-                        <!--                            :class="{'is-invalid': errors.teachers != null}"-->
-                        <!--                          >-->
-                        <!--                            <template #option="{ option }">-->
-                        <!--                              {{ option.full_name }} - {{ option.branch.name }}-->
-                        <!--                            </template>-->
-                        <!--                            <template #tag="{ option, handleTagRemove, disabled }">-->
-                        <!--                              <span class="multiselect-tag text-wrap">-->
-                        <!--                                {{ option.full_name }} - {{ option.branch.name }}-->
-                        <!--                                <span-->
-                        <!--                                  v-if="!disabled"-->
-                        <!--                                  class="multiselect-tag-remove"-->
-                        <!--                                  @mousedown.prevent="handleTagRemove(option, $event)"-->
-                        <!--                                >-->
-                        <!--                                  <span class="multiselect-tag-remove-icon" />-->
-                        <!--                                </span>-->
-                        <!--                              </span>-->
-                        <!--                            </template>-->
-                        <!--                          </multiselect>-->
-                        <!--                          <div-->
-                        <!--                            v-if="errors.teachers"-->
-                        <!--                            role="alert"-->
-                        <!--                            class="invalid-feedback order-last"-->
-                        <!--                            style="display: inline-block;"-->
-                        <!--                          >-->
-                        <!--                            {{ errors.teachers }}-->
-                        <!--                          </div>-->
-                        <!--                        </div>-->
                       </div>
                       <div class="form-row justify-content-md-center mt-3">
                         <div class="form-group col-md-6">
@@ -184,16 +141,6 @@ export default {
         institutions.value = await getInstitution(districtId.value)
       } else {
         institutions.value = []
-      }
-    })
-
-    // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
-    watch(institutionId, async () => {
-      selectedTeachers.value = null
-      if (institutionId.value) {
-        teachers.value = await getTeachers(districtId.value, institutionId.value)
-      } else {
-        teachers.value = []
       }
     })
 
