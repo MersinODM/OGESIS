@@ -16,7 +16,7 @@
       value-prop="id"
       :searchable="true"
       label="name"
-      :options="getDistricts"
+      :options="districts"
       class="form-control"
       :class="{'is-invalid': isValidated && errorMessage != null}"
     />
@@ -32,7 +32,7 @@ import useDistrictApi from '../services/useDistrictApi'
 import ValidationError from './ValidationError'
 import { useAbility } from '@casl/vue'
 import Multiselect from '@vueform/multiselect'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
 
 export default {
@@ -51,6 +51,10 @@ export default {
       type: Boolean,
       default: false
     },
+    addAllChoice: {
+      type: Boolean,
+      default: false
+    },
     name: {
       type: String,
       default: ''
@@ -59,6 +63,16 @@ export default {
   setup (props, { emit }) {
     const { can } = useAbility()
     const { getDistricts } = useDistrictApi()
+    const districts = ref([])
+    getDistricts()
+      .then(value => {
+        if (props.addAllChoice) {
+          districts.value = value
+          districts.value.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
+        } else {
+          districts.value = value
+        }
+      })
 
     const district = computed({
       get: () => props.modelValue,
@@ -67,8 +81,9 @@ export default {
 
     return {
       can,
-      getDistricts,
+      districts,
       district,
+      // useModelWrapper(props, emit, 'addAllChoice'),
       ...useComponentValidationWrapper(props)
     }
   }

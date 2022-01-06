@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             ProvinceSeeder::class,
             BranchSeeder::class,
             InstitutionSeeder::class,
-            ThemeSeeder::class,
             TeacherSeeder::class,
             PartnerSeeder::class,
+            ThemeSeeder::class,
         ]);
     }
 }

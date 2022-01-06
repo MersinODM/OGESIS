@@ -44,3 +44,8 @@ String.prototype.withPrefix = function (prefix) {
 String.prototype.withSuffix = function (suffix) {
   return this + suffix
 }
+
+// eslint-disable-next-line no-extend-native
+Array.prototype.insert = function (index, item) {
+  this.splice(index, 0, item)
+}
