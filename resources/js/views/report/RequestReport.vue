@@ -29,6 +29,7 @@
                         :institutions="institutions"
                         :validation-required="true"
                         :validation-message="errors.institution_id"
+                        mode="tags"
                       />
                     </div>
                     <div class="row justify-content-md-center">
@@ -109,6 +110,7 @@ export default {
       institutionId.value = null
       if (districtId.value) {
         institutions.value = await getInstitution(districtId.value)
+        institutions.value.insert(0, { id: -1, name: 'Hepsi' })
       } else {
         institutions.value = []
       }

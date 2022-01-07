@@ -7,6 +7,7 @@
     <multiselect
       v-model="institution"
       :name="name"
+      :mode="mode"
       placeholder="Kurum seçebilirsiniz."
       no-options-text="Bu liste boş!"
       no-result-text="Burada bişey bulamadık!"
@@ -56,6 +57,10 @@ export default {
     name: {
       type: String,
       default: ''
+    },
+    mode: {
+      type: String,
+      default: 'single'
     }
   },
   setup (props, { emit }) {

@@ -120,14 +120,16 @@ class CreatePlansTable extends Migration
                 ->on('ogs_dev_plans');
         });
 
-        Schema::create('ogs_reports', function (Blueprint $table) {
-            $table->id()->startingValue(10000);
-            // Polimorfik ilişki kullanıyoruz
-            $table->unsignedInteger('institution_id');
+        Schema::create('ogs_report_request', function (Blueprint $table) {
+            $table->id()->startingValue(1000);
             $table->unsignedBigInteger('plan_id');
-            $table->string('name')->nullable();
+            $table->unsignedInteger('institution_id');
+            $table->unsignedBigInteger('creator_id');
+            $table->string('code',10);
+            $table->string('description', 5000);
             $table->json('report')->nullable(); // Bu önemli ileride raporları bunun içine json olarak koyucaz
             $table->binary('file')->nullable();
+            $table->string('file_name', 300)->nullable();
             $table->timestamps();
 
             $table->foreign('institution_id')
@@ -138,6 +140,21 @@ class CreatePlansTable extends Migration
                 ->references('id')
                 ->on('ogs_dev_plans');
         });
+
+//        Schema::create('ogs_reports', function (Blueprint $table) {
+//            $table->id()->startingValue(10000);
+//            $table->unsignedBigInteger('request_id');
+////            $table->unsignedInteger('institution_id');
+////            $table->unsignedBigInteger('plan_id');
+//            $table->string('name')->nullable();
+//            $table->json('report')->nullable(); // Bu önemli ileride raporları bunun içine json olarak koyucaz
+//            $table->binary('file')->nullable();
+//            $table->timestamps();
+//
+//            $table->foreign('request_id')
+//                ->references('id')
+//                ->on('ogs_report_request');
+//        });
 
 //        Schema::create('ogs_attachments', function (Blueprint $table) {
 //            $table->id()->startingValue(10000);
@@ -337,7 +354,7 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_activity_types');
         Schema::dropIfExists('ogs_activity_themes');
         Schema::dropIfExists('ogs_institution_infos');
-        Schema::dropIfExists('ogs_reports');
+        Schema::dropIfExists('ogs_report_request');
         Schema::dropIfExists('ogs_institution_plans');
         Schema::dropIfExists('ogs_dev_plans');
         Schema::dropIfExists('ogs_institution_facilities');

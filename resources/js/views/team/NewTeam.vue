@@ -144,6 +144,10 @@ export default {
       }
     })
 
+    watch(institutionId, async () => {
+      teachers.value = await getTeachers(districtId.value, institutionId.value)
+    })
+
     // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
     // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
     if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
