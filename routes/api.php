@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\InstitutionController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\ReportRequestController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ThemeController;
@@ -71,6 +72,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('branches', [BranchController::class, 'create']);
     Route::put('branches/{id}', [BranchController::class, 'update']);
     Route::get('branches/search_by', [BranchController::class, 'searchBy']);
+
+    //Report endpoint tanımlamaları
+    Route::post('report-requests', [ReportRequestController::class, 'create']);
 
 });
 

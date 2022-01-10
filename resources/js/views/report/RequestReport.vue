@@ -78,6 +78,7 @@ import useNotifier from '../../utils/useNotifier'
 import { ref, watch } from 'vue'
 import TextArea from '../../components/TextArea'
 import useInstitutionApi from '../../services/useInstitutionApi'
+import useReportApi from "../../services/useReportApi";
 
 export default {
   name: 'RequestReport',
@@ -85,6 +86,7 @@ export default {
   setup () {
     const notifier = useNotifier()
     const { getInstitution } = useInstitutionApi()
+    const { createReportRequest } = useReportApi()
 
     const schema = object({
       description: string().typeError(() => 'Kısa açıklama giderilmelidir!')
@@ -119,7 +121,8 @@ export default {
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        const response = null // await createTeam(values)
+        values.plan_id = 1000
+        const response = await createReportRequest(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })
           await router.replace({ name: 'listTeams' })

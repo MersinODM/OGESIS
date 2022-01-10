@@ -120,7 +120,7 @@ class CreatePlansTable extends Migration
                 ->on('ogs_dev_plans');
         });
 
-        Schema::create('ogs_report_request', function (Blueprint $table) {
+        Schema::create('ogs_report_requests', function (Blueprint $table) {
             $table->id()->startingValue(1000);
             $table->unsignedBigInteger('plan_id');
             $table->unsignedInteger('institution_id');
@@ -153,7 +153,7 @@ class CreatePlansTable extends Migration
 //
 //            $table->foreign('request_id')
 //                ->references('id')
-//                ->on('ogs_report_request');
+//                ->on('ogs_report_requests');
 //        });
 
 //        Schema::create('ogs_attachments', function (Blueprint $table) {
@@ -354,7 +354,7 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_activity_types');
         Schema::dropIfExists('ogs_activity_themes');
         Schema::dropIfExists('ogs_institution_infos');
-        Schema::dropIfExists('ogs_report_request');
+        Schema::dropIfExists('ogs_report_requests');
         Schema::dropIfExists('ogs_institution_plans');
         Schema::dropIfExists('ogs_dev_plans');
         Schema::dropIfExists('ogs_institution_facilities');

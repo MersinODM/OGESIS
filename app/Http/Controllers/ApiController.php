@@ -45,13 +45,13 @@ class ApiController extends Controller
         return null;
     }
 
-    public function apiException($exception): array
+    public function apiException($exception): JsonResponse
     {
-        return [
+        return response()->json([
             ResponseKeys::CODE => ResponseCodes::CODE_ERROR,
             ResponseKeys::MESSAGE => ResponseContents::EXCEPTION_MESSAGE,
             ResponseKeys::EXCEPTION => $exception->getMessage()
-        ];
+        ], 500);
     }
 
     public function unauthorized(): JsonResponse
