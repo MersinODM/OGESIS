@@ -3,7 +3,7 @@
     v-if="can(TEACHER_LIST_LEVEL_3)"
     class="form-group"
   >
-    <label>İlçe Seçimi</label>
+    <label>Gelişim Planı Seçimi</label>
     <multiselect
       v-model="selectedPLan"
       :name="name"
