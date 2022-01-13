@@ -12,6 +12,16 @@
                 <div class="col-md-6">
                   <form @submit.prevent>
                     <div class="row justify-content-md-center">
+                      <plan-selector
+                        v-model="districtId"
+                        name="district_id"
+                        class="col-md-12"
+                        :add-all-choice="true"
+                        :validation-required="true"
+                        :validation-message="errors.district_id"
+                      />
+                    </div>
+                    <div class="row justify-content-md-center">
                       <district-selector
                         v-model="districtId"
                         name="district_id"
@@ -79,10 +89,11 @@ import { ref, watch } from 'vue'
 import TextArea from '../../components/TextArea'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useReportApi from "../../services/useReportApi";
+import PlanSelector from "../../components/PlanSelector";
 
 export default {
   name: 'RequestReport',
-  components: { TextArea, InstitutionSelector, DistrictSelector, Page },
+  components: {PlanSelector, TextArea, InstitutionSelector, DistrictSelector, Page },
   setup () {
     const notifier = useNotifier()
     const { getInstitution } = useInstitutionApi()
