@@ -13,12 +13,13 @@
                   <form @submit.prevent>
                     <div class="row justify-content-md-center">
                       <plan-selector
-                        v-model="districtId"
-                        name="district_id"
+                        v-model="planId"
+                        name="plan_id"
                         class="col-md-12"
+                        :plans="planList"
                         :add-all-choice="true"
                         :validation-required="true"
-                        :validation-message="errors.district_id"
+                        :validation-message="errors.plan_id"
                       />
                     </div>
                     <div class="row justify-content-md-center">
@@ -88,16 +89,18 @@ import useNotifier from '../../utils/useNotifier'
 import { ref, watch } from 'vue'
 import TextArea from '../../components/TextArea'
 import useInstitutionApi from '../../services/useInstitutionApi'
-import useReportApi from "../../services/useReportApi";
-import PlanSelector from "../../components/PlanSelector";
+import useReportApi from '../../services/useReportApi'
+import PlanSelector from '../../components/PlanSelector'
+import usePlanApi from '../../services/usePlanApi'
 
 export default {
   name: 'RequestReport',
-  components: {PlanSelector, TextArea, InstitutionSelector, DistrictSelector, Page },
+  components: { PlanSelector, TextArea, InstitutionSelector, DistrictSelector, Page },
   setup () {
     const notifier = useNotifier()
     const { getInstitution } = useInstitutionApi()
     const { createReportRequest } = useReportApi()
+    const { getLastPlans } = usePlanApi()
 
     const schema = object({
       description: string().typeError(() => 'Kısa açıklama giderilmelidir!')
@@ -115,8 +118,13 @@ export default {
     const { value: description } = useField('description')
     const { value: institutionId } = useField('institution_id')
     const { value: districtId } = useField('district_id')
+    const { value: planId } = useField('plan_id')
 
     const institutions = ref([])
+    const planList = ref([])
+    getLastPlans().then((plans) => {
+      plans.value = plans
+    })
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
@@ -145,10 +153,12 @@ export default {
 
     return {
       save,
+      planId,
       districtId,
       institutionId,
       description,
       institutions,
+      planList,
       errors
     }
   }

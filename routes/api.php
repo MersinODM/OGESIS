@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     // Planlama api endpoint tanımları
     Route::post('plans', [PlanController::class, 'createAll']);
     Route::put('plans/{id}', [PlanController::class, 'update']);
+    Route::get('plans/latest/{count}', [PlanController::class, 'getLastPlans']);
 
     // Tema endpoint tanımlamaları
     Route::post('institutions', [InstitutionController::class, 'create']);

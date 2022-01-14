@@ -44,4 +44,14 @@ class PlanController extends ApiController
             return $this->apiException($exception);
         }
     }
+
+    public function getLastPlans($count) {
+        $plans = DevPlan::select('id', 'name')
+            ->where('is_open', true)
+            ->take($count)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($plans);
+
+    }
 }

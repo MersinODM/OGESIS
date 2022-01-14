@@ -119,12 +119,13 @@ import { DatePicker } from 'v-calendar'
 import { string, date, object, ref as yupRef } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
-import PlanService from '../../services/PlanService'
+import usePlanApi from '../../services/usePlanApi'
 
 export default {
   name: 'CreatePlan',
   components: { Page, DatePicker },
   setup () {
+    const { create } = usePlanApi()
     const schema = object({
       title: string().typeError(() => 'Plan adı/başlığı yazı tipinde olmalıdır!')
         .required(() => 'Plan adı/başlığı gereklidir!'),
@@ -145,7 +146,7 @@ export default {
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Ayarladağınız tarih aralığında başka plan yoksa planlarınız oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        await PlanService.save({
+        await create({
           start_date: values.startDate,
           end_date: values.endDate,
           description: values.title
