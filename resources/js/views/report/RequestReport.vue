@@ -17,7 +17,6 @@
                         name="plan_id"
                         class="col-md-12"
                         :plans="planList"
-                        :add-all-choice="true"
                         :validation-required="true"
                         :validation-message="errors.plan_id"
                       />
@@ -79,7 +78,7 @@
 import InstitutionSelector from '../../components/InstitutionSelector'
 import DistrictSelector from '../../components/DistrictSelector'
 import Page from '../../components/Page'
-import { object, string } from 'yup'
+import { object, string, number } from 'yup'
 import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
@@ -106,6 +105,8 @@ export default {
       description: string().typeError(() => 'Kısa açıklama giderilmelidir!')
         .min(8, () => 'Açıklama yeterince uzun değil!')
         .required(() => 'Açıklama gereklidir!'),
+      plan_id: number().typeError(() => 'Plan seçilmelidir')
+        .required(() => 'Plan seçilmelidir!'),
       // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
       ...useRuleInstitution(),
       // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
@@ -140,7 +141,6 @@ export default {
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        values.plan_id = 1000
         const response = await createReportRequest(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })

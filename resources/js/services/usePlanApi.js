@@ -16,7 +16,7 @@ export default function () {
 
   const getLastPlans = async (count = 10) => {
     try {
-      const response = await http.get(`api/v1/plans/last/${count}`)
+      const response = await http.get(`api/v1/plans/latest/${count}`)
       return response.data
     } catch (e) { }
   }
