@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             PartnerSeeder::class,
             ThemeSeeder::class,
+            PlanSeeder::class,
         ]);
     }
 }

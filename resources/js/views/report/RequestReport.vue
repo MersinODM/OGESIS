@@ -124,7 +124,7 @@ export default {
     const institutions = ref([])
     const planList = ref([])
     getLastPlans().then((plans) => {
-      plans.value = plans
+      planList.value = plans
     })
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
@@ -144,7 +144,7 @@ export default {
         const response = await createReportRequest(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })
-          await router.replace({ name: 'listTeams' })
+          await router.replace({ name: 'listReports' })
         } else {
           await notifier.error({ message: 'Takım kaydı oluşturalamadı!.', duration: 3200 })
         }
