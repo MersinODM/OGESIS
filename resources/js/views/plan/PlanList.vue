@@ -3,8 +3,16 @@
 </template>
 
 <script>
+import Page from '../../components/Page'
+import DistrictSelector from '../../components/DistrictSelector'
+import InstitutionSelector from '../../components/InstitutionSelector'
+
 export default {
-  name: "PlanList"
+  name: 'PlanList',
+
+  setup () {
+
+  }
 }
 </script>
 
