@@ -11,11 +11,18 @@
           <div class="card">
             <div class="card-body">
               <div class="row justify-content-md-center">
-                <div class="col-md-3 mt-1">
-                  <district-selector />
-                </div>
-                <div class="col-md-3 mt-1" />
-                <div class="col-md-3 mt-1" />
+                <district-selector
+                  v-model="selectedDistrict"
+                  name="district_id"
+                  class="col-md-3 mt-1"
+                  :validation-required="false"
+                />
+                <institution-selector
+                  v-model="selectedInstitution"
+                  :institutions="institutions"
+                  :validation-required="true"
+                  class="col-md-3 mt-1"
+                />
               </div>
               <div class="row">
                 <div class="col-md-12">
@@ -30,10 +37,8 @@
                         <tr>
                           <th>ID</th>
                           <th>DISTRICT_ID</th>
-                          <th>BRANCH_ID</th>
                           <th>PLAN_ID</th>
                           <th>CREATOR_ID</th>
-                          <th>İLÇE</th>
                           <th>KOD</th>
                           <th>KURUM</th>
                           <th>AÇIKLAMA</th>
@@ -60,12 +65,15 @@ import InstitutionSelector from '../../components/InstitutionSelector'
 import { onMounted } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
+import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 let table = null
 
 export default {
   name: 'ReportList',
   components: { Page, DistrictSelector, InstitutionSelector },
   setup () {
+    const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter(() => table?.ajax.reload(null, false))
+
     onMounted(() => {
       table = $('#reportTable')
         .on('preXhr.dt', (e, settings, data) => {
@@ -73,7 +81,8 @@ export default {
           // yeni parametre eklemek için ateşleniyor
           data.district_id = selectedDistrict.value
           data.institution_id = selectedInstitution.value
-          data.branch_id = selectedBranch.value
+          // data.institution_id = selectedInstitution.value
+          // data.branch_id = selectedBranch.value
         })
         .DataTable({
           fixedHeader: true,
@@ -86,7 +95,7 @@ export default {
           paging: true,
           stateDuration: -1,
           ajax: {
-            url: '/api/v1/reports/table',
+            url: '/api/v1/report-requests/table',
             dataType: 'json',
             type: 'POST',
             xhrFields: {
@@ -108,10 +117,21 @@ export default {
               visible: false
             },
             {
-              data: 'branch_id',
-              name: 'branch_id',
+              data: 'plan_id',
+              name: 'plan_id',
               searchable: false,
               visible: false
+            },
+            {
+              data: 'creator_id',
+              name: 'creator_id',
+              searchable: false,
+              visible: false
+            },
+            {
+              data: 'code',
+              name: 'code',
+              searchable: true
             },
             {
               data: 'institution.name',
@@ -119,39 +139,38 @@ export default {
               searchable: true
             },
             {
-              data: 'branch.name',
-              name: 'branch.name',
+              data: 'description',
+              name: 'description',
               searchable: true
             },
+
             {
-              data: 'first_name',
-              name: 'first_name',
-              searchable: true
-            },
-            {
-              data: 'last_name',
-              name: 'last_name',
-              searchable: true
-            },
-            {
-              data: 'phone',
-              name: 'phone',
-              searchable: true
-            },
-            {
-              data: 'email',
-              name: 'email',
-              searchable: true
+              data: 'file_name',
+              name: 'file_name',
+              searchable: false,
+              render (data, type, row, meta) {
+                if (row?.file_name) {
+                  return '<span class="badge badge-success">Yüklenmiş</span>'
+                }
+                return '<span class="badge badge-danger">Yüklenmemiş</span>'
+              }
             },
             {
               data: '',
               width: '10%',
               render (data, type, row, meta) {
-                return '<div class="btn-group">' +
-                      '<button class="btn btn-xs btn-primary">Göster</button>' +
+                if (row?.file_name) {
+                  return '<div class="btn-group">' +
+                      '<button class="btn btn-xs btn-primary">İndir</button>' +
                       '<button class="btn btn-xs btn-warning">Düzenle</button>' +
                       // '<button class="btn btn-xs btn-danger">Düşür</button>' +
                       '</div>'
+                }
+                return '<div class="btn-group">' +
+                    '<button class="btn btn-xs btn-danger">Yükle</button>' +
+                    '<button class="btn btn-xs btn-warning">Düzenle</button>' +
+                    // '<button class="btn btn-xs btn-danger">Düşür</button>' +
+                    '</div>'
               },
               searchable: false,
               orderable: false
@@ -171,6 +190,12 @@ export default {
         await router.push({ name: 'underConstruction' })
       })
     })
+
+    return {
+      institutions,
+      selectedDistrict,
+      selectedInstitution
+    }
   }
 }
 </script>

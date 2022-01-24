@@ -76,6 +76,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
 
     //Report endpoint tanımlamaları
     Route::post('report-requests', [ReportRequestController::class, 'create']);
+    Route::post('report-requests/table', [ReportRequestController::class, 'getTable']);
 
 });
 
