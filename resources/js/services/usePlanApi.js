@@ -14,7 +14,7 @@ export default function () {
     } catch (e) {}
   }
 
-  const getLastPlans = async (count = 10) => {
+  const getLatestPlans = async (count = 10) => {
     try {
       const response = await http.get(`api/v1/plans/latest/${count}`)
       return response.data
@@ -24,6 +24,6 @@ export default function () {
   return {
     findById,
     create,
-    getLastPlans
+    getLatestPlans
   }
 }

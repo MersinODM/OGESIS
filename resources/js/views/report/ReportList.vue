@@ -20,7 +20,12 @@
                 <institution-selector
                   v-model="selectedInstitution"
                   :institutions="institutions"
-                  :validation-required="true"
+                  :validation-required="false"
+                  class="col-md-3 mt-1"
+                />
+                <plan-selector
+                  v-model="selectedPlan"
+                  :validation-required="false"
                   class="col-md-3 mt-1"
                 />
               </div>
@@ -41,6 +46,7 @@
                           <th>CREATOR_ID</th>
                           <th>KOD</th>
                           <th>KURUM</th>
+                          <th>PLAN</th>
                           <th>AÇIKLAMA</th>
                           <th>DURUM</th>
                           <th>AKSİYON</th>
@@ -62,17 +68,22 @@
 import Page from '../../components/Page'
 import DistrictSelector from '../../components/DistrictSelector'
 import InstitutionSelector from '../../components/InstitutionSelector'
-import { onMounted } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
+import PlanSelector from '../../components/PlanSelector'
 let table = null
 
 export default {
   name: 'ReportList',
-  components: { Page, DistrictSelector, InstitutionSelector },
+  components: { PlanSelector, Page, DistrictSelector, InstitutionSelector },
   setup () {
     const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter(() => table?.ajax.reload(null, false))
+    const selectedPlan = ref()
+    watch(selectedPlan, () => {
+      table?.ajax.reload(null, false)
+    })
 
     onMounted(() => {
       table = $('#reportTable')
@@ -81,7 +92,7 @@ export default {
           // yeni parametre eklemek için ateşleniyor
           data.district_id = selectedDistrict.value
           data.institution_id = selectedInstitution.value
-          // data.institution_id = selectedInstitution.value
+          data.plan_id = selectedPlan.value
           // data.branch_id = selectedBranch.value
         })
         .DataTable({
@@ -122,7 +133,7 @@ export default {
               searchable: false,
               visible: false
             },
-            {
+            {import PlanSelector from "../../components/PlanSelector";
               data: 'creator_id',
               name: 'creator_id',
               searchable: false,
@@ -139,6 +150,11 @@ export default {
               searchable: true
             },
             {
+              data: 'plan.name',
+              name: 'plan.name',
+              searchable: true
+            },
+            {
               data: 'description',
               name: 'description',
               searchable: true
@@ -148,6 +164,7 @@ export default {
               data: 'file_name',
               name: 'file_name',
               searchable: false,
+              className: 'text-center',
               render (data, type, row, meta) {
                 if (row?.file_name) {
                   return '<span class="badge badge-success">Yüklenmiş</span>'
@@ -161,19 +178,17 @@ export default {
               render (data, type, row, meta) {
                 if (row?.file_name) {
                   return '<div class="btn-group">' +
-                      '<button class="btn btn-xs btn-primary">İndir</button>' +
-                      '<button class="btn btn-xs btn-warning">Düzenle</button>' +
-                      // '<button class="btn btn-xs btn-danger">Düşür</button>' +
+                      '<button class="btn btn-xs btn-success">Göster</button>' +
+                      '<button class="btn btn-xs btn-danger">Sil</button>' +
                       '</div>'
                 }
                 return '<div class="btn-group">' +
-                    '<button class="btn btn-xs btn-danger">Yükle</button>' +
-                    '<button class="btn btn-xs btn-warning">Düzenle</button>' +
-                    // '<button class="btn btn-xs btn-danger">Düşür</button>' +
+                    '<button class="btn btn-xs btn-primary">Yükle</button>' +
                     '</div>'
               },
               searchable: false,
-              orderable: false
+              orderable: false,
+              className: 'text-center'
             }
           ]
         })
@@ -194,7 +209,8 @@ export default {
     return {
       institutions,
       selectedDistrict,
-      selectedInstitution
+      selectedInstitution,
+      selectedPlan
     }
   }
 }

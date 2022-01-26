@@ -68,8 +68,12 @@ class ReportRequestController extends ApiController
     public function getTable(Request $request): JsonResponse
     {
         $query = ReportRequest::with('institution:id,district_id,name', 'plan:id,name')
-            ->select('id', 'code', 'description', 'institution_id', 'plan_id', 'file_name');
+            ->select('ogs_report_requests.id', 'ogs_report_requests.code', 'ogs_report_requests.description', 'institution_id', 'plan_id', 'file_name');
         $user = Auth::user();
+        // Plan id verilmişse buna göre süzdürme yapıyoruz bunu tüm seviyelerde yapabiliriz
+        if ($request->has('plan_id') && !is_null($request->input('plan_id'))) {
+            $query->where('plan_id', '=', $request->input('plan_id'));
+        }
 
         // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
         if($user && $user->can(Permissions::TEAM_LIST_LEVEL_3)) {

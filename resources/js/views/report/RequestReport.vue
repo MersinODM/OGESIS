@@ -16,7 +16,6 @@
                         v-model="planId"
                         name="plan_id"
                         class="col-md-12"
-                        :plans="planList"
                         :validation-required="true"
                         :validation-message="errors.plan_id"
                       />
@@ -99,7 +98,7 @@ export default {
     const notifier = useNotifier()
     const { getInstitution } = useInstitutionApi()
     const { createReportRequest } = useReportApi()
-    const { getLastPlans } = usePlanApi()
+    const { getLatestPlans } = usePlanApi()
 
     const schema = object({
       description: string().typeError(() => 'Kısa açıklama giderilmelidir!')
@@ -122,11 +121,6 @@ export default {
     const { value: planId } = useField('plan_id')
 
     const institutions = ref([])
-    const planList = ref([])
-    getLastPlans().then((plans) => {
-      planList.value = plans
-    })
-
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(districtId, async () => {
       institutionId.value = null
@@ -158,7 +152,6 @@ export default {
       institutionId,
       description,
       institutions,
-      planList,
       errors
     }
   }

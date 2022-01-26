@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="$can(TEACHER_LIST_LEVEL_3)"
     class="form-group"
   >
     <label>Gelişim Planı Seçimi</label>
@@ -32,6 +31,8 @@ import ValidationError from './ValidationError'
 import Multiselect from '@vueform/multiselect'
 import { useModelWrapper } from '../compositions/useModelWrapper'
 import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
+import usePlanApi from '../services/usePlanApi'
+import { ref } from 'vue'
 
 export default {
   name: 'PlanSelector',
@@ -60,6 +61,19 @@ export default {
     }
   },
   setup (props, { emit }) {
+    if (props.plans && props.plans.length <= 0) {
+      const { getLatestPlans } = usePlanApi()
+      const planList = ref([])
+      getLatestPlans().then(value => {
+        planList.value = value
+      })
+      return {
+        selectedPLan: useModelWrapper(props, emit),
+        planList,
+        ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
+      }
+    }
+
     return {
       selectedPLan: useModelWrapper(props, emit),
       planList: useModelWrapper(props, emit, 'plans'),
