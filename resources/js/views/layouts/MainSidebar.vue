@@ -150,7 +150,7 @@ export default {
           },
           {
             name: 'Planlar',
-            routeName: 'underConstruction',
+            routeName: 'planList',
             icon: 'mdi mdi-bookshelf'
           }
         ]

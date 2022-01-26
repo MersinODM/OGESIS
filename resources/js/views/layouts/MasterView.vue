@@ -29,7 +29,7 @@
     </div>
     <n-footer />
     <div
-      v-if="screenSize === 'xs' && isSidebarMenuCollapsed"
+      v-if="(screenSize === 'xs' && isSidebarMenuCollapsed) || (screenSize ==='sm' && isSidebarMenuCollapsed)"
       id="sidebar-overlay"
       @click="toggleMenuSidebar"
     />
@@ -99,7 +99,7 @@ export default {
       appElement.classList.remove('sidebar-open')
       if (isSidebarMenuCollapsed.value && screenSize.value === 'lg') {
         appElement.classList.add('sidebar-collapse')
-      } else if (isSidebarMenuCollapsed.value && screenSize.value === 'xs') {
+      } else if (isSidebarMenuCollapsed.value && (screenSize.value === 'xs' || screenSize.value === 'sm')) {
         appElement.classList.add('sidebar-open')
       } else if (!isSidebarMenuCollapsed.value && screenSize.value !== 'lg') {
         appElement.classList.add('sidebar-closed')

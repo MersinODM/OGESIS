@@ -63,11 +63,11 @@
 import Page from '../../components/Page'
 import DistrictSelector from '../../components/DistrictSelector'
 import InstitutionSelector from '../../components/InstitutionSelector'
-import {useDistrictAndInstitutionFilter} from "../../compositions/useDistrictAndInstitutionFilter";
-import {onMounted, ref, watch} from "vue/dist/vue";
-import tr from "../../utils/dataTablesTurkish";
-import PlanSelector from "../../components/PlanSelector";
-import router from "../../router";
+import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
+import { onMounted, ref, watch } from 'vue'
+import tr from '../../utils/dataTablesTurkish'
+import PlanSelector from '../../components/PlanSelector'
+import router from '../../router'
 let table = null
 
 export default {
@@ -82,111 +82,111 @@ export default {
 
     onMounted(() => {
       table = $('#reportTable')
-          .on('preXhr.dt', (e, settings, data) => {
-            // Bu event sunucuya datatable üzerinden veri gitmeden önce
-            // yeni parametre eklemek için ateşleniyor
-            data.district_id = selectedDistrict.value
-            data.institution_id = selectedInstitution.value
-            data.plan_id = selectedPlan.value
-            // data.branch_id = selectedBranch.value
-          })
-          .DataTable({
-            fixedHeader: true,
-            processing: true,
-            serverSide: true,
-            responsive: false,
-            stateSave: true,
-            retrieve: true,
-            searching: true,
-            paging: true,
-            stateDuration: -1,
-            ajax: {
-              url: '/api/v1/report-requests/table',
-              dataType: 'json',
-              type: 'POST',
-              xhrFields: {
-                withCredentials: true
+        .on('preXhr.dt', (e, settings, data) => {
+          // Bu event sunucuya datatable üzerinden veri gitmeden önce
+          // yeni parametre eklemek için ateşleniyor
+          data.district_id = selectedDistrict.value
+          data.institution_id = selectedInstitution.value
+          data.plan_id = selectedPlan.value
+          // data.branch_id = selectedBranch.value
+        })
+        .DataTable({
+          fixedHeader: true,
+          processing: true,
+          serverSide: true,
+          responsive: false,
+          stateSave: true,
+          retrieve: true,
+          searching: true,
+          paging: true,
+          stateDuration: -1,
+          ajax: {
+            url: '/api/v1/report-requests/table',
+            dataType: 'json',
+            type: 'POST',
+            xhrFields: {
+              withCredentials: true
+            }
+          },
+          language: tr,
+          columns: [
+            {
+              data: 'id',
+              name: 'id',
+              searchable: false,
+              visible: false
+            },
+            {
+              data: 'district_id',
+              name: 'district_id',
+              searchable: false,
+              visible: false
+            },
+            {
+              data: 'plan_id',
+              name: 'plan_id',
+              searchable: false,
+              visible: false
+            },
+            {
+              data: 'creator_id',
+              name: 'creator_id',
+              searchable: false,
+              visible: false
+            },
+            {
+              data: 'code',
+              name: 'code',
+              searchable: true
+            },
+            {
+              data: 'institution.name',
+              name: 'institution.name',
+              searchable: true
+            },
+            {
+              data: 'plan.name',
+              name: 'plan.name',
+              searchable: true
+            },
+            {
+              data: 'description',
+              name: 'description',
+              searchable: true
+            },
+
+            {
+              data: 'file_name',
+              name: 'file_name',
+              searchable: false,
+              className: 'text-center',
+              render (data, type, row, meta) {
+                if (row?.file_name) {
+                  return '<span class="badge badge-success">Yüklenmiş</span>'
+                }
+                return '<span class="badge badge-danger">Yüklenmemiş</span>'
               }
             },
-            language: tr,
-            columns: [
-              {
-                data: 'id',
-                name: 'id',
-                searchable: false,
-                visible: false
-              },
-              {
-                data: 'district_id',
-                name: 'district_id',
-                searchable: false,
-                visible: false
-              },
-              {
-                data: 'plan_id',
-                name: 'plan_id',
-                searchable: false,
-                visible: false
-              },
-              {import PlanSelector from "../../components/PlanSelector";
-                data: 'creator_id',
-                name: 'creator_id',
-                searchable: false,
-                visible: false
-              },
-              {
-                data: 'code',
-                name: 'code',
-                searchable: true
-              },
-              {
-                data: 'institution.name',
-                name: 'institution.name',
-                searchable: true
-              },
-              {
-                data: 'plan.name',
-                name: 'plan.name',
-                searchable: true
-              },
-              {
-                data: 'description',
-                name: 'description',
-                searchable: true
-              },
-
-              {
-                data: 'file_name',
-                name: 'file_name',
-                searchable: false,
-                className: 'text-center',
-                render (data, type, row, meta) {
-                  if (row?.file_name) {
-                    return '<span class="badge badge-success">Yüklenmiş</span>'
-                  }
-                  return '<span class="badge badge-danger">Yüklenmemiş</span>'
-                }
-              },
-              {
-                data: '',
-                width: '10%',
-                render (data, type, row, meta) {
-                  if (row?.file_name) {
-                    return '<div class="btn-group">' +
+            {
+              data: '',
+              width: '10%',
+              render (data, type, row, meta) {
+                if (row?.file_name) {
+                  return '<div class="btn-group">' +
                         '<button class="btn btn-xs btn-success">Göster</button>' +
                         '<button class="btn btn-xs btn-danger">Sil</button>' +
                         '</div>'
-                  }
-                  return '<div class="btn-group">' +
+                }
+                return '<div class="btn-group">' +
                       '<button class="btn btn-xs btn-primary">Yükle</button>' +
                       '</div>'
-                },
-                searchable: false,
-                orderable: false,
-                className: 'text-center'
-              }
-            ]
-          })
+              },
+              searchable: false,
+              orderable: false,
+              className: 'text-center'
+            }
+          ]
+        })
 
       table.on('click', '.btn-primary', async (e) => {
         const data = table.row($(e.target).parents('tr')[0]).data()

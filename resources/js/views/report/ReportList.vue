@@ -133,7 +133,7 @@ export default {
               searchable: false,
               visible: false
             },
-            {import PlanSelector from "../../components/PlanSelector";
+            {
               data: 'creator_id',
               name: 'creator_id',
               searchable: false,
