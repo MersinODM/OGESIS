@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     // Tema endpoint tanımlamaları
     Route::post('themes', [ThemeController::class, 'create']);
     Route::put('themes/{id}', [ThemeController::class, 'update']);
-    Route::get('themes', [ThemeController::class, 'searchByName']);
+    Route::get('themes', [ThemeController::class, 'getThemes']);
 
     // Aktivite endpoint tanımlamaları
     Route::post('activities', [ActivityController::class, 'create']);

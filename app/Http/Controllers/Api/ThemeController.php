@@ -7,6 +7,7 @@ use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\ActivityTheme;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Nette\NotImplementedException;
@@ -80,5 +81,10 @@ class ThemeController extends ApiController
         $name = $request->get('name');
         $themes = ActivityTheme::where('name', 'like', '%'.$name.'%')->get();
         return response()->json($themes);
+    }
+
+    public function getThemes(Request $request): JsonResponse
+    {
+        return response()->json(ActivityTheme::select('id', 'parent_id', 'code', 'name')->get());
     }
 }

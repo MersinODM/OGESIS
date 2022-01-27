@@ -91,6 +91,7 @@ export default {
           // data.branch_id = selectedBranch.value
         })
         .DataTable({
+          select: true,
           fixedHeader: true,
           processing: true,
           serverSide: true,
