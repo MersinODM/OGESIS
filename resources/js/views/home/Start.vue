@@ -4,9 +4,9 @@
       <h4>Giriş</h4>
     </template>
     <template #content>
-      <div class="row">
-        <div class="col-md-3">
-          <theme-selector v-model="selectedVal" />
+      <div class="row justify-content-md-center">
+        <div class="col-md-6">
+          <add-activity />
         </div>
       </div>
     </template>
@@ -15,12 +15,12 @@
 
 <script>
 import Page from '../../components/Page'
-import { inject, ref } from 'vue'
-import ThemeSelector from '../../components/ThemeSelector'
+import { ref } from 'vue'
+import AddActivity from '../../components/activities/AddActivity'
 
 export default {
   name: 'Start',
-  components: { ThemeSelector, Page },
+  components: { AddActivity, Page },
   setup (props) {
     return {
       selectedVal: ref()

@@ -32,7 +32,7 @@ import { useModelWrapper } from '../compositions/useModelWrapper'
 import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
 
 export default {
-  name: 'DatePicker',
+  name: 'ODatePicker',
   components: { ValidationError, DatePicker },
   props: {
     modelValue: {
