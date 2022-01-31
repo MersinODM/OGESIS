@@ -34,6 +34,13 @@
       />
     </div>
     <div class="form-row">
+      <partner-selector
+        v-model="selectedPartners"
+        class="col-md-12"
+        :validation-required="false"
+      />
+    </div>
+    <div class="form-row">
       <text-box
         v-model="title"
         class="col-md-12"
@@ -80,10 +87,11 @@ import ThemeSelector from '../ThemeSelector'
 import TextBox from '../TextBox'
 import TextArea from '../TextArea'
 import DatePicker from '../ODatePicker'
+import PartnerSelector from '../PartnerSelector'
 
 export default {
   name: 'AddActivity',
-  components: { TextArea, TextBox, InstitutionSelector, DistrictSelector, PlanSelector, ThemeSelector, DatePicker },
+  components: { PartnerSelector, TextArea, TextBox, InstitutionSelector, DistrictSelector, PlanSelector, ThemeSelector, DatePicker },
   setup () {
     return {
       title: '',

@@ -65,6 +65,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="sass">
+@import 'v-calendar/dist/style.css'
 </style>
