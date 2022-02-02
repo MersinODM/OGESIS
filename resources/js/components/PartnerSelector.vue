@@ -3,20 +3,24 @@
     <label>Paydaş/Partner Seçimi</label>
     <multiselect
       v-model="selectedPartners"
-      :options="partnerList"
       label="name"
-      name="partners"
-      mode="tags"
-      :searchable="true"
-      track-by="name"
+      :name="name"
       value-prop="id"
+      mode="tags"
+      :options="findPartner"
+      :close-on-select="false"
+      :filter-results="false"
+      :min-chars="1"
+      :resolve-on-load="false"
+      :delay="350"
+      :searchable="true"
+      :loading="isSearching"
+      :class="{'is-invalid': isValidated && errorMessage != null}"
       placeholder="Paydaş seçimi yapabilirsiniz."
       no-options-text="Bu liste boş!"
-      no-result-text="Burada bişey bulamadık!"
+      no-results-text="Burada başka seçenek bulamadık!"
       class="form-control h-auto"
-      :class="{'is-invalid': isValidated && errorMessage != null}"
-    >
-    </multiselect>
+    />
     <validation-error
       v-if="isValidated"
       v-model="errorMessage"
@@ -29,6 +33,7 @@ import { useModelWrapper } from '../compositions/useModelWrapper'
 import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
 import ValidationError from './ValidationError'
 import Multiselect from '@vueform/multiselect'
+import { useSearchPartners } from '../compositions/useSearchPartners'
 
 export default {
   name: 'PartnerSelector',
@@ -47,19 +52,16 @@ export default {
       type: Boolean,
       default: false
     },
-    partners: {
-      type: Array,
-      default: () => ([])
-    },
     name: {
       type: String,
       default: ''
     }
   },
   setup (props, { emit }) {
+    const selectedPartners = useModelWrapper(props, emit) // Buradan model için gerekenler yapılıyor
     return {
-      selectedPartners: useModelWrapper(props, emit),
-      partnerList: useModelWrapper(props, emit, 'partners'),
+      selectedPartners,
+      ...useSearchPartners(selectedPartners),
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
     }
   }

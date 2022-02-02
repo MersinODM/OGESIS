@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\DistrictController;
 use App\Http\Controllers\Api\InstitutionController;
+use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\ReportRequestController;
 use App\Http\Controllers\Api\TeacherController;
@@ -74,9 +75,13 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::put('branches/{id}', [BranchController::class, 'update']);
     Route::get('branches/search_by', [BranchController::class, 'searchBy']);
 
+    //Partner endpoint tanınlamaları
+    Route::get('partners/search_by', [PartnerController::class, 'searchBy']);
+
     //Report endpoint tanımlamaları
     Route::post('report-requests', [ReportRequestController::class, 'create']);
     Route::post('report-requests/table', [ReportRequestController::class, 'getTable']);
+
 
 });
 

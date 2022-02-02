@@ -93,6 +93,7 @@ export default {
   name: 'AddActivity',
   components: { PartnerSelector, TextArea, TextBox, InstitutionSelector, DistrictSelector, PlanSelector, ThemeSelector, DatePicker },
   setup () {
+    
     return {
       title: '',
       selectedPlan: '',

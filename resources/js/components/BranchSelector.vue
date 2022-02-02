@@ -14,7 +14,7 @@
       :loading="isSearching"
       placeholder="Branş araması/seçimi yapabilirsiniz."
       no-options-text="Bu liste boş!"
-      no-result-text="Burada bişey bulamadık!"
+      no-results-text="Burada bişey bulamadık!"
       class="form-control"
       :class="{'is-invalid': errorMessage != null}"
       @search-change="findBranch"
