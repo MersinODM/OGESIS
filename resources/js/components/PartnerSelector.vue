@@ -3,10 +3,10 @@
     <label>Paydaş/Partner Seçimi</label>
     <multiselect
       v-model="selectedPartners"
-      label="name"
-      :name="name"
-      value-prop="id"
       mode="tags"
+      label="name"
+      value-prop="id"
+      :name="name"
       :options="findPartner"
       :close-on-select="false"
       :filter-results="false"
@@ -16,7 +16,7 @@
       :searchable="true"
       :loading="isSearching"
       :class="{'is-invalid': isValidated && errorMessage != null}"
-      placeholder="Paydaş seçimi yapabilirsiniz."
+      placeholder="Paydaş seçimi için arama yapabilirsiniz."
       no-options-text="Bu liste boş!"
       no-results-text="Burada başka seçenek bulamadık!"
       class="form-control h-auto"

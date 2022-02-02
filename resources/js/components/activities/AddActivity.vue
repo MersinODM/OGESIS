@@ -59,6 +59,21 @@
       />
     </div>
     <div class="form-row">
+      <div class="col-md-12">
+        <radio-group>
+          <radio-button>Aktif</radio-button>
+          <radio-button>Aktif</radio-button>
+          <radio-button>Aktif</radio-button>
+        </radio-group>
+      </div>
+<!--      <div class="col-md-6">-->
+<!--        <button class="btn btn-primary btn-block">Öğretmen Seç</button>-->
+<!--      </div>-->
+<!--      <div class="col-md-6">-->
+<!--        <button class="btn btn-primary btn-block">Takım Seç</button>-->
+<!--      </div>-->
+    </div>
+    <div class="form-row">
       <div class="col-md-6">
         <date-picker
           v-model="plannedStartDate"
@@ -78,8 +93,8 @@
     </div>
   </form>
 </template>
-
 <script>
+
 import PlanSelector from '../PlanSelector'
 import DistrictSelector from '../DistrictSelector'
 import InstitutionSelector from '../InstitutionSelector'
@@ -88,19 +103,36 @@ import TextBox from '../TextBox'
 import TextArea from '../TextArea'
 import DatePicker from '../ODatePicker'
 import PartnerSelector from '../PartnerSelector'
+import Toggle from '@vueform/toggle'
+import { ref } from 'vue'
+import RadioGroup from "../buttons/RadioGroup";
+import RadioButton from "../buttons/RadioButton";
 
 export default {
   name: 'AddActivity',
-  components: { PartnerSelector, TextArea, TextBox, InstitutionSelector, DistrictSelector, PlanSelector, ThemeSelector, DatePicker },
+  components: {
+    RadioButton,
+    RadioGroup,
+    PartnerSelector,
+    TextArea,
+    TextBox,
+    InstitutionSelector,
+    DistrictSelector,
+    PlanSelector,
+    ThemeSelector,
+    DatePicker,
+    Toggle
+  },
   setup () {
-    
+    const selection = ref(false)
     return {
       title: '',
       selectedPlan: '',
       selectedDistrict: '',
       selectedInstitution: '',
       selectedTheme: '',
-      errors: []
+      errors: [],
+      selection
     }
   }
 }
