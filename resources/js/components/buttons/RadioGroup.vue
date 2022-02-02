@@ -1,6 +1,9 @@
 <template>
-  <div class="btn-group btn-group-toggle">
-    <slot />
+  <div class="form-group">
+    <label>fsdfsdfsd</label>
+    <div class="btn-group btn-group-toggle">
+      <slot />
+    </div>
   </div>
 </template>
 
