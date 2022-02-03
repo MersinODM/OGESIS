@@ -43,5 +43,8 @@ class PartnerSeeder extends Seeder
         Partner::create(['name' => 'TARSUS BELEDİYESİ']);
         Partner::create(['name' => 'TOROSLAR BELEDİYESİ']);
         Partner::create(['name' => 'YENİŞEHİR BELEDİYESİ']);
+        Partner::create(['name' => 'ÖĞRETMENLER']);
+        Partner::create(['name' => 'ÖĞRENCİLER']);
+        Partner::create(['name' => 'VELİLER']);
     }
 }

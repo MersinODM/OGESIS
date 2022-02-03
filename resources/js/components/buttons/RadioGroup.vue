@@ -1,7 +1,7 @@
 <template>
   <div class="form-group">
-    <label>fsdfsdfsd</label>
-    <div class="btn-group btn-group-toggle">
+    <label>{{ label }}</label><br>
+    <div class="btn-group btn-group-toggle col-md-12">
       <slot />
     </div>
   </div>
@@ -9,16 +9,20 @@
 
 <script>
 import { provide, reactive, ref, onBeforeMount, onBeforeUpdate } from 'vue'
-const isButton = (node) => node.type.name === 'button'
+const isButton = (node) => node.type.name === 'RadioButton'
 
 export default {
   name: 'RadioGroup',
+  props: {
+    label: {
+      type: String,
+      default: ''
+    }
+  },
   setup (_, { slots }) {
     const state = reactive({
       selectedIndex: null,
-      buttons: [],
-      count: 0,
-      selectedId: 0
+      buttons: []
     })
     provide('radioProvider', state)
 

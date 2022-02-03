@@ -1,16 +1,43 @@
 <template>
-  <label class="btn bg-olive">
-    <input type="radio" autocomplete="off">
+  <label
+    class="btn"
+    :class="{active: isActive}"
+  >
+    <input
+      type="radio"
+      autocomplete="off"
+      @click="activate"
+    >
     <slot />
   </label>
 </template>
 
 <script>
 
+import { getCurrentInstance, inject, watch, ref } from 'vue'
+
 export default {
   name: 'RadioButton',
-  setup () {
+  emits: ['click'],
+  setup (props, { emit }) {
+    const state = inject('radioProvider')
+    const index = getCurrentInstance().vnode.key
+    const isActive = ref(false)
+    const activate = () => {
+      state.selectedIndex = index
+      emit('click')
+    }
 
+    watch(
+      () => state.selectedIndex,
+      () => {
+        isActive.value = index === state.selectedIndex
+      })
+
+    return {
+      activate,
+      isActive
+    }
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="form-group">
-    <label>Takım Seçimi</label>
+    <label>Öğretmen Seçimi</label>
     <multiselect
       v-model="selectedTeachers"
       :options="teacherList"

@@ -59,21 +59,6 @@
       />
     </div>
     <div class="form-row">
-      <div class="col-md-12">
-        <radio-group>
-          <radio-button>Aktif</radio-button>
-          <radio-button>Aktif</radio-button>
-          <radio-button>Aktif</radio-button>
-        </radio-group>
-      </div>
-<!--      <div class="col-md-6">-->
-<!--        <button class="btn btn-primary btn-block">Öğretmen Seç</button>-->
-<!--      </div>-->
-<!--      <div class="col-md-6">-->
-<!--        <button class="btn btn-primary btn-block">Takım Seç</button>-->
-<!--      </div>-->
-    </div>
-    <div class="form-row">
       <div class="col-md-6">
         <date-picker
           v-model="plannedStartDate"
@@ -91,6 +76,38 @@
         />
       </div>
     </div>
+    <div class="form-row justify-content-md-center">
+      <div class="col-md-12">
+        <radio-group label="Ekip veya sorumlu seçimi">
+          <radio-button
+            :key="0"
+            class="bg-gradient-fuchsia col-md-6"
+            @click="isTeamSelected = false"
+          >
+            Öğretmenlerden Seç
+          </radio-button>
+          <radio-button
+            :key="1"
+            class="bg-gradient-fuchsia col-md-6"
+            @click="isTeamSelected = true"
+          >
+            Takımlardan Seç
+          </radio-button>
+        </radio-group>
+      </div>
+    </div>
+    <div
+      v-if="isTeamSelected"
+      class="form-row"
+    >
+      <team-selector class="col-md-12" />
+    </div>
+    <div
+      v-else
+      class="form-row"
+    >
+      <teacher-selector class="col-md-12" />
+    </div>
   </form>
 </template>
 <script>
@@ -103,14 +120,16 @@ import TextBox from '../TextBox'
 import TextArea from '../TextArea'
 import DatePicker from '../ODatePicker'
 import PartnerSelector from '../PartnerSelector'
-import Toggle from '@vueform/toggle'
 import { ref } from 'vue'
-import RadioGroup from "../buttons/RadioGroup";
-import RadioButton from "../buttons/RadioButton";
+import RadioGroup from '../buttons/RadioGroup'
+import RadioButton from '../buttons/RadioButton'
+import TeamSelector from '../TeamSelector'
+import TeacherSelector from '../TeacherSelector'
 
 export default {
   name: 'AddActivity',
   components: {
+    TeacherSelector,
     RadioButton,
     RadioGroup,
     PartnerSelector,
@@ -121,10 +140,18 @@ export default {
     PlanSelector,
     ThemeSelector,
     DatePicker,
-    Toggle
+    TeamSelector
   },
   setup () {
     const selection = ref(false)
+    const isTeamSelected = ref(false)
+    const button1 = () => {
+      isTeamSelected.value = false
+    }
+
+    const button2 = () => {
+      isTeamSelected.value = false
+    }
     return {
       title: '',
       selectedPlan: '',
@@ -132,7 +159,10 @@ export default {
       selectedInstitution: '',
       selectedTheme: '',
       errors: [],
-      selection
+      selection,
+      isTeamSelected,
+      button1,
+      button2
     }
   }
 }
