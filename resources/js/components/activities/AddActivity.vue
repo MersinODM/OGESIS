@@ -112,6 +112,7 @@
 </template>
 <script>
 
+import { ref, inject } from 'vue'
 import PlanSelector from '../PlanSelector'
 import DistrictSelector from '../DistrictSelector'
 import InstitutionSelector from '../InstitutionSelector'
@@ -120,11 +121,11 @@ import TextBox from '../TextBox'
 import TextArea from '../TextArea'
 import DatePicker from '../ODatePicker'
 import PartnerSelector from '../PartnerSelector'
-import { ref } from 'vue'
 import RadioGroup from '../buttons/RadioGroup'
 import RadioButton from '../buttons/RadioButton'
 import TeamSelector from '../TeamSelector'
 import TeacherSelector from '../TeacherSelector'
+import constants from '../../utils/constants'
 
 export default {
   name: 'AddActivity',
@@ -145,8 +146,12 @@ export default {
   setup () {
     const selection = ref(false)
     const isTeamSelected = ref(false)
+    const { EVENT_CLOSE_MODAL, EVENT_MODAL_CLOSED, EVENT_OPEN_MODAL, EVENT_MODAL_OPENED } = constants()
+    const eventBus = inject('eventBus')
+
     const button1 = () => {
       isTeamSelected.value = false
+      eventBus.publish(EVENT_OPEN_MODAL)
     }
 
     const button2 = () => {
