@@ -17,7 +17,7 @@
 
 <template>
   <div
-    v-if="isShow"
+    v-if="isShowModal"
     id="modal-default"
     class="modal fade show"
     aria-modal="true"
@@ -41,16 +41,15 @@
           <slot name="modal-body" />
         </div>
       </div>
-      <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
   </div>
 </template>
 
 <script>
-import { inject, ref } from 'vue'
+import { inject, ref, watch } from 'vue'
 import SkinHelper from '../utils/SkinHelper'
 import constants from '../utils/constants'
+import { useModelWrapper } from '../compositions/useModelWrapper'
 
 export default {
   name: 'Modal',
@@ -58,31 +57,43 @@ export default {
     name: {
       type: String,
       default: ''
+    },
+    isShow: {
+      type: Boolean,
+      default: true
     }
   },
-  setup (props) {
-    const isShow = ref(false)
+  setup (props, { emit }) {
     const eventBus = inject('eventBus')
     const { EVENT_CLOSE_MODAL, EVENT_MODAL_CLOSED, EVENT_OPEN_MODAL, EVENT_MODAL_OPENED } = constants()
+    const isShowModal = useModelWrapper(props, emit, 'isShowModal')
+
+    watch(isShowModal, () => {
+      if (isShowModal) {
+        SkinHelper.OpenModalSkin()
+      } else {
+        SkinHelper.CloseModalSkin()
+      }
+    })
 
     eventBus.on(EVENT_CLOSE_MODAL, () => close())
 
     const close = () => {
-      isShow.value = false
+      isShowModal.value = false
       SkinHelper.CloseModalSkin()
       eventBus.emit(EVENT_MODAL_CLOSED)
     }
 
     eventBus.on(EVENT_OPEN_MODAL, (event) => {
       if (props.name !== event.name) return
-      isShow.value = true
+      isShowModal.value = true
       SkinHelper.OpenModalSkin()
     })
 
     eventBus.emit(EVENT_MODAL_OPENED, { name: props.name })
 
     return {
-      isShow,
+      isShowModal,
       close
     }
   }

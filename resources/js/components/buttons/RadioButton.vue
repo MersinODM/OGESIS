@@ -15,13 +15,21 @@
 <script>
 
 import { getCurrentInstance, inject, watch, ref } from 'vue'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
 
 export default {
   name: 'RadioButton',
+  props: {
+    modelValue: {
+      default: false,
+      type: Boolean
+    }
+  },
   emits: ['click'],
   setup (props, { emit }) {
-    const state = inject('radioProvider')
     const index = getCurrentInstance().vnode.key
+    const isShow = useModelWrapper(props, emit)
+    const state = inject('radioProvider')
     const isActive = ref(false)
     const activate = () => {
       state.selectedIndex = index
@@ -36,6 +44,7 @@ export default {
 
     return {
       activate,
+      isShow,
       isActive
     }
   }

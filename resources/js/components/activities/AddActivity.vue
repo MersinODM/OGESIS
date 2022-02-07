@@ -1,5 +1,6 @@
 <template>
-  <form @submit.prevent>
+  <div>
+    <form @submit.prevent>
     <div class="form-row">
       <plan-selector
         v-model="selectedPlan"
@@ -103,12 +104,18 @@
       <team-selector class="col-md-12" />
     </div>
     <div
-      v-else
+      v-if="!isTeamSelected"
       class="form-row"
     >
       <teacher-selector class="col-md-12" />
     </div>
   </form>
+    <modal :is-show="showModal">
+      <template #modal-body>
+        deneme
+      </template>
+    </modal>
+  </div>
 </template>
 <script>
 
@@ -126,10 +133,12 @@ import RadioButton from '../buttons/RadioButton'
 import TeamSelector from '../TeamSelector'
 import TeacherSelector from '../TeacherSelector'
 import constants from '../../utils/constants'
+import Modal from '../Modal'
 
 export default {
   name: 'AddActivity',
   components: {
+    Modal,
     TeacherSelector,
     RadioButton,
     RadioGroup,
@@ -146,10 +155,12 @@ export default {
   setup () {
     const selection = ref(false)
     const isTeamSelected = ref(false)
-    const { EVENT_CLOSE_MODAL, EVENT_MODAL_CLOSED, EVENT_OPEN_MODAL, EVENT_MODAL_OPENED } = constants()
+    const { EVENT_OPEN_MODAL } = constants()
     const eventBus = inject('eventBus')
+    const showModal = ref(false)
 
     const button1 = () => {
+      showModal.value = !showModal.value
       isTeamSelected.value = false
       eventBus.publish(EVENT_OPEN_MODAL)
     }
@@ -167,7 +178,8 @@ export default {
       selection,
       isTeamSelected,
       button1,
-      button2
+      button2,
+      showModal
     }
   }
 }

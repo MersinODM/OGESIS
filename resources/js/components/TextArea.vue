@@ -5,11 +5,11 @@
       v-model="text"
       v-uppercase="isUppercase"
       :class="{'is-invalid': isValidated && errorMessage != null}"
-      class="form-control"
       :name="name"
-      type="text"
       :placeholder="placeholder"
-      style="width: 100%; min-height: 3em"
+      class="form-control"
+      type="text"
+      style="width: 100%; min-height: 3.5em; max-height: 15em"
     />
     <validation-error
       v-if="isValidated"
