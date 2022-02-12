@@ -17,17 +17,17 @@
 
 <template>
   <div
-    v-if="isShowModal"
+    v-if="isShow"
     id="modal-default"
     class="modal fade show"
     aria-modal="true"
     role="dialog"
-    style="padding-right: 15px; display: block;"
+    style="display: block;"
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h4><slot name="modal-title" /></h4>
+          <h4>{{ title }}</h4>
           <button
             type="button"
             class="close"
@@ -38,7 +38,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <slot name="modal-body" />
+          <component :is="current" />
         </div>
       </div>
     </div>
@@ -46,54 +46,25 @@
 </template>
 
 <script>
-import { inject, ref, watch } from 'vue'
-import SkinHelper from '../utils/SkinHelper'
-import constants from '../utils/constants'
-import { useModelWrapper } from '../compositions/useModelWrapper'
+import { computed } from 'vue'
+
+import { useModalActionTypes } from '../utils/constants'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Modal',
-  props: {
-    name: {
-      type: String,
-      default: ''
-    },
-    isShow: {
-      type: Boolean,
-      default: true
-    }
-  },
   setup (props, { emit }) {
-    const eventBus = inject('eventBus')
-    const { EVENT_CLOSE_MODAL, EVENT_MODAL_CLOSED, EVENT_OPEN_MODAL, EVENT_MODAL_OPENED } = constants()
-    const isShowModal = useModelWrapper(props, emit, 'isShowModal')
-
-    watch(isShowModal, () => {
-      if (isShowModal) {
-        SkinHelper.OpenModalSkin()
-      } else {
-        SkinHelper.CloseModalSkin()
-      }
-    })
-
-    eventBus.on(EVENT_CLOSE_MODAL, () => close())
+    const store = useStore()
+    const { MODAL, CLOSE } = useModalActionTypes()
 
     const close = () => {
-      isShowModal.value = false
-      SkinHelper.CloseModalSkin()
-      eventBus.emit(EVENT_MODAL_CLOSED)
+      store.dispatch(MODAL.withSuffix(CLOSE))
     }
 
-    eventBus.on(EVENT_OPEN_MODAL, (event) => {
-      if (props.name !== event.name) return
-      isShowModal.value = true
-      SkinHelper.OpenModalSkin()
-    })
-
-    eventBus.emit(EVENT_MODAL_OPENED, { name: props.name })
-
     return {
-      isShowModal,
+      current: computed(() => store.state.modal.currentComponent),
+      isShow: computed(() => store.state.modal.isShow),
+      title: computed(() => store.state.modal.title),
       close
     }
   }

@@ -100,6 +100,23 @@ export const useAuthActionTypes = () => {
   }
 }
 
+export const useModalMutationTypes = () => {
+  return {
+    MODAL: 'modal/',
+    CURRENT_COMPONENT: 'currentComponent',
+    IS_SHOW: 'isShow',
+    TITLE: 'title'
+  }
+}
+
+export const useModalActionTypes = () => {
+  return {
+    MODAL: 'modal/',
+    SHOW: 'show',
+    CLOSE: 'close'
+  }
+}
+
 // TODO Object.freeze() implemantasyonu yapılabilir
 export const usePermissionConstants = () => {
   return {

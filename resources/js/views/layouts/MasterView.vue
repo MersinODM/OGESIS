@@ -26,6 +26,7 @@
       class="content-wrapper"
     >
       <router-view />
+      <modal />
     </div>
     <n-footer />
     <div
@@ -54,8 +55,7 @@ export default {
     const { GET_ME, AUTH } = useAuthActionTypes()
     SkinHelper.MainSkin()
     const { MODAL_CURRICULUM, MODAL_QUESTION } = constants()
-    let appElement = null
-
+    const appElement = document.body
     // Burada kullanıcıyı yeniden alıyoruz apilerden
     store.dispatch(AUTH.withSuffix(GET_ME))
     const userLoaded = computed(() => store.state.auth.user != null)
@@ -67,7 +67,6 @@ export default {
     }
 
     onMounted(() => {
-      appElement = document.getElementById('app')
       appElement.classList.add('sidebar-mini')
       appElement.classList.add('layout-fixed')
     })

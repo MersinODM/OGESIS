@@ -17,26 +17,33 @@
 
 const SkinHelper = {
   LoginSkin () {
-    const appElement = document.getElementById('app')
+    const appElement = document.body
     // document.body.classList.remove('sidebar-mini', 'layout-fixed', 'layout-navbar-fixed', 'layout-footer-fixed', 'register-page')
     appElement.classList.remove('sidebar-mini', 'layout-fixed', 'register-page')
     appElement.classList.add('login-page')
   },
   MainSkin () {
-    const appElement = document.getElementById('app')
+    const appElement = document.body
     appElement.classList.remove('login-page', 'register-page')
     appElement.classList.add('sidebar-mini', 'layout-fixed')
     // appElement.classList.add('sidebar-mini', 'layout-fixed', 'layout-footer-fixed', 'layout-navbar-fixed')
   },
   OpenModalSkin () {
-    const appElement = document.getElementById('app')
+    const appElement = document.body
     appElement.classList.add('modal-open')
     appElement.style.paddingRight = '15px'
+    appElement.style.height = 'auto'
+    const modalBackground = document.createElement('div')
+    modalBackground.id = 'modalBackground'
+    modalBackground.classList.add('modal-backdrop', 'fade', 'show')
+    document.body.appendChild(modalBackground)
   },
   CloseModalSkin () {
-    const appElement = document.getElementById('app')
+    const appElement = document.body
     appElement.classList.remove('modal-open')
     appElement.style.removeProperty('padding-right')
+    appElement.style.removeProperty('height')
+    document.getElementById('modalBackground')?.remove()
   }
 }
 
