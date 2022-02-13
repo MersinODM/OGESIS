@@ -1,14 +1,15 @@
 import { ref, watch } from 'vue'
 import useInstitutionApi from '../services/useInstitutionApi'
 import { useAbility } from '@casl/vue'
-import { useRouter } from 'vue-router'
 import { usePermissionConstants } from '../utils/constants'
 import store from '../store'
 
-export function useDistrictAndInstitutionFilter (reload = null) {
+export function useDistrictAndInstitutionFilter (reload = null, selectedDistrict = null, selectedInstitution = null) {
   const institutions = ref([])
-  const selectedDistrict = ref()
-  const selectedInstitution = ref()
+  if (selectedDistrict == null || selectedInstitution == null) {
+    selectedDistrict = ref()
+    selectedInstitution = ref()
+  }
   const { can, cannot } = useAbility()
   const { getInstitution } = useInstitutionApi()
   const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
@@ -34,7 +35,9 @@ export function useDistrictAndInstitutionFilter (reload = null) {
 
   // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
   watch(selectedInstitution, () => {
-    reload()
+    if (reload) {
+      reload()
+    }
   })
 
   // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise

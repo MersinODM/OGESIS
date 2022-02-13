@@ -59,8 +59,8 @@
 
 <script>
 import Page from '../../components/Page'
-import DistrictSelector from '../../components/DistrictSelector'
-import InstitutionSelector from '../../components/InstitutionSelector'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
+import InstitutionSelector from '../../components/selectors/InstitutionSelector'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import { useAbility } from '@casl/vue'

@@ -1,10 +1,12 @@
 <template>
-  <div class="form-group">
-    <label>Takım Seçimi</label>
+  <div
+    class="form-group"
+  >
+    <label>Gelişim Planı Seçimi</label>
     <multiselect
-      v-model="selectedTeam"
+      v-model="selectedPLan"
       :name="name"
-      placeholder="Takım seçebilirsiniz"
+      placeholder="Gelişim planı seçebilirsiniz"
       no-options-text="Bu liste boş!"
       no-result-text="Burada bişey bulamadık!"
       :close-on-select="true"
@@ -13,7 +15,7 @@
       value-prop="id"
       :searchable="true"
       label="name"
-      :options="teamList"
+      :options="planList"
       class="form-control"
       :class="{'is-invalid': isValidated && errorMessage != null}"
     />
@@ -25,13 +27,15 @@
 </template>
 
 <script>
-import ValidationError from './ValidationError'
+import ValidationError from '../ValidationError'
 import Multiselect from '@vueform/multiselect'
-import { useModelWrapper } from '../compositions/useModelWrapper'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import usePlanApi from '../../services/usePlanApi'
+import { ref } from 'vue'
 
 export default {
-  name: 'TeamSelector',
+  name: 'PlanSelector',
   components: { ValidationError, Multiselect },
   props: {
     modelValue: {
@@ -47,7 +51,7 @@ export default {
       type: Boolean,
       default: false
     },
-    teams: {
+    plans: {
       type: Array,
       default: () => ([])
     },
@@ -57,9 +61,22 @@ export default {
     }
   },
   setup (props, { emit }) {
+    if (props.plans && props.plans.length <= 0) {
+      const { getLatestPlans } = usePlanApi()
+      const planList = ref([])
+      getLatestPlans().then(value => {
+        planList.value = value
+      })
+      return {
+        selectedPLan: useModelWrapper(props, emit),
+        planList,
+        ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
+      }
+    }
+
     return {
-      selectedTeam: useModelWrapper(props, emit),
-      teamList: useModelWrapper(props, emit, 'teams'),
+      selectedPLan: useModelWrapper(props, emit),
+      planList: useModelWrapper(props, emit, 'plans'),
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
     }
   }

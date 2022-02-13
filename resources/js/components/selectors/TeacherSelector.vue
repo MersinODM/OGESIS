@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import ValidationError from './ValidationError'
+import ValidationError from '../ValidationError'
 import Multiselect from '@vueform/multiselect'
-import { useModelWrapper } from '../compositions/useModelWrapper'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 
 export default {
   name: 'TeacherSelector',

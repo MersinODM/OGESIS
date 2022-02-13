@@ -90,12 +90,12 @@ import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useStore } from 'vuex'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useDistrictApi from '../../services/useDistrictApi'
-import DistrictSelector from '../../components/DistrictSelector'
-import InstitutionSelector from '../../components/InstitutionSelector'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
+import InstitutionSelector from '../../components/selectors/InstitutionSelector'
 import TextBox from '../../components/TextBox'
 import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
 import router from '../../router'
-import TeacherSelector from '../../components/TeacherSelector'
+import TeacherSelector from '../../components/selectors/TeacherSelector'
 
 export default {
   name: 'NewTeam',

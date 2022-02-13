@@ -50,6 +50,11 @@ import { computed } from 'vue'
 
 import { useModalActionTypes } from '../utils/constants'
 import { useStore } from 'vuex'
+import AddActivity from './activities/AddActivity'
+
+const componentMap = {
+  AddActivity
+}
 
 export default {
   name: 'Modal',
@@ -62,7 +67,7 @@ export default {
     }
 
     return {
-      current: computed(() => store.state.modal.currentComponent),
+      current: computed(() => componentMap[store.state.modal.currentComponent]),
       isShow: computed(() => store.state.modal.isShow),
       title: computed(() => store.state.modal.title),
       close

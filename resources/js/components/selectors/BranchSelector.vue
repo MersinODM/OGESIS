@@ -28,10 +28,10 @@
 
 <script>
 import Multiselect from '@vueform/multiselect'
-import ValidationError from './ValidationError'
-import { useModelWrapper } from '../compositions/useModelWrapper'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
-import { useSearchBranches } from '../compositions/useSearchBranches'
+import ValidationError from '../ValidationError'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import { useSearchBranches } from '../../compositions/useSearchBranches'
 
 export default {
   name: 'BranchSelector',

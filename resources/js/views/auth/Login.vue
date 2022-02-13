@@ -92,9 +92,8 @@
 import LicenceInfo from '../../components/LicenceInfo'
 import SkinHelper from '../../utils/SkinHelper'
 import { ref } from 'vue'
-import AuthService from '../../services/AuthService'
 import { useStore } from 'vuex'
-import { useAuthActionTypes } from '../../utils/constants';
+import { useAuthActionTypes } from '../../utils/constants'
 // import router from "../../router";
 
 export default {
@@ -103,6 +102,7 @@ export default {
   setup (props) {
     const store = useStore()
     const { AUTH, LOGIN } = useAuthActionTypes()
+    SkinHelper.CloseModalSkin()
     SkinHelper.LoginSkin()
     const email = ref()
     const password = ref()

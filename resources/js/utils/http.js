@@ -20,6 +20,7 @@ import router from '../router'
 import pace from 'pace-progressbar'
 // import OverlayHelper from './OverlayHelper'
 import axios from 'axios/dist/axios.min'
+import SkinHelper from "./SkinHelper";
 
 const isHandlerEnabled = (config = {}) => {
   return !(!config?.errorHandler)
@@ -44,8 +45,7 @@ const http = axios.create({
   baseURL: `${domain}`,
   withCredentials: true
 })
-
-
+let isOpenMB = false
 http.interceptors.response.use((response) => {
   // pace.stop()
   return response
@@ -58,15 +58,18 @@ http.interceptors.response.use((response) => {
     console.error(error)
   }
   if (error.response.status === 401) {
+    if (isOpenMB) return
+    pace.stop()
     Swal.fire({
       title: 'Oturum süreniz dolmuştur',
       text: 'Kullanıcı giriş sayfasına yönlendirileceksiniz',
       icon: 'warning',
       confirmButtonText: 'Tamam'
     }).then(async (value) => {
-      pace.stop()
+      isOpenMB = false
       await router.push({ name: 'login' })
     })
+    isOpenMB = true
   } else {
     pace.stop()
     return Promise.reject(error)

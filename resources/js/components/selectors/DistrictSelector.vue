@@ -28,12 +28,12 @@
 </template>
 
 <script>
-import useDistrictApi from '../services/useDistrictApi'
-import ValidationError from './ValidationError'
+import useDistrictApi from '../../services/useDistrictApi'
+import ValidationError from '../ValidationError'
 import { useAbility } from '@casl/vue'
 import Multiselect from '@vueform/multiselect'
 import { computed, ref } from 'vue'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 
 export default {
   name: 'DistrictSelector',

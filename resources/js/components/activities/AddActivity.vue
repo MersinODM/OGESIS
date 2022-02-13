@@ -6,7 +6,7 @@
           v-model="selectedPlan"
           class="col-md-12"
           :validation-required="true"
-          :validation-message="errors.plan"
+          :validation-message="errors.plan_id"
         />
       </div>
       <div class="form-row">
@@ -20,6 +20,7 @@
       <div class="form-row">
         <institution-selector
           v-model="selectedInstitution"
+          :institutions="institutions"
           class="col-md-12"
           :validation-required="true"
           :validation-message="errors.institution_id"
@@ -28,6 +29,7 @@
       <div class="form-row">
         <theme-selector
           v-model="selectedTheme"
+          name="theme_id"
           class="col-md-12"
           label="Açıklama"
           :validation-required="true"
@@ -37,6 +39,7 @@
       <div class="form-row">
         <partner-selector
           v-model="selectedPartners"
+          name="partners"
           class="col-md-12"
           :validation-required="false"
         />
@@ -44,6 +47,7 @@
       <div class="form-row">
         <text-box
           v-model="title"
+          name="title"
           class="col-md-12"
           label="Etkinlik Başlığı"
           :validation-required="true"
@@ -63,6 +67,7 @@
         <div class="col-md-6">
           <date-picker
             v-model="plannedStartDate"
+            name="planned_start_date"
             label="Planlanan Başlangıç Tarihi"
             :validation-required="true"
             :validation-message="errors.planned_start_date"
@@ -71,6 +76,7 @@
         <div class="col-md-6">
           <date-picker
             v-model="plannedEndDate"
+            name="planned_end_date"
             label="Planlanan Bitiş Tarihi"
             :validation-required="true"
             :validation-message="errors.planned_end_date"
@@ -110,25 +116,39 @@
       >
         <teacher-selector class="col-md-12" />
       </div>
+      <div class="form-row justify-content-md-center">
+        <div class="col-md-6">
+          <button
+            class="btn btn-primary btn-block"
+            @click="save"
+          >
+            Kaydet
+          </button>
+        </div>
+      </div>
     </form>
   </div>
 </template>
 <script>
 
-import { ref, inject } from 'vue'
-import PlanSelector from '../PlanSelector'
-import DistrictSelector from '../DistrictSelector'
-import InstitutionSelector from '../InstitutionSelector'
-import ThemeSelector from '../ThemeSelector'
+import { ref } from 'vue'
+import PlanSelector from '../selectors/PlanSelector'
+import DistrictSelector from '../selectors/DistrictSelector'
+import InstitutionSelector from '../selectors/InstitutionSelector'
+import ThemeSelector from '../selectors/ThemeSelector'
 import TextBox from '../TextBox'
 import TextArea from '../TextArea'
 import DatePicker from '../ODatePicker'
-import PartnerSelector from '../PartnerSelector'
+import PartnerSelector from '../selectors/PartnerSelector'
 import RadioGroup from '../buttons/RadioGroup'
 import RadioButton from '../buttons/RadioButton'
-import TeamSelector from '../TeamSelector'
-import TeacherSelector from '../TeacherSelector'
+import TeamSelector from '../selectors/TeamSelector'
+import TeacherSelector from '../selectors/TeacherSelector'
 import constants from '../../utils/constants'
+import {object, string, date, ref as yupRef, array} from 'yup'
+import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
+import { useField, useForm } from 'vee-validate'
+import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 
 export default {
   name: 'AddActivity',
@@ -147,33 +167,66 @@ export default {
     TeamSelector
   },
   setup () {
-    const selection = ref(false)
+    const PLAN_ERROR_MESSAGE = 'Plan seçimi yapılmaldır!'
+    const THEME_ERROR_MESSAGE = 'Tema seçimi yapılmaldır!'
+    const TITLE_ERROR_MESSAGE = 'Etkinlik başlığı girilmelidir!'
+    const PLANNED_START_DATE_ERROR_MESSAGE = 'Planlanan başlangıç tarihi seçilmelidir!'
+    const PLANNED_END_DATE_ERROR_MESSAGE = 'Planlanan bitiş tarihi seçilmelidir!'
+
+    // Validasyon bilgileri
+    const schema = object({
+      plan_id: string().typeError(() => PLAN_ERROR_MESSAGE)
+        .required(() => PLAN_ERROR_MESSAGE),
+      theme_id: string().typeError(() => THEME_ERROR_MESSAGE)
+        .required(() => THEME_ERROR_MESSAGE),
+      title: string().typeError(() => TITLE_ERROR_MESSAGE)
+        .required(() => TITLE_ERROR_MESSAGE),
+      planned_start_date: date().typeError(() => PLANNED_START_DATE_ERROR_MESSAGE)
+        .required(() => PLANNED_START_DATE_ERROR_MESSAGE),
+      planned_end_date: date().typeError(() => PLANNED_END_DATE_ERROR_MESSAGE)
+        .required(() => PLANNED_END_DATE_ERROR_MESSAGE)
+        .min(yupRef('planned_start_date'), () => 'Planlanan bitiş tarihi planlanan başlangıç tarihinden sonra olmalıdır'),
+      partners: array().notRequired(),
+      description: string().notRequired(),
+      // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
+      ...useRuleInstitution(),
+      // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
+      ...useRuleDistrict()
+    })
+
+    const { handleSubmit, errors } = useForm({ validationSchema: schema })
+    // Validasyon değişken tanımlamaları
+    const { value: title } = useField('title')
+    const { value: selectedPlan } = useField('plan_id')
+    const { value: selectedTheme } = useField('theme_id')
+    const { value: plannedStartDate } = useField('planned_start_date')
+    const { value: plannedEndDate } = useField('planned_end_date')
+    const { value: selectedInstitution } = useField('institution_id')
+    const { value: selectedDistrict } = useField('district_id')
+    const { value: selectedPartners } = useField('partners')
+    const { value: description } = useField('description')
+
+    const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
     const isTeamSelected = ref(false)
-    const { EVENT_OPEN_MODAL } = constants()
-    const eventBus = inject('eventBus')
-    const showModal = ref(false)
 
-    const button1 = () => {
-      showModal.value = !showModal.value
-      isTeamSelected.value = false
-      eventBus.publish(EVENT_OPEN_MODAL)
-    }
+    const save = handleSubmit(async values => {
+      console.log(values)
+    })
 
-    const button2 = () => {
-      isTeamSelected.value = false
-    }
     return {
-      title: '',
-      selectedPlan: '',
-      selectedDistrict: '',
-      selectedInstitution: '',
-      selectedTheme: '',
-      errors: [],
-      selection,
+      title,
+      selectedPlan,
+      selectedDistrict,
+      selectedInstitution,
+      selectedTheme,
+      selectedPartners,
+      plannedStartDate,
+      plannedEndDate,
       isTeamSelected,
-      button1,
-      button2,
-      showModal
+      institutions,
+      description,
+      errors,
+      save
     }
   }
 }

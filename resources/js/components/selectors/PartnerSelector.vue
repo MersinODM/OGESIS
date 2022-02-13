@@ -29,11 +29,11 @@
 </template>
 
 <script>
-import { useModelWrapper } from '../compositions/useModelWrapper'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
-import ValidationError from './ValidationError'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import ValidationError from '../ValidationError'
 import Multiselect from '@vueform/multiselect'
-import { useSearchPartners } from '../compositions/useSearchPartners'
+import { useSearchPartners } from '../../compositions/useSearchPartners'
 
 export default {
   name: 'PartnerSelector',

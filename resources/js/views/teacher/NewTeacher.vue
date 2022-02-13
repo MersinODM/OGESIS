@@ -112,12 +112,11 @@ import { ResponseCodes, usePermissionConstants } from '../../utils/constants'
 import { useAbility } from '@casl/vue'
 import { ref, watch } from 'vue'
 import { useStore } from 'vuex'
-import DistrictSelector from '../../components/DistrictSelector'
-import InstitutionSelector from '../../components/InstitutionSelector'
-import BranchSelector from '../../components/BranchSelector'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
+import InstitutionSelector from '../../components/selectors/InstitutionSelector'
+import BranchSelector from '../../components/selectors/BranchSelector'
 import TextBox from '../../components/TextBox'
 import { useRuleBranch, useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
-
 
 export default {
   name: 'NewTeacher',

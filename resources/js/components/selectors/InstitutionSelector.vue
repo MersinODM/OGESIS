@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import ValidationError from './ValidationError'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
-import { useModelWrapper } from '../compositions/useModelWrapper'
+import ValidationError from '../ValidationError'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
 import Multiselect from '@vueform/multiselect'
 
 export default {

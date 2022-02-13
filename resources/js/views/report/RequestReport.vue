@@ -74,8 +74,8 @@
 </template>
 
 <script>
-import InstitutionSelector from '../../components/InstitutionSelector'
-import DistrictSelector from '../../components/DistrictSelector'
+import InstitutionSelector from '../../components/selectors/InstitutionSelector'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
 import Page from '../../components/Page'
 import { object, string, number } from 'yup'
 import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
@@ -88,7 +88,7 @@ import { ref, watch } from 'vue'
 import TextArea from '../../components/TextArea'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useReportApi from '../../services/useReportApi'
-import PlanSelector from '../../components/PlanSelector'
+import PlanSelector from '../../components/selectors/PlanSelector'
 import usePlanApi from '../../services/usePlanApi'
 
 export default {

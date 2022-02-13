@@ -29,10 +29,10 @@
 
 <script>
 import Multiselect from '@vueform/multiselect'
-import ValidationError from './ValidationError'
-import { useModelWrapper } from '../compositions/useModelWrapper'
-import { useComponentValidationWrapper } from '../compositions/useComponentValidationWrapper'
-import useThemeApi from '../services/useThemeApi'
+import ValidationError from '../ValidationError'
+import { useModelWrapper } from '../../compositions/useModelWrapper'
+import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import useThemeApi from '../../services/useThemeApi'
 import { ref } from 'vue'
 
 export default {

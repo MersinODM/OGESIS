@@ -66,13 +66,13 @@
 
 <script>
 import Page from '../../components/Page'
-import DistrictSelector from '../../components/DistrictSelector'
-import InstitutionSelector from '../../components/InstitutionSelector'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
+import InstitutionSelector from '../../components/selectors/InstitutionSelector'
 import {onMounted, ref, watch} from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
-import PlanSelector from '../../components/PlanSelector'
+import PlanSelector from '../../components/selectors/PlanSelector'
 let table = null
 
 export default {
