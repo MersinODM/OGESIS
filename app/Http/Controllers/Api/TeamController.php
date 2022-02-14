@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Utils\{ResponseCodes, ResponseKeys};
-use App\Models\{Team};
+use App\Models\{Teacher, Team};
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB};
@@ -102,7 +104,42 @@ class TeamController extends ApiController
 
     }
 
-    public function getTable(Request $request)
+    /*
+     * Tüm öğretmenleri getiren api endpoint
+     */
+    public function get($district_id, $institution_id): JsonResponse
+    {
+        $user = Auth::user();
+        if ($user && $user->cannot('team.list.*')) {
+            return $this->unauthorized();
+        }
+        $query = Team::with(['teachers:id,name'])
+            ->select('id', 'institution_id', 'name');
+        if ($user->can(Permissions::TEAM_LIST_LEVEL_3)) {
+            $query->where('institution_id', $institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($district_id) {
+                    $q->where('district_id', $district_id);
+                });
+            return response()->json($query->get());
+        }
+        if ($user->can(Permissions::TEAM_LIST_LEVEL_2)) {
+            $query->where('institution_id', $institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($user) {
+                    $q->where('district_id', $user->institution()->district_id);
+                });
+            return response()->json($query->get());
+        }
+        if ($user->can(Permissions::TEAM_LIST_LEVEL_1)) {
+            $query->where('institution_id', $user->institution_id)
+                ->whereHas('institution', static function (Builder $q) use ($user) {
+                    $q->where('district_id', $user->institution()->district_id);
+                });
+            return response()->json($query->get());
+        }
+        return $this->unauthorized();
+    }
+
+    public function getTable(Request $request): JsonResponse
     {
         $query = Team::with('institution:id,district_id,name', 'institution.district:id,name')
         ->select('id', 'name', 'institution_id');

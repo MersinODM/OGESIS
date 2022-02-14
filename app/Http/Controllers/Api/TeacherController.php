@@ -163,26 +163,26 @@ class TeacherController extends ApiController
     public function get($district_id, $institution_id): JsonResponse
     {
         $user = Auth::user();
-        if ($user && $user->cannot([Permissions::TEACHER_LIST_LEVEL_2, Permissions::TEACHER_LIST_LEVEL_3])) {
+        if ($user && $user->cannot('teacher.list.*')) {
             return $this->unauthorized();
         }
         $query = Teacher::with(['branch:id,name'])
             ->select('id', 'branch_id', 'institution_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
-        if ($user->can(Permissions::TEAM_ADD_MEMBER_LEVEL_3)) {
+        if ($user->can(Permissions::TEACHER_LIST_LEVEL_3)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($district_id) {
                     $q->where('district_id', $district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEACHER_CREATE_LEVEL_2)) {
+        if ($user->can(Permissions::TEACHER_LIST_LEVEL_2)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEACHER_CREATE_LEVEL_1)) {
+        if ($user->can(Permissions::TEACHER_LIST_LEVEL_1)) {
             $query->where('institution_id', $user->institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
