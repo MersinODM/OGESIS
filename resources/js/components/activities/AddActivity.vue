@@ -10,6 +10,16 @@
         />
       </div>
       <div class="form-row">
+        <theme-selector
+          v-model="selectedTheme"
+          name="theme_id"
+          class="col-md-12"
+          label="Açıklama"
+          :validation-required="true"
+          :validation-message="errors.theme_id"
+        />
+      </div>
+      <div class="form-row">
         <district-selector
           v-model="selectedDistrict"
           class="col-md-12"
@@ -27,21 +37,58 @@
         />
       </div>
       <div class="form-row">
-        <theme-selector
-          v-model="selectedTheme"
-          name="theme_id"
-          class="col-md-12"
-          label="Açıklama"
-          :validation-required="true"
-          :validation-message="errors.theme_id"
-        />
-      </div>
-      <div class="form-row">
         <partner-selector
           v-model="selectedPartners"
           name="partners"
           class="col-md-12"
           :validation-required="false"
+        />
+      </div>
+      <div class="form-row justify-content-md-center">
+        <div class="col-md-12">
+          <radio-group label="Ekip veya sorumlu seçimi">
+            <radio-button
+              :key="0"
+              class="bg-gradient-warning col-md-6"
+              @click="isTeamSelected = false"
+            >
+              Öğretmenlerden Seç
+            </radio-button>
+            <radio-button
+              :key="1"
+              v-model="isTeamSelected"
+              class="bg-gradient-warning col-md-6"
+              @click="isTeamSelected = true"
+            >
+              Takımlardan Seç
+            </radio-button>
+          </radio-group>
+        </div>
+      </div>
+      <div
+        v-if="isTeamSelected"
+        class="form-row"
+      >
+        <team-selector
+          v-model="selectedTeam"
+          class="col-md-12"
+          name="team_id"
+          :teams="teams"
+          :validation-required="true"
+          :validation-message="errors.team_id"
+        />
+      </div>
+      <div
+        v-if="!isTeamSelected"
+        class="form-row"
+      >
+        <teacher-selector
+          v-model="selectedTeachers"
+          :teachers="teachers"
+          name="teachers"
+          class="col-md-12"
+          :validation-required="true"
+          :validation-message="errors.teachers"
         />
       </div>
       <div class="form-row">
@@ -84,39 +131,6 @@
         </div>
       </div>
       <div class="form-row justify-content-md-center">
-        <div class="col-md-12">
-          <radio-group label="Ekip veya sorumlu seçimi">
-            <radio-button
-              :key="0"
-              class="bg-gradient-fuchsia col-md-6"
-              @click="isTeamSelected = false"
-            >
-              Öğretmenlerden Seç
-            </radio-button>
-            <radio-button
-              :key="1"
-              v-model="isTeamSelected"
-              class="bg-gradient-fuchsia col-md-6"
-              @click="isTeamSelected = true"
-            >
-              Takımlardan Seç
-            </radio-button>
-          </radio-group>
-        </div>
-      </div>
-      <div
-        v-if="isTeamSelected"
-        class="form-row"
-      >
-        <team-selector class="col-md-12" />
-      </div>
-      <div
-        v-if="!isTeamSelected"
-        class="form-row"
-      >
-        <teacher-selector class="col-md-12" />
-      </div>
-      <div class="form-row justify-content-md-center">
         <div class="col-md-6">
           <button
             class="btn btn-primary btn-block"
@@ -144,11 +158,12 @@ import RadioGroup from '../buttons/RadioGroup'
 import RadioButton from '../buttons/RadioButton'
 import TeamSelector from '../selectors/TeamSelector'
 import TeacherSelector from '../selectors/TeacherSelector'
-import constants from '../../utils/constants'
-import {object, string, date, ref as yupRef, array} from 'yup'
+import { object, string, date, ref as yupRef, array, boolean, number } from 'yup'
 import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
 import { useField, useForm } from 'vee-validate'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
+import { useTeacherFilter } from '../../compositions/useTeacherFilter'
+import { useTeamFilter } from '../../compositions/useTeamFilter'
 
 export default {
   name: 'AddActivity',
@@ -175,6 +190,7 @@ export default {
 
     // Validasyon bilgileri
     const schema = object({
+      isTeamSelected: boolean().notRequired(),
       plan_id: string().typeError(() => PLAN_ERROR_MESSAGE)
         .required(() => PLAN_ERROR_MESSAGE),
       theme_id: string().typeError(() => THEME_ERROR_MESSAGE)
@@ -188,6 +204,15 @@ export default {
         .min(yupRef('planned_start_date'), () => 'Planlanan bitiş tarihi planlanan başlangıç tarihinden sonra olmalıdır'),
       partners: array().notRequired(),
       description: string().notRequired(),
+      teachers: array().when('isTeamSelected', {
+        is: false,
+        then: (schema) => schema.required(() => 'Öğretmen seçimi yapılmaldır!')
+          .min(1, () => 'En az 1 öğretmen seçilmelidir')
+      }),
+      team_id: number().when('isTeamSelected', {
+        is: true,
+        then: (schema) => schema.required(() => 'Takım seçimi yapılmaldır!')
+      }),
       // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
       ...useRuleInstitution(),
       // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
@@ -205,10 +230,14 @@ export default {
     const { value: selectedDistrict } = useField('district_id')
     const { value: selectedPartners } = useField('partners')
     const { value: description } = useField('description')
+    const { value: isTeamSelected } = useField('isTeamSelected')
+    const { value: selectedTeachers } = useField('teachers')
+    const { value: selectedTeam } = useField('team_id')
+    isTeamSelected.value = false
 
     const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
-    const isTeamSelected = ref(false)
-
+    const { teachers } = useTeacherFilter(selectedDistrict, selectedInstitution, selectedTeachers)
+    const { teams } = useTeamFilter(selectedDistrict, selectedInstitution, selectedTeachers)
     const save = handleSubmit(async values => {
       console.log(values)
     })
@@ -223,8 +252,12 @@ export default {
       plannedStartDate,
       plannedEndDate,
       isTeamSelected,
+      selectedTeachers,
+      selectedTeam,
       institutions,
       description,
+      teachers,
+      teams,
       errors,
       save
     }

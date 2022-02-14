@@ -2519,6 +2519,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vueuse/core@npm:^7.6.2":
+  version: 7.6.2
+  resolution: "@vueuse/core@npm:7.6.2"
+  dependencies:
+    "@vueuse/shared": 7.6.2
+    vue-demi: "*"
+  peerDependencies:
+    "@vue/composition-api": ^1.1.0
+    vue: ^2.6.0 || ^3.2.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+    vue:
+      optional: true
+  checksum: 60ed01a9bcfdd949149fe0048cab9a00df445712334e9f7923094f9569b59b5ff97f15f827e32cf2143a85d930369067970a8993e7043787151e0e4a767fbf80
+  languageName: node
+  linkType: hard
+
+"@vueuse/shared@npm:7.6.2":
+  version: 7.6.2
+  resolution: "@vueuse/shared@npm:7.6.2"
+  dependencies:
+    vue-demi: "*"
+  peerDependencies:
+    "@vue/composition-api": ^1.1.0
+    vue: ^2.6.0 || ^3.2.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+    vue:
+      optional: true
+  checksum: 824043ef06f71090220f2a053430c124e283a0cfa381e2f780b4b27390353d503d6f9d8bc68323136922b9585eabd1c9b9588c3c921b64e5042a0ba4b0587cd1
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.11.1":
   version: 1.11.1
   resolution: "@webassemblyjs/ast@npm:1.11.1"
@@ -9794,6 +9829,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.2.31
     "@vueform/multiselect": ^2.3.2
     "@vueform/toggle": ^2.0.1
+    "@vueuse/core": ^7.6.2
     admin-lte: ^3.2.0
     animate.css: ^4.1.1
     axios: ^0.26.0
@@ -11183,6 +11219,22 @@ __metadata:
   version: 1.1.2
   resolution: "vm-browserify@npm:1.1.2"
   checksum: 10a1c50aab54ff8b4c9042c15fc64aefccce8d2fb90c0640403242db0ee7fb269f9b102bdb69cfb435d7ef3180d61fd4fb004a043a12709abaf9056cfd7e039d
+  languageName: node
+  linkType: hard
+
+"vue-demi@npm:*":
+  version: 0.12.1
+  resolution: "vue-demi@npm:0.12.1"
+  peerDependencies:
+    "@vue/composition-api": ^1.0.0-rc.1
+    vue: ^3.0.0-0 || ^2.6.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+  bin:
+    vue-demi-fix: bin/vue-demi-fix.js
+    vue-demi-switch: bin/vue-demi-switch.js
+  checksum: d39a43e765e5bc34cf5b378ccff53a521e824f8c55aae6a9163c294364e8af593c5331b3b3b1b679b28096a3142abed5aed07e2dfb581c96f2eba88a176666f2
   languageName: node
   linkType: hard
 

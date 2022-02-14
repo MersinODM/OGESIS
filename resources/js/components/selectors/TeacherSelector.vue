@@ -5,7 +5,7 @@
       v-model="selectedTeachers"
       :options="teacherList"
       label="full_name"
-      name="teachers"
+      :name="name"
       mode="tags"
       :searchable="true"
       :create-option="false"

@@ -1,4 +1,5 @@
 import http from '../utils/http'
+import districts from "../store/modules/districts";
 
 export default function () {
   const createTeam = async (data) => {
@@ -22,9 +23,9 @@ export default function () {
     } catch (e) {}
   }
 
-  const getTeams = async () => {
+  const getTeams = async (districtId, institutionId) => {
     try {
-      const response = await http.get('api/v1/teams')
+      const response = await http.get(`api/v1/districts/${districtId}/institutions/${institutionId}/teams`)
       return response.data
     } catch (e) {}
   }

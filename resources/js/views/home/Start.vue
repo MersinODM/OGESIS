@@ -37,7 +37,7 @@ export default {
     const store = useStore()
     const { MODAL, SHOW } = useModalActionTypes()
     const openModal = () => {
-      store.dispatch(MODAL.withSuffix(SHOW), { title: 'deneme', component: 'AddActivity' })
+      store.dispatch(MODAL.withSuffix(SHOW), { title: 'Yeni Etkinlik', component: 'AddActivity' })
     }
 
     const openModal2 = () => {

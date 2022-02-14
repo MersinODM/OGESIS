@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::post('themes', [ThemeController::class, 'create']);
     Route::put('themes/{id}', [ThemeController::class, 'update']);
     Route::get('themes', [ThemeController::class, 'getThemes']);
+    Route::get('districts/{district_id}/institutions/{institution_id}/teams', [TeamController::class, 'get']);
 
     // Aktivite endpoint tanımlamaları
     Route::post('activities', [ActivityController::class, 'create']);
