@@ -187,6 +187,7 @@ export default {
     const TITLE_ERROR_MESSAGE = 'Etkinlik başlığı girilmelidir!'
     const PLANNED_START_DATE_ERROR_MESSAGE = 'Planlanan başlangıç tarihi seçilmelidir!'
     const PLANNED_END_DATE_ERROR_MESSAGE = 'Planlanan bitiş tarihi seçilmelidir!'
+    const TEAM_ERROR_MESSAGE = 'Takım seçimi yapılmaldır!'
 
     // Validasyon bilgileri
     const schema = object({
@@ -211,7 +212,7 @@ export default {
       }),
       team_id: number().when('isTeamSelected', {
         is: true,
-        then: (schema) => schema.required(() => 'Takım seçimi yapılmaldır!')
+        then: (schema) => schema.typeError(() => TEAM_ERROR_MESSAGE).required(() => TEAM_ERROR_MESSAGE)
       }),
       // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
       ...useRuleInstitution(),

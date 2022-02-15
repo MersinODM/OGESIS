@@ -113,7 +113,10 @@ class TeamController extends ApiController
         if ($user && $user->cannot('team.list.*')) {
             return $this->unauthorized();
         }
-        $query = Team::with(['teachers:id,name'])
+        $query = Team::with(['teachers' => static function($query) {
+            $query->join('ogs_branches as b', 'b.id', '=', 'branch_id')
+                ->select('ogs_teachers.id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) as full_name'), 'b.name as branch');
+        }])
             ->select('id', 'institution_id', 'name');
         if ($user->can(Permissions::TEAM_LIST_LEVEL_3)) {
             $query->where('institution_id', $institution_id)

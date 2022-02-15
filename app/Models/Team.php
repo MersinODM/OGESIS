@@ -20,6 +20,11 @@ class Team extends Model
         return $this->belongsToMany(Teacher::class, 'ogs_team_teachers', "team_id", "teacher_id");
     }
 
+//    public function teachersWithBranches(): BelongsToMany {
+//        return $this->belongsToMany(Teacher::class, 'ogs_team_teachers', "team_id", "teacher_id")
+//            ->with(["branches:id,name"]);
+//    }
+
     public function institution(): BelongsTo
     {
         return $this->belongsTo(Institution::class, 'institution_id');
