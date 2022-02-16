@@ -87,9 +87,11 @@
 import Messenger from '../../utils/messenger'
 import { useStore } from 'vuex'
 import { useAuthActionTypes } from '../../utils/constants'
+import PlanSelector from '../../components/selectors/PlanSelector'
 
 export default {
   name: 'NHeader',
+  components: { PlanSelector },
   emits: ['toggleMenuSideBar'],
   setup () {
     const store = useStore()

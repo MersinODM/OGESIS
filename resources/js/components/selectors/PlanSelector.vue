@@ -2,7 +2,7 @@
   <div
     class="form-group"
   >
-    <label>Gelişim Planı Seçimi</label>
+    <label v-if="isShowLabel">Gelişim Planı Seçimi</label>
     <multiselect
       v-model="selectedPLan"
       :name="name"
@@ -58,6 +58,10 @@ export default {
     name: {
       type: String,
       default: ''
+    },
+    isShowLabel: {
+      type: Boolean,
+      default: true
     }
   },
   setup (props, { emit }) {
@@ -75,6 +79,7 @@ export default {
     }
 
     return {
+      showLabel: useModelWrapper(props, emit, 'isShowLabel'),
       selectedPLan: useModelWrapper(props, emit),
       planList: useModelWrapper(props, emit, 'plans'),
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor

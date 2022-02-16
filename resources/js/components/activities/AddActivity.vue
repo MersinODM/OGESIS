@@ -164,11 +164,11 @@ import { useField, useForm } from 'vee-validate'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 import { useTeacherFilter } from '../../compositions/useTeacherFilter'
 import { useTeamFilter } from '../../compositions/useTeamFilter'
-import Messenger from "../../utils/messenger";
-import {ResponseCodes} from "../../utils/constants";
-import router from "../../router";
-import useNotifier from "../../utils/useNotifier";
-import useActivityApi from "../../services/useActivityApi";
+import Messenger from '../../utils/messenger'
+import { ResponseCodes } from '../../utils/constants'
+import router from '../../router'
+import useNotifier from '../../utils/useNotifier'
+import useActivityApi from '../../services/useActivityApi'
 
 export default {
   name: 'AddActivity',
@@ -253,7 +253,7 @@ export default {
         const response = await createActivity(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Etkinlik/Aktivite başarıyla oluşturuldu.', duration: 3200 })
-          await router.push({ name: 'plans' })
+          await router.push({ name: 'plans', params: { planId: values.plan_id } })
         } else {
           await notifier.error({ message: 'Etkinlik/Aktivite kaydı oluşturalamadı!.', duration: 3200 })
         }

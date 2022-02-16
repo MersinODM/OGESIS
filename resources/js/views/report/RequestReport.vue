@@ -89,7 +89,6 @@ import TextArea from '../../components/TextArea'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import useReportApi from '../../services/useReportApi'
 import PlanSelector from '../../components/selectors/PlanSelector'
-import usePlanApi from '../../services/usePlanApi'
 
 export default {
   name: 'RequestReport',
@@ -98,7 +97,6 @@ export default {
     const notifier = useNotifier()
     const { getInstitution } = useInstitutionApi()
     const { createReportRequest } = useReportApi()
-    const { getLatestPlans } = usePlanApi()
 
     const schema = object({
       description: string().typeError(() => 'Kısa açıklama giderilmelidir!')
