@@ -133,14 +133,14 @@ export default {
     })
 
     const save = handleSubmit(async values => {
-      const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
+      const result = await Messenger.showPrompt('Rapor talebi oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
         const response = await createReportRequest(values)
         if (response?.code === ResponseCodes.SUCCESS) {
-          await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })
-          await router.replace({ name: 'listReports' })
+          await notifier.success({ message: 'Rapor talebi başarıyla oluşturuldu.', duration: 3200 })
+          await router.push({ name: 'listReports' })
         } else {
-          await notifier.error({ message: 'Takım kaydı oluşturalamadı!.', duration: 3200 })
+          await notifier.error({ message: 'Rapor talebi kaydı oluşturalamadı!.', duration: 3200 })
         }
       }
     })
