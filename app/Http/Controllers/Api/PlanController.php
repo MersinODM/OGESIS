@@ -8,6 +8,7 @@ use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\DevPlan;
 use App\Models\Institution;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +46,12 @@ class PlanController extends ApiController
         }
     }
 
-    public function getLastPlans($count) {
+    /**
+     * @param int $count
+     * @return JsonResponse
+     */
+    public function getLastPlans(int $count = 5): JsonResponse
+    {
         $plans = DevPlan::select('id', 'name')
             ->where('is_open', true)
             ->take($count)
