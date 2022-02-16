@@ -5,8 +5,13 @@
       v-model="selectedDate"
       mode="date"
       :name="name"
+      :update-on-input="false"
       locale="tr"
       input-format="dd.MM.yyyy"
+      :model-config="{
+        type: 'string',
+        mask: ['YYYY-MM-DD HH:mm'],
+      }"
       style="background-color: white"
     >
       <template #default="{ inputValue, inputEvents }">
