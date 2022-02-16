@@ -13,7 +13,7 @@ class Activity extends Model
 
     protected $fillable = [
         'institution_id',"plan_id", "type_id", "theme_id",
-        "title", "description", "status", "creator_id",
+        'team_id', "title", "description", "status", "creator_id",
         "start_date", "end_date",
         'planned_start_date', 'planned_end_date'
     ];

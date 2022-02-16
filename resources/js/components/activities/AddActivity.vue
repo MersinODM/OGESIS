@@ -164,6 +164,11 @@ import { useField, useForm } from 'vee-validate'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 import { useTeacherFilter } from '../../compositions/useTeacherFilter'
 import { useTeamFilter } from '../../compositions/useTeamFilter'
+import Messenger from "../../utils/messenger";
+import {ResponseCodes} from "../../utils/constants";
+import router from "../../router";
+import useNotifier from "../../utils/useNotifier";
+import useActivityApi from "../../services/useActivityApi";
 
 export default {
   name: 'AddActivity',
@@ -188,10 +193,12 @@ export default {
     const PLANNED_START_DATE_ERROR_MESSAGE = 'Planlanan başlangıç tarihi seçilmelidir!'
     const PLANNED_END_DATE_ERROR_MESSAGE = 'Planlanan bitiş tarihi seçilmelidir!'
     const TEAM_ERROR_MESSAGE = 'Takım seçimi yapılmaldır!'
+    const notifier = useNotifier()
+    const { createActivity } = useActivityApi()
 
     // Validasyon bilgileri
     const schema = object({
-      isTeamSelected: boolean().notRequired(),
+      isTeamSelected: boolean(),
       plan_id: string().typeError(() => PLAN_ERROR_MESSAGE)
         .required(() => PLAN_ERROR_MESSAGE),
       theme_id: string().typeError(() => THEME_ERROR_MESSAGE)
@@ -204,7 +211,8 @@ export default {
         .required(() => PLANNED_END_DATE_ERROR_MESSAGE)
         .min(yupRef('planned_start_date'), () => 'Planlanan bitiş tarihi planlanan başlangıç tarihinden sonra olmalıdır'),
       partners: array().notRequired(),
-      description: string().notRequired(),
+      description: string().required(() => 'Anlaşılabilir bir açıklama gereklidir!')
+        .max(5000, () => 'Açıklama azami 5000 karakter olabilir'),
       teachers: array().when('isTeamSelected', {
         is: false,
         then: (schema) => schema.required(() => 'Öğretmen seçimi yapılmaldır!')
@@ -216,7 +224,7 @@ export default {
       }),
       // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
       ...useRuleInstitution(),
-      // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
+      // Eğer il yetkisi vars    const notifier = useNotifier()a ilçe kurum doğrulması yapacağız
       ...useRuleDistrict()
     })
 
@@ -240,7 +248,16 @@ export default {
     const { teachers } = useTeacherFilter(selectedDistrict, selectedInstitution, selectedTeachers)
     const { teams } = useTeamFilter(selectedDistrict, selectedInstitution, selectedTeachers)
     const save = handleSubmit(async values => {
-      console.log(values)
+      const result = await Messenger.showPrompt('Etkinlik/Aktivite oluşturulacaktır. Onaylıyor musunuz?')
+      if (result.isConfirmed) {
+        const response = await createActivity(values)
+        if (response?.code === ResponseCodes.SUCCESS) {
+          await notifier.success({ message: 'Etkinlik/Aktivite başarıyla oluşturuldu.', duration: 3200 })
+          await router.push({ name: 'plans' })
+        } else {
+          await notifier.error({ message: 'Etkinlik/Aktivite kaydı oluşturalamadı!.', duration: 3200 })
+        }
+      }
     })
 
     return {

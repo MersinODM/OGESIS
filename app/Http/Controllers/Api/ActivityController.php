@@ -20,10 +20,11 @@ class ActivityController  extends ApiController
             'institution_id' => Rule::requiredIf($request->user()->can([Permissions::ACTIVITY_CREATE_LEVEL_3, Permissions::ACTIVITY_CREATE_LEVEL_2])),
             'theme_id' => 'required',
             'title' => 'required',
-            'planned_start_date' => 'required',
-            'planned_end_date' => 'required',
+            'planned_start_date' => 'required|date',
+            'planned_end_date' => 'required|date|after:planned_start_date',
             'description' => 'required|max:5000',
-            'partners' => 'required|min:1'
+            'team_id' => 'required_if:isTeamSelected,true',
+            'teachers' =>'required_if:isTeamSelected,false',
         ]);
 
         if ($validationResult) {
@@ -38,6 +39,9 @@ class ActivityController  extends ApiController
                 $activity->institution_id = $request->user()->institution_id;
             }
             $activity->save();
+            if (!$request->input('isTeamSelected')) {
+                $activity->teachers()->attach($request->input('teachers'));
+            }
             $activity->partners()->attach($request->input('partners'));
             DB::commit();
             return response()->json([
