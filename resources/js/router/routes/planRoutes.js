@@ -1,6 +1,6 @@
 import CreatePlan from '../../views/plan/CreatePlan'
 import PlanList from '../../views/plan/PlanList'
-import ShowPlan from '../../views/plan/ShowPlan'
+import ActivityList from '../../views/activity/ActivityList'
 
 const planRoutes = [
   {
@@ -9,9 +9,9 @@ const planRoutes = [
     component: CreatePlan
   },
   {
-    path: 'plans/:planId',
-    name: 'newPlan',
-    component: ShowPlan
+    path: 'plans/:planId/activities',
+    name: 'activityList',
+    component: ActivityList
   },
   {
     path: 'plans/table',

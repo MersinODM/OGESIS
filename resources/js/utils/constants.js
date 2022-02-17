@@ -117,9 +117,47 @@ export const useModalActionTypes = () => {
   }
 }
 
+export const usePlanConstants = () => {
+  return {
+    PLAN: 'plan/',
+    INIT: 'init',
+    SET_SELECTED: 'setSelected',
+    SET_PLAN_LIST: 'setPlanList',
+    CLEAR_SELECTED: 'clearSelected'
+  }
+}
+
+export const usePlanActionTypes = () => {
+  return {
+    PLAN: 'plan/',
+    SET: 'set',
+    CLEAR: 'clear'
+  }
+}
+
 // TODO Object.freeze() implemantasyonu yapılabilir
 export const usePermissionConstants = () => {
   return {
+    ALL: '*',
+    // Seviye yetkileri
+    LEVEL_3: 'level3',
+    LEVEL_2: 'level2',
+    LEVEL_1: 'level1',
+    // Aksiyon yetkileri
+    CREATE: 'create',
+    DELETE: 'delete',
+    UPDATE: 'update',
+    LIST: 'list',
+    SHOW: 'show',
+    UPLOAD: 'upload',
+    // Subje yetkileri
+    TEACHER: 'teacher',
+    TEAM: 'team',
+    INSTITUTION: 'institution',
+    PLAN: 'plan',
+    ACTIVITY: 'activity',
+    REPORT: 'report',
+    PERSONAL: 'personal',
     // Öğretmen işlemleri ile ilgili yetkiler
     TEACHER_CREATE_LEVEL_3: 'teacher.create.level3',
     TEACHER_CREATE_LEVEL_2: 'teacher.create.level2',

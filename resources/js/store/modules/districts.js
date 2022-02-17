@@ -1,5 +1,7 @@
-import { useDistrictConstants } from '../../utils/constants'
+import { useDistrictConstants, usePermissionConstants } from '../../utils/constants'
 import useDistrictApi from '../../services/useDistrictApi'
+import { useAbility } from '@casl/vue'
+import useInstitutionApi from '../../services/useInstitutionApi'
 
 const {
   M_DISTRICTS,
@@ -9,30 +11,48 @@ const {
 } = useDistrictConstants()
 
 const { getDistricts } = useDistrictApi()
+const { can, cannot } = useAbility()
+const { getInstitution } = useInstitutionApi()
+const { LEVEL_3 } = usePermissionConstants()
 
 export default {
   namespaced: true,
   state: () => ({
-    currentDistrict: null,
-    districts: []
+    districts: [],
+    selectedDistrict: null
   }),
   getters: {
-    currentDistrict: (state) => state.currentDistrict,
-    districts: (state) => state.districts
+    districts: (state) => state.districts,
+    selectedDistrict: (state) => state.selectedDistrict
   },
   mutations: {
-    [M_DISTRICTS] (state, districts) { state.districts = districts },
-    [M_CURRENT_DISTRICT] (state, district) { state.currentDistrict = district }
+    [DISTRICTS] (state, districts) { state.district = districts },
+    [SELECTED_DISTRICT] (state, selectedDistrict) { state.selectedDistrict = selectedDistrict },
+    [SET_CRUD] (state, setCrud) {
+      if (setCrud) {
+        state.districts.splice(0, 1)
+      } else {
+        state.districts.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
+      }
+    }
   },
   actions: {
-    [A_SET_CURRENT_DISTRICT] ({ commit }, district) {
-      commit(M_CURRENT_DISTRICT, district)
+    async [INIT] ({ commit }) {
+      // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
+      // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
+      if (can(LEVEL_3)) {
+        const data = await getDistricts()
+        commit(DISTRICTS, data)
+      }
     },
-    async [A_SET_DISTRICTS] ({ commit }) {
-      try {
-        const districts = await getDistricts()
-        commit(M_DISTRICTS, districts)
-      } catch (e) {}
+    [CRUD_MODE] ({ commit }, setCrud) {
+      commit(SET_CRUD, setCrud)
+    },
+    [SET_DISTRICTS] ({ commit }, districts) {
+      commit(DISTRICTS, districts)
+    },
+    [SET_SELECTED_DISTRICT] ({ commit, dispatch }, selectedDistrict) {
+      commit(SET_SELECTED_DISTRICT, selectedDistrict)
     }
   }
 }

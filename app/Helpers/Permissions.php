@@ -4,7 +4,28 @@ namespace App\Helpers;
 
 class Permissions
 {
+    public const ALL = '*';
+    public const LEVEL_3 = 'level.3';
+    public const LEVEL_2 = 'level.2';
+    public const LEVEL_1 = 'level.1';
+
+    public const CREATE = 'create';
+    public const DELETE = 'delete';
+    public const UPDATE = 'update';
+    public const LIST = 'list';
+    public const SHOW = 'show';
+    public const UPLOAD = 'upload';
     //Öğretmen işlemleri ile ilgili yetkiler
+
+    public const TEACHER = 'teacher';
+    public const TEAM = 'team';
+    public const INSTITUTION = 'institution';
+    public const PLAN = 'plan';
+    public const ACTIVITY = 'activity';
+    public const REPORT = 'report';
+    public const PERSONAL = 'personal';
+
+
     public const TEACHER_CREATE_LEVEL_3 = 'teacher.create.level3';
     public const TEACHER_CREATE_LEVEL_2 = 'teacher.create.level2';
     public const TEACHER_CREATE_LEVEL_1 = 'teacher.create.level1';
@@ -76,7 +97,32 @@ class Permissions
     public static function getPermissions(): array
     {
         return [
+
+
             //name                          // slug
+            //Burada hiyerarşi yetkileri tanımlandı
+            self::ALL => 'Tüm izinler',
+            self::LEVEL_3 => 'İl Müdürlüğü Seviyesinde Yetki',
+            self::LEVEL_2 => 'İlçe Müdürlüğü Seviyesinde Yetki',
+            self::LEVEL_1 => 'Okul Müdürlüğü Seviyesinde Yetki',
+
+            //Burada aksiyon yetkileri
+            self::CREATE => 'Oluşturma Yetkisi',
+            self::UPDATE => 'Güncelleme Yetkisi',
+            self::DELETE => 'Silme Yetkisi',
+            self::LIST => 'Listeleme Yetkisi',
+            self::SHOW => 'Gösterme Yetkisi',
+            self::UPLOAD => 'Yükleme Yetkisi',
+
+            //Burada subje yetkileri
+            self::TEACHER => 'Öğretmen İşlemleri Yetkisi',
+            self::TEAM => 'Takım İşlemleri Yetkisi',
+            self::INSTITUTION => 'Kurum İşlemleri Yetkisi',
+            self::PLAN => 'Gelişim Planı İşlemleri Yetkisi',
+            self::ACTIVITY => 'Etkinlik İşlemleri Yetkisi',
+            self::REPORT => 'Rapor İşlemleri Yetkisi',
+            self::PERSONAL => 'Kişisel İşlemler Yetkisi',
+
             // Öğetmen yetkileri
             self::TEACHER_CREATE_LEVEL_3 => 'Öğretmen Oluşturma(İl Yetkisi)',
             self::TEACHER_CREATE_LEVEL_2 => 'Öğretmen Oluşturma(İlçe Yetkisi)',
