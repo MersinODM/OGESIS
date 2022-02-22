@@ -1,6 +1,6 @@
 import { createStore, createLogger } from 'vuex'
-import district from './modules/districts'
-import institution from './modules/institutions'
+// import district from './modules/districts'
+// import institution from './modules/institutions'
 import branch from './modules/branches'
 import ui from './modules/ui'
 import auth from './modules/auth'
@@ -13,8 +13,8 @@ export default createStore({
   modules: {
     auth,
     ui,
-    district,
-    institution,
+    // district,
+    // institution,
     branch,
     modal
   },

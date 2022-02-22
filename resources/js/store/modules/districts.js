@@ -4,14 +4,16 @@ import { useAbility } from '@casl/vue'
 import useInstitutionApi from '../../services/useInstitutionApi'
 
 const {
-  M_DISTRICTS,
-  M_CURRENT_DISTRICT,
-  A_SET_CURRENT_DISTRICT,
-  A_SET_DISTRICTS
+  INIT,
+  SET_DISTRICTS,
+  SELECT_DISTRICT,
+  SET_SELECTED_DISTRICT,
+  SET_CRUD,
+  DISTRICTS
 } = useDistrictConstants()
 
 const { getDistricts } = useDistrictApi()
-const { can, cannot } = useAbility()
+const { can } = useAbility()
 const { getInstitution } = useInstitutionApi()
 const { LEVEL_3 } = usePermissionConstants()
 
@@ -26,11 +28,11 @@ export default {
     selectedDistrict: (state) => state.selectedDistrict
   },
   mutations: {
-    [DISTRICTS] (state, districts) { state.district = districts },
-    [SELECTED_DISTRICT] (state, selectedDistrict) { state.selectedDistrict = selectedDistrict },
+    [SET_DISTRICTS] (state, districts) { state.district = districts },
+    [SELECT_DISTRICT] (state, selectedDistrict) { state.selectedDistrict = selectedDistrict },
     [SET_CRUD] (state, setCrud) {
       if (setCrud) {
-        state.districts.splice(0, 1)
+        state.districts.splice(state.districts.findIndex((d) => d.id === -1), 1)
       } else {
         state.districts.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
       }
@@ -44,9 +46,6 @@ export default {
         const data = await getDistricts()
         commit(DISTRICTS, data)
       }
-    },
-    [CRUD_MODE] ({ commit }, setCrud) {
-      commit(SET_CRUD, setCrud)
     },
     [SET_DISTRICTS] ({ commit }, districts) {
       commit(DISTRICTS, districts)

@@ -2,7 +2,7 @@ import { calculateScreenSize } from '../../utils/calculateScreenSize'
 
 import { useUIMutationConstants } from '../../utils/constants'
 
-const { IS_SIDE_BAR_MENU_COLLAPSED, DARK_MODE, SCREEN_SIZE } = useUIMutationConstants()
+const { IS_SIDE_BAR_MENU_COLLAPSED, DARK_MODE, SCREEN_SIZE, SET_CRUD } = useUIMutationConstants()
 
 export default {
   namespaced: true,

@@ -1,40 +1,55 @@
 
-import { useInstitutionConstants } from '../../utils/constants'
+import { useInstitutionConstants, usePermissionConstants } from '../../utils/constants'
 import useInstitutionApi from '../../services/useInstitutionApi'
+import { useAbility } from '@casl/vue'
 
 const {
-  A_SEARCH_INSTITUTIONS,
-  A_SET_CURRENT_INSTITUTION,
-  M_CURRENT_INSTITUTION,
-  M_INSTITUTIONS
+  INSTITUTIONS,
+  SELECTED_INSTITUTION,
+  SET_SELECTED_INSTITUTION,
+  SET_INSTITUTIONS,
+  INIT
 } = useInstitutionConstants()
 
-const { searchInstitution } = useInstitutionApi()
+const { LEVEL_2, LEVEL_3 } = usePermissionConstants()
+const { can, cannot } = useAbility()
+const { getInstitution } = useInstitutionApi()
 
 export default {
   namespaced: true,
   state: () => ({
-    currentInstitution: null,
+    selectedInstitution: null,
     institutions: []
   }),
   getters: {
-    currentInstitution: (state) => state.currentInstitution,
+    selectedInstitution: (state) => state.selectedInstitution,
     institutions: (state) => state.institutions
   },
   mutations: {
-    [M_INSTITUTIONS] (state, institutions) { state.institutions = institutions },
-    [M_CURRENT_INSTITUTION] (state, district) { state.currentInstitution = district }
+    [INSTITUTIONS] (state, institutions) { state.institutions = institutions },
+    [SELECTED_INSTITUTION] (state, institution) { state.selectedInstitution = institution },
+    [SET_CRUD] (state, setCrud) {
+      if (setCrud) {
+        state.institutions.splice(state.institutions.findIndex((d) => d.id === -1), 1)
+      } else {
+        state.institutions.insert(0, { id: -1, district_id: -1, name: 'Hepsi' })
+      }
+    }
   },
   actions: {
-    [A_SET_CURRENT_INSTITUTION] ({ commit }, district) {
-      commit(M_CURRENT_INSTITUTION, district)
+    async [INIT] ({ commit, rootGetters }) {
+      // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
+      // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
+      if (can(LEVEL_2) && cannot(LEVEL_3)) {
+        const data = await getInstitution(rootGetters['auth/user']?.institution.district_id)
+        commit(INSTITUTIONS, data)
+      }
     },
-    async [A_SEARCH_INSTITUTIONS] ({ commit }, param) {
-      try {
-        if (!param?.content) return
-        const institutions = await searchInstitution(param)
-        commit(M_INSTITUTIONS, institutions)
-      } catch (e) {}
+    [SET_INSTITUTIONS] ({ commit }, institutions) {
+      commit(INSTITUTIONS, institutions)
+    },
+    [SET_SELECTED_INSTITUTION] ({ commit }, institution) {
+      commit(SELECTED_INSTITUTION, institution)
     }
   }
 }

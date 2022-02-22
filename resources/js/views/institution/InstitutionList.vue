@@ -13,15 +13,10 @@
             <div class="card-body">
               <div class="row justify-content-md-center">
                 <div class="col-md-3 mt-1">
-                  <div class="form-group">
-                    <label>İlçe Tercihi</label>
-                    <multiselect
-                      v-model="selectedDistrict"
-                      :options="districts"
-                      label="name"
-                      value-prop="id"
-                    />
-                  </div>
+                  <district-selector
+                    v-model="selectedDistrict"
+                    :validation-required="false"
+                  />
                 </div>
               </div>
               <div class="row">
@@ -60,23 +55,19 @@
 <script>
 
 import Page from '../../components/Page'
-import Multiselect from '@vueform/multiselect'
 import { useRouter } from 'vue-router'
-import { useDistrictFilter } from '../../compositions/useDistrictFilter'
-import useDistrictStore from '../../store/useDistrictStore'
-import { onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch, ref } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
+import DistrictSelector from '../../components/selectors/DistrictSelector'
 
 let table = null
 
 export default {
   name: 'InstitutionList',
-  components: { Page, Multiselect },
+  components: { Page, DistrictSelector },
   setup () {
     const router = useRouter()
-    const districtStore = useDistrictStore()
-    districtStore.actions.setDistricts()
-    const { selectedDistrict, districts } = useDistrictFilter()
+    const selectedDistrict = ref()
 
     watch(selectedDistrict, () => {
       table?.ajax.reload(null, false)
@@ -180,8 +171,7 @@ export default {
     })
 
     return {
-      selectedDistrict,
-      districts
+      selectedDistrict
     }
   }
 }

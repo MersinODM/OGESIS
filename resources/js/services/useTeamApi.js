@@ -1,5 +1,4 @@
 import http from '../utils/http'
-import districts from "../store/modules/districts";
 
 export default function () {
   const createTeam = async (data) => {

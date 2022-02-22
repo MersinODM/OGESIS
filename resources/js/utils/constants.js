@@ -47,28 +47,30 @@ export const useUIMutationConstants = () => {
   return {
     DARK_MODE: 'darkMode',
     IS_SIDE_BAR_MENU_COLLAPSED: 'isSidebarMenuCollapsed',
-    SCREEN_SIZE: 'screenSize'
+    SCREEN_SIZE: 'screenSize',
+    SET_CRUD: 'setCrud'
   }
 }
 
 export const useDistrictConstants = () => {
   return {
-    DISTRICT_PREFIX: 'district/',
-    M_CURRENT_DISTRICT: 'currentDistrict',
-    M_DISTRICTS: 'allDistricts',
-    A_SET_CURRENT_DISTRICT: 'setCurrentDistrict',
-    A_SET_DISTRICTS: 'setDistricts'
+    INIT: 'init',
+    DISTRICT: 'district/',
+    DISTRICTS: 'districts',
+    SELECT_DISTRICT: 'selectDistrict',
+    SET_SELECTED_DISTRICT: 'setSelectedDistrict',
+    SET_DISTRICTS: 'setDistricts'
   }
 }
 
 export const useInstitutionConstants = () => {
   return {
-    INSTITUTION_PREFIX: 'institution/',
-    M_CURRENT_INSTITUTION: 'currentInstitution',
-    M_INSTITUTIONS: 'allInstitutions',
-    A_SET_CURRENT_INSTITUTION: 'setCurrentInstitution',
-    A_SET_INSTITUTIONS: 'setInstitutions',
-    A_SEARCH_INSTITUTIONS: 'searchInstitutions'
+    INIT: 'init',
+    INSTITUTION: 'institution/',
+    INSTITUTIONS: 'institutions',
+    SELECTED_INSTITUTION: 'selectedInstitution',
+    SET_INSTITUTIONS: 'setInstitutions',
+    SET_SELECTED_INSTITUTION: 'setSelectedInstitution',
   }
 }
 
