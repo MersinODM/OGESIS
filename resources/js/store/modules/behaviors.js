@@ -13,8 +13,9 @@ const {
 export default {
   namespaced: true,
   actions: {
-    async [INIT] ({ commit }) {
-
+    [INIT] ({ dispatch }) {
+      dispatch(DISTRICT.withSuffix(INIT), { root: true })
+      dispatch(INSTITUTION.withSuffix(INIT), { root: true })
     },
     [SET_CRUD] ({ dispatch }, setCrud) {
       dispatch(DISTRICT.withSuffix(SET_CRUD), setCrud, { root: true })
