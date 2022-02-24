@@ -1,14 +1,14 @@
 
-import { useInstitutionConstants, usePermissionConstants } from '../../utils/constants'
+import { useBehaviorConstants, useInstitutionConstants, usePermissionConstants } from '../../utils/constants'
 import useInstitutionApi from '../../services/useInstitutionApi'
 import { useAbility } from '@casl/vue'
 
+const { INIT, SET_CRUD } = useBehaviorConstants()
 const {
   INSTITUTIONS,
   SELECTED_INSTITUTION,
   SET_SELECTED_INSTITUTION,
-  SET_INSTITUTIONS,
-  INIT
+  SET_INSTITUTIONS
 } = useInstitutionConstants()
 
 const { LEVEL_2, LEVEL_3 } = usePermissionConstants()

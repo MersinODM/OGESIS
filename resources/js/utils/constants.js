@@ -52,9 +52,15 @@ export const useUIMutationConstants = () => {
   }
 }
 
-export const useDistrictConstants = () => {
+export const useBehaviorConstants = () => {
   return {
     INIT: 'init',
+    SET_CRUD: 'setCrud'
+  }
+}
+
+export const useDistrictConstants = () => {
+  return {
     DISTRICT: 'district/',
     DISTRICTS: 'districts',
     SELECT_DISTRICT: 'selectDistrict',

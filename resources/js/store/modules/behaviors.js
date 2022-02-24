@@ -1,14 +1,8 @@
-import { useDistrictConstants, useInstitutionConstants } from '../../utils/constants'
+import { useBehaviorConstants, useDistrictConstants, useInstitutionConstants } from '../../utils/constants'
 
-const {
-  INIT,
-  SET_CRUD,
-  DISTRICT
-} = useDistrictConstants()
-
-const {
-  INSTITUTION
-} = useInstitutionConstants()
+const { INIT, SET_CRUD } = useBehaviorConstants()
+const { DISTRICT } = useDistrictConstants()
+const { INSTITUTION } = useInstitutionConstants()
 
 export default {
   namespaced: true,
