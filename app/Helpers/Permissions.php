@@ -18,14 +18,18 @@ class Permissions
     //Öğretmen işlemleri ile ilgili yetkiler
 
     public const TEACHER = 'teacher';
+    public const BRANCH = 'branch';
     public const TEAM = 'team';
     public const INSTITUTION = 'institution';
     public const PLAN = 'plan';
     public const ACTIVITY = 'activity';
     public const REPORT = 'report';
+    public const THEME = 'theme';
+    public const DISTRICT = 'district';
+    public const PARTNER = 'partner';
+
+
     public const PERSONAL = 'personal';
-
-
     public const TEACHER_CREATE_LEVEL_3 = 'teacher.create.level3';
     public const TEACHER_CREATE_LEVEL_2 = 'teacher.create.level2';
     public const TEACHER_CREATE_LEVEL_1 = 'teacher.create.level1';
@@ -94,6 +98,7 @@ class Permissions
     public const REPORT_LIST_LEVEL_1 = 'report.list.level1';
 
 
+
     public static function getPermissions(): array
     {
         return [
@@ -117,11 +122,15 @@ class Permissions
             //Burada subje yetkileri
             self::TEACHER => 'Öğretmen İşlemleri Yetkisi',
             self::TEAM => 'Takım İşlemleri Yetkisi',
+            self::THEME => 'Tema İşlemleri Yetkisi',
             self::INSTITUTION => 'Kurum İşlemleri Yetkisi',
             self::PLAN => 'Gelişim Planı İşlemleri Yetkisi',
             self::ACTIVITY => 'Etkinlik İşlemleri Yetkisi',
             self::REPORT => 'Rapor İşlemleri Yetkisi',
             self::PERSONAL => 'Kişisel İşlemler Yetkisi',
+            self::BRANCH => 'Alan/Branş İşlemleri Yetkisi',
+            self::DISTRICT => 'İlçe İşlemleri Yetkisi',
+            self::PARTNER => 'Partner/Paydaş İşlemleri Yetkisi',
 
             // Öğetmen yetkileri
             self::TEACHER_CREATE_LEVEL_3 => 'Öğretmen Oluşturma(İl Yetkisi)',

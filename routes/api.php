@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Permissions;
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BranchController;
@@ -34,58 +35,72 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
 
 
     // İlçeler api endpoint tanımları
-    Route::get('districts', [DistrictController::class, 'list']);
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::DISTRICT]], static function () {
+        Route::get('districts', [DistrictController::class, 'list'])->can(Permissions::LIST);
+    });
 
-    // Planlama api endpoint tanımları
-    Route::post('plans', [PlanController::class, 'createAll']);
-    Route::put('plans/{id}', [PlanController::class, 'update']);
-    Route::get('plans/latest/{count}', [PlanController::class, 'getLastPlans']);
+    // Planlama api endpoint ve yetki tanımları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::PLAN]], static function () {
+        Route::post('plans', [PlanController::class, 'createAll'])->can(Permissions::CREATE);
+        Route::put('plans/{id}', [PlanController::class, 'update'])->can(Permissions::UPDATE);
+        Route::get('plans/latest/{count}', [PlanController::class, 'getLastPlans'])->can(Permissions::LIST);
+    });
 
-    // Tema endpoint tanımlamaları
-    Route::post('institutions', [InstitutionController::class, 'create']);
-    Route::post('institutions/import', [InstitutionController::class, 'importFromExcel']);
-    Route::post('institutions/table', [InstitutionController::class, 'getTable']);
-    Route::put('institutions/{id}', [InstitutionController::class, 'update']);
-    Route::get('institutions/search_by', [InstitutionController::class, 'searchBy']);
-    Route::get('districts/{id}/institutions', [InstitutionController::class, 'get']);
+    // Kurum endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::INSTITUTION]], static function () {
+        Route::post('institutions', [InstitutionController::class, 'create'])->can(Permissions::CREATE);
+        Route::post('institutions/import', [InstitutionController::class, 'importFromExcel'])->can(Permissions::CREATE);
+        Route::post('institutions/table', [InstitutionController::class, 'getTable'])->can(Permissions::LIST);
+        Route::put('institutions/{id}', [InstitutionController::class, 'update'])->can(Permissions::UPDATE);
+        Route::get('institutions/search_by', [InstitutionController::class, 'searchBy'])->can(Permissions::LIST);
+        Route::get('districts/{id}/institutions', [InstitutionController::class, 'get'])->can(Permissions::LIST);
+    });
 
-    // Tema endpoint tanımlamaları
-    Route::post('themes', [ThemeController::class, 'create']);
-    Route::put('themes/{id}', [ThemeController::class, 'update']);
-    Route::get('themes', [ThemeController::class, 'getThemes']);
-    Route::get('districts/{district_id}/institutions/{institution_id}/teams', [TeamController::class, 'get']);
+    // Tema endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::THEME]], static function () {
+        Route::post('themes', [ThemeController::class, 'create'])->can(Permissions::CREATE);
+        Route::put('themes/{id}', [ThemeController::class, 'update'])->can(Permissions::UPDATE);
+        Route::get('themes', [ThemeController::class, 'getThemes'])->can(Permissions::LIST);
+        Route::get('districts/{district_id}/institutions/{institution_id}/teams', [TeamController::class, 'get'])->can(Permissions::LIST);
+    });
 
-    // Aktivite endpoint tanımlamaları
-    Route::post('activities', [ActivityController::class, 'create']);
-    Route::put('activities/{id}', [ActivityController::class, 'update']);
-    Route::get('activities', [ActivityController::class, 'list']);
+    // Aktivite endpoint ve yetki denetimleri
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::ACTIVITY]], static function () {
+        Route::post('activities', [ActivityController::class, 'create'])->can(Permissions::CREATE);
+        Route::put('activities/{id}', [ActivityController::class, 'update'])->can(Permissions::UPDATE);
+        Route::get('activities', [ActivityController::class, 'list'])->can(Permissions::LIST);
+    });
 
-    // Öğretmen endpoint tanımlamaları
-    Route::post('teachers', [TeacherController::class, 'create']);
-    Route::put('teachers/{id}', [TeacherController::class, 'update']);
-    Route::post('teachers/table', [TeacherController::class, 'getTable']);
-    Route::get('districts/{district_id}/institutions/{institution_id}/teachers', [TeacherController::class, 'get']);
+    // Öğretmen endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::TEACHER]], static function () {
+        Route::post('teachers', [TeacherController::class, 'create'])->can(Permissions::CREATE);
+        Route::put('teachers/{id}', [TeacherController::class, 'update'])->can(Permissions::UPDATE);
+        Route::post('teachers/table', [TeacherController::class, 'getTable'])->can(Permissions::LIST);
+        Route::get('districts/{district_id}/institutions/{institution_id}/teachers', [TeacherController::class, 'get'])->can(Permissions::LIST);
+    });
 
-    // Takım endpoint tanımlamaları
-    Route::post('teams', [TeamController::class, 'create']);
-    Route::put('teams/{id}', [TeamController::class, 'update']);
-    Route::post('teams/table', [TeamController::class, 'getTable']);
+    // Takım endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::TEAM]], static function () {
+        Route::post('teams', [TeamController::class, 'create'])->can(Permissions::CREATE);
+        Route::put('teams/{id}', [TeamController::class, 'update'])->can(Permissions::UPDATE);
+        Route::post('teams/table', [TeamController::class, 'getTable'])->can(Permissions::LIST);
+    });
 
-    //Branş endpoint tanımlamaları
-    Route::post('branches', [BranchController::class, 'create']);
-    Route::put('branches/{id}', [BranchController::class, 'update']);
-    Route::get('branches/search_by', [BranchController::class, 'searchBy']);
+    //Branş endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::BRANCH]], static function (){
+        Route::post('branches', [BranchController::class, 'create'])->can(Permissions::CREATE);
+        Route::put('branches/{id}', [BranchController::class, 'update'])->can(Permissions::UPDATE);
+        Route::get('branches/search_by', [BranchController::class, 'searchBy'])->can(Permissions::LIST);
+    });
 
-    //Partner endpoint tanınlamaları
-    Route::get('partners/search_by', [PartnerController::class, 'searchBy']);
+    //Partner endpoint ve yetki tanılamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::PARTNER]], static function () {
+        Route::get('partners/search_by', [PartnerController::class, 'searchBy'])->can(Permissions::LIST);
+    });
 
-    //Report endpoint tanımlamaları
-    Route::post('report-requests', [ReportRequestController::class, 'create']);
-    Route::post('report-requests/table', [ReportRequestController::class, 'getTable']);
-
-
+    //Report endpoint ve yetki tanımlamaları
+    Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::REPORT]], static function () {
+        Route::post('report-requests', [ReportRequestController::class, 'create'])->can(Permissions::CREATE);
+        Route::post('report-requests/table', [ReportRequestController::class, 'getTable'])->can(Permissions::LIST);
+    });
 });
-
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
