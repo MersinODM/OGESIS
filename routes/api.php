@@ -1,19 +1,17 @@
 <?php
 
 use App\Helpers\Permissions;
-use App\Http\Controllers\Api\ActivityController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BranchController;
-use App\Http\Controllers\Api\DistrictController;
-use App\Http\Controllers\Api\InstitutionController;
-use App\Http\Controllers\Api\PartnerController;
-use App\Http\Controllers\Api\PlanController;
-use App\Http\Controllers\Api\ReportRequestController;
-use App\Http\Controllers\Api\TeacherController;
-use App\Http\Controllers\Api\TeamController;
-use App\Http\Controllers\Api\ThemeController;
-use App\Models\Activity;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\{ActivityController,
+    AuthController,
+    BranchController,
+    DistrictController,
+    InstitutionController,
+    PartnerController,
+    PlanController,
+    ReportRequestController,
+    TeacherController,
+    TeamController,
+    ThemeController};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -102,5 +100,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::REPORT]], static function () {
         Route::post('report-requests', [ReportRequestController::class, 'create'])->can(Permissions::CREATE);
         Route::post('report-requests/table', [ReportRequestController::class, 'getTable'])->can(Permissions::LIST);
+        // TODO rapor yükleme tamamlanacak
+        Route::post('institutions/{institutionId}/reports/upload');
     });
 });
