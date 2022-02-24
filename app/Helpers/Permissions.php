@@ -1,9 +1,15 @@
 <?php
 
 namespace App\Helpers;
-
+/*
+ * Tüm yetkiler kombinasyonel olarak planlanmıştır buradaki kilit nokta seviyelerdir.
+ * Örneğin: TEACHER ve CREATE yetkisine sahip olan her bir kulanıcı öğretmen oluşturabilir ancak
+ * INSTITUTION ve CREATE yetkisine sahip kullancı için LEVEL_2 veya LEVEL_3 yetki lazımdır
+ * Burada tüm kurumlara CRUD ve SUBJE yetkileri verilebilir ancak seviyeler mutlaka kurumun seviyesinde olmalıdır
+ */
 class Permissions
 {
+
     public const ALL = '*';
     public const LEVEL_3 = 'level.3';
     public const LEVEL_2 = 'level.2';
@@ -15,7 +21,6 @@ class Permissions
     public const LIST = 'list';
     public const SHOW = 'show';
     public const UPLOAD = 'upload';
-    //Öğretmen işlemleri ile ilgili yetkiler
 
     public const TEACHER = 'teacher';
     public const BRANCH = 'branch';
