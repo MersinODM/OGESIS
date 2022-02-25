@@ -67,7 +67,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
         Route::post('activities', [ActivityController::class, 'create'])->can(Permissions::ACTIVITY_CREATE);
         Route::put('activities/{id}', [ActivityController::class, 'update'])->can(Permissions::ACTIVITY_UPDATE);
         Route::get('activities', [ActivityController::class, 'list'])->can(Permissions::ACTIVITY_LIST);
-    });REPORT
+    });
 
     // Öğretmen endpoint ve yetki tanımlamaları
     Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::TEACHER]], static function () {
