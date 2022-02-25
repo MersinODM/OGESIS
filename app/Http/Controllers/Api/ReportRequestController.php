@@ -76,7 +76,7 @@ class ReportRequestController extends ApiController
         }
 
         // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
-        if($user && $user->can(Permissions::TEAM_LIST_LEVEL_3)) {
+        if($user && $user->can(Permissions::LEVEL_3)) {
             if ($request->has('district_id') && !is_null($request->input('district_id'))) {
                 $query->whereRelation('institution', 'district_id', '=', $request->input('district_id'));
             }
@@ -87,7 +87,7 @@ class ReportRequestController extends ApiController
                 ->toJson();
         }
 
-        if ($user->can(Permissions::TEAM_LIST_LEVEL_2) && $user->cannot(Permissions::TEAM_LIST_LEVEL_3)) {
+        if ($user->can(Permissions::LEVEL_2) && $user->cannot(Permissions::LEVEL_3)) {
             $query->whereRelation('institution', 'district_id', '=',  $user->institution()->district_id);
             if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
                 $query->where('institution_id', '=', $request->input('institution_id'));
@@ -96,7 +96,7 @@ class ReportRequestController extends ApiController
                 ->toJson();
         }
 
-        if ($user->cannot([Permissions::TEAM_LIST_LEVEL_3, Permissions::TEAM_LIST_LEVEL_2]) && $user->can(Permissions::TEAM_LIST_LEVEL_1)) {
+        if ($user->cannot([Permissions::LEVEL_3, Permissions::LEVEL_2]) && $user->can(Permissions::LEVEL_1)) {
             $query->where('institution_id', '=', $user->institution_id);
             return Datatables::eloquent($query)
                 ->toJson();
