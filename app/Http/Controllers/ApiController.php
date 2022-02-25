@@ -45,6 +45,11 @@ class ApiController extends Controller
         return null;
     }
 
+    public function validationResponse($validationResult): JsonResponse
+    {
+       return response()->json($validationResult, 422);
+    }
+
     public function apiException($exception): JsonResponse
     {
         return response()->json([

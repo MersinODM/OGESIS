@@ -15,9 +15,11 @@ use Illuminate\Validation\Rule;
 class ActivityController  extends ApiController
 {
     public function create(Request $request) {
+        $user = $request->user();
+
         $validationResult = $this->apiValidator($request, [
             'plan_id' => 'required',
-            'institution_id' => Rule::requiredIf($request->user()->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
+            'institution_id' => Rule::requiredIf($user->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
             'theme_id' => 'required',
             'title' => 'required',
             'planned_start_date' => 'required|date',
@@ -28,9 +30,9 @@ class ActivityController  extends ApiController
         ]);
 
         if ($validationResult) {
-            return response()->json($validationResult, 422);
+            return $this->validationResponse($validationResult);
         }
-        $user = $request->user();
+
         try {
             DB::beginTransaction();
             $activity = new Activity($request->all());
@@ -66,7 +68,7 @@ class ActivityController  extends ApiController
         ]);
 
         if ($validationResult) {
-            return response()->json($validationResult, 422);
+            return $this->validationResponse($validationResult);
         }
 
         try {

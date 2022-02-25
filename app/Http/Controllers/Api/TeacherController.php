@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class TeacherController extends ApiController
@@ -25,36 +26,23 @@ class TeacherController extends ApiController
     public function create(Request $request)
     {
         $user = Auth::user();
-        $teacher = new Teacher();
-        if ($user && ($user->can(Permissions::TEACHER_CREATE_LEVEL_3)
-                || $user->can(Permissions::TEACHER_CREATE_LEVEL_2))) {
-            $validationResult = $this->apiValidator($request, [
-                'branch_id' => 'required',
-                'institution_id' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
-            ]);
-            if ($validationResult) {
-                return response()->json($validationResult, 422);
-            }
-            $teacher->fill($request->all());
-        } else if ($user && $user->can(Permissions::TEACHER_CREATE_LEVEL_1)) {
-            $validationResult = $this->apiValidator($request, [
-                'branch_id' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
-            ]);
-            if ($validationResult) {
-                return response()->json($validationResult, 422);
-            }
-            $teacher->fill($request->all());
-            $teacher->institution_id = $user->institution_id;
-        } else {
-           return $this->unauthorized();
+        $validationResult = $this->apiValidator($request, [
+            'branch_id' => 'required',
+            'institution_id' => Rule::requiredIf($request->user()->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
+            'first_name' => 'required',
+            'last_name' => 'required',
+        ]);
+        if ($validationResult) {
+            return response()->json($validationResult, 422);
         }
 
         try {
             DB::beginTransaction();
+            $teacher = new Teacher();
+            $teacher->fill($request->all());
+            if ($user && $user->can(Permissions::LEVEL_1)) {
+                $teacher->institution_id = $user->institution_id;
+            }
             $teacher->save();
             DB::commit();
             return response()->json([
@@ -66,29 +54,16 @@ class TeacherController extends ApiController
         }
     }
 
+    /** @noinspection NullPointerExceptionInspection */
     public function update(Request $request, $id)
     {
         $user = Auth::user();
-        $validationResult = null;
-        if ($user && $user->can('teacher.update.admin')) {
-            $validationResult = $this->apiValidator($request, [
-                'branch_id' => 'required',
-                'institution_id' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
-            ]);
-        } else if ($user && $user->can('teacher.update.manager')) {
-            $validationResult = $this->apiValidator($request, [
-                'branch_id' => 'required',
-                'first_name' => 'required',
-                'last_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
-            ]);
-        }
-
+        $validationResult = $this->apiValidator($request, [
+            'branch_id' => 'required',
+            'institution_id' => Rule::requiredIf($user->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
+            'first_name' => 'required',
+            'last_name' => 'required',
+        ]);
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
@@ -119,7 +94,7 @@ class TeacherController extends ApiController
         $query = Teacher::with(['branch:id,name', 'institution:id,district_id,name'])
             ->select('id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
 
-        if ($user && $user->can(Permissions::TEACHER_LIST_LEVEL_3)) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             $validationResult = $this->apiValidator($request, [
                 'district_id' => 'required',
                 'institution_id' => 'required',
@@ -135,7 +110,7 @@ class TeacherController extends ApiController
             return response()->json($query->get());
         }
 
-        if ($user && $user->can(Permissions::TEACHER_LIST_LEVEL_2)) {
+        if ($user && $user->can(Permissions::LEVEL_2)) {
             $validationResult = $this->apiValidator($request, [
                 'institution_id' => 'required',
             ]);
@@ -147,7 +122,7 @@ class TeacherController extends ApiController
                 ->where('district_id', $request->query('district_id'));
             return response()->json($query->get());
         }
-        $institutionId = Auth::user()->institution_id;
+
         $teachers = Teacher::with(['branch' => static function ($query) {
             $query->select('id', 'name');
         }])
@@ -163,26 +138,23 @@ class TeacherController extends ApiController
     public function get($district_id, $institution_id): JsonResponse
     {
         $user = Auth::user();
-        if ($user && $user->cannot('teacher.list.*')) {
-            return $this->unauthorized();
-        }
         $query = Teacher::with(['branch:id,name'])
             ->select('id', 'branch_id', 'institution_id', DB::raw('CONCAT(first_name, " ", last_name) AS full_name'));
-        if ($user->can(Permissions::TEACHER_LIST_LEVEL_3)) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($district_id) {
                     $q->where('district_id', $district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEACHER_LIST_LEVEL_2)) {
+        if ($user && $user->can(Permissions::LEVEL_2)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEACHER_LIST_LEVEL_1)) {
+        if ($user && $user->can(Permissions::LEVEL_1)) {
             $query->where('institution_id', $user->institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
@@ -201,17 +173,17 @@ class TeacherController extends ApiController
         // TODO refaktör gerekebilir
         // Kullanıcı 2i seviye(leve2) ise yani ilçe Mem kullanıcısı ise sadece kendi ilçesini listeleyebilsin
         // Yetkiye en üst seviyeden başlayarak bakabiliriz böylece üst else if yapısı amacına uygun çalışmış olur
-        if ($user && $user->can('teacher.list.level3')) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             $this->checkDistrict($request, $query);
             $this->checkInstitution($request, $query);
             $this->checkBranch($request, $query);
-        } else if ($user && $user->can('teacher.list.level2')) {
+        } else if ($user && $user->can(Permissions::LEVEL_2)) {
             $query->whereHas('institution', static function (Builder $q) use ($user) {
                 $q->where('district_id', $user->institution()->district_id);
             });
             $this->checkInstitution($request, $query);
             $this->checkBranch($request, $query);
-        } else if ($user && $user->can('teacher.list.level1')) {
+        } else if ($user && $user->can(Permissions::LEVEL_1)) {
             $query->whereHas('institution', static function (Builder $q) use ($user) {
                 $q->where('district_id', $user->institution()->district_id);
             });

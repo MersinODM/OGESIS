@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection NullPointerExceptionInspection */
 
 namespace App\Http\Controllers\Api;
 
@@ -6,6 +6,7 @@ use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\Utils\{ResponseCodes, ResponseKeys};
 use App\Models\{Teacher, Team};
 use Exception;
@@ -21,20 +22,13 @@ class TeamController extends ApiController
     public function create(Request $request)
     {
         $user = Auth::user();
-        if ($user && $user->can([Permissions::TEAM_CREATE_LEVEL_3, Permissions::TEAM_CREATE_LEVEL_2])) {
-            $validationResult = $this->apiValidator($request, [
-                'institution_id' => 'required',
-                'name' => 'required',
-                'teachers' => 'required|array|min:2'
-            ]);
-        } else if($user && $user->can(Permissions::TEAM_CREATE_LEVEL_1)) {
-            $validationResult = $this->apiValidator($request, [
-                'name' => 'required',
-                'teachers' => 'required|array|min:2'
-            ]);
-        } else {
-            return $this->unauthorized();
-        }
+
+        $validationResult = $this->apiValidator($request, [
+            'institution_id' => Rule::requiredIf($user->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
+            'name' => 'required',
+            'teachers' => 'required|array|min:2'
+        ]);
+
 
         if ($validationResult) {
             return response()->json($validationResult, 422);
@@ -62,23 +56,11 @@ class TeamController extends ApiController
     public function update(Request $request, $id)
     {
         $user = Auth::user();
-        $validationResult = null;
-        if ($user && $user->can('team.create.admin')) {
-            $validationResult = $this->apiValidator($request, [
-                'plan_id' => 'required',
-                'institution_id' => 'required',
-                'team_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
-            ]);
-        } else if ($user && $user->can('team.create.manager')) {
-            $validationResult = $this->apiValidator($request, [
-                'plan_id' => 'required',
-                'team_name' => 'required',
-//            'phone' => 'required',
-//            'email' => 'required',
-            ]);
-        }
+        $validationResult = $this->apiValidator($request, [
+            'institution_id' => Rule::requiredIf($user->can([Permissions::LEVEL_3, Permissions::LEVEL_2])),
+            'name' => 'required',
+            'teachers' => 'required|array|min:2'
+        ]);
 
         if ($validationResult) {
             return response()->json($validationResult, 422);
@@ -113,26 +95,26 @@ class TeamController extends ApiController
         if ($user && $user->cannot('team.list.*')) {
             return $this->unauthorized();
         }
-        $query = Team::with(['teachers' => static function($query) {
+        $query = Team::with(['teachers' => static function ($query) {
             $query->join('ogs_branches as b', 'b.id', '=', 'branch_id')
                 ->select('ogs_teachers.id', 'branch_id', DB::raw('CONCAT(first_name, " ", last_name) as full_name'), 'b.name as branch');
         }])
             ->select('id', 'institution_id', 'name');
-        if ($user->can(Permissions::TEAM_LIST_LEVEL_3)) {
+        if ($user->can(Permissions::LEVEL_3)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($district_id) {
                     $q->where('district_id', $district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEAM_LIST_LEVEL_2)) {
+        if ($user->can(Permissions::LEVEL_2)) {
             $query->where('institution_id', $institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
                 });
             return response()->json($query->get());
         }
-        if ($user->can(Permissions::TEAM_LIST_LEVEL_1)) {
+        if ($user->can(Permissions::LEVEL_1)) {
             $query->where('institution_id', $user->institution_id)
                 ->whereHas('institution', static function (Builder $q) use ($user) {
                     $q->where('district_id', $user->institution()->district_id);
@@ -145,11 +127,11 @@ class TeamController extends ApiController
     public function getTable(Request $request): JsonResponse
     {
         $query = Team::with('institution:id,district_id,name', 'institution.district:id,name')
-        ->select('id', 'name', 'institution_id');
+            ->select('id', 'name', 'institution_id');
         $user = Auth::user();
 
         // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
-        if($user && $user->can(Permissions::TEAM_LIST_LEVEL_3)) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             if ($request->has('district_id') && !is_null($request->input('district_id'))) {
                 $query->whereRelation('institution', 'district_id', '=', $request->input('district_id'));
             }
@@ -160,8 +142,8 @@ class TeamController extends ApiController
                 ->toJson();
         }
 
-        if ($user->can(Permissions::TEAM_LIST_LEVEL_2) && $user->cannot(Permissions::TEAM_LIST_LEVEL_3)) {
-            $query->whereRelation('institution', 'district_id', '=',  $user->institution()->district_id);
+        if ($user->can(Permissions::LEVEL_2) && $user->cannot(Permissions::LEVEL_3)) {
+            $query->whereRelation('institution', 'district_id', '=', $user->institution()->district_id);
             if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
                 $query->where('institution_id', '=', $request->input('institution_id'));
             }
@@ -169,7 +151,7 @@ class TeamController extends ApiController
                 ->toJson();
         }
 
-        if ($user->cannot([Permissions::TEAM_LIST_LEVEL_3, Permissions::TEAM_LIST_LEVEL_2]) && $user->can(Permissions::TEAM_LIST_LEVEL_1)) {
+        if ($user->cannot([Permissions::LEVEL_3, Permissions::LEVEL_2]) && $user->can(Permissions::LEVEL_1)) {
             $query->where('institution_id', '=', $user->institution_id);
             return Datatables::eloquent($query)
                 ->toJson();
