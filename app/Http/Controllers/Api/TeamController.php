@@ -131,7 +131,7 @@ class TeamController extends ApiController
         $user = Auth::user();
 
         // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
-        if ($user && $user->can(Permissions::LEVEL_3)) {
+        if ($user->can(Permissions::LEVEL_3)) {
             if ($request->has('district_id') && !is_null($request->input('district_id'))) {
                 $query->whereRelation('institution', 'district_id', '=', $request->input('district_id'));
             }
