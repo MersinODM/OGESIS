@@ -2,7 +2,7 @@
  *     Copyright 2021 Mersin İl Milli Eğitim Müdürlüğü Ölçme Değerlendirme Merkezi
  *
  *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
+ *     you may not use subjects file except in compliance with the License.
  *     You may obtain a copy of the License at
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
@@ -76,7 +76,7 @@ export const useInstitutionConstants = () => {
     INSTITUTIONS: 'institutions',
     SELECTED_INSTITUTION: 'selectedInstitution',
     SET_INSTITUTIONS: 'setInstitutions',
-    SET_SELECTED_INSTITUTION: 'setSelectedInstitution',
+    SET_SELECTED_INSTITUTION: 'setSelectedInstitution'
   }
 }
 
@@ -145,94 +145,90 @@ export const usePlanActionTypes = () => {
 
 // TODO Object.freeze() implemantasyonu yapılabilir
 export const usePermissionConstants = () => {
-  return {
-    ALL: '*',
-    // Seviye yetkileri
-    LEVEL_3: 'level3',
-    LEVEL_2: 'level2',
-    LEVEL_1: 'level1',
-    // Aksiyon yetkileri
+  const subjects = {
     CREATE: 'create',
     DELETE: 'delete',
     UPDATE: 'update',
     LIST: 'list',
     SHOW: 'show',
     UPLOAD: 'upload',
-    // Subje yetkileri
+
     TEACHER: 'teacher',
+    BRANCH: 'branch',
     TEAM: 'team',
     INSTITUTION: 'institution',
     PLAN: 'plan',
     ACTIVITY: 'activity',
     REPORT: 'report',
-    PERSONAL: 'personal',
-    // Öğretmen işlemleri ile ilgili yetkiler
-    TEACHER_CREATE_LEVEL_3: 'teacher.create.level3',
-    TEACHER_CREATE_LEVEL_2: 'teacher.create.level2',
-    TEACHER_CREATE_LEVEL_1: 'teacher.create.level1',
-    TEACHER_UPDATE_LEVEL_3: 'teacher.update.level3',
-    TEACHER_UPDATE_LEVEL_2: 'teacher.update.level2',
-    TEACHER_UPDATE_LEVEL_1: 'teacher.update.level1',
-    TEACHER_DELETE_LEVEL_3: 'teacher.delete.level3',
-    TEACHER_DELETE_LEVEL_2: 'teacher.delete.level2',
-    TEACHER_DELETE_LEVEL_1: 'teacher.delete.level1',
-    TEACHER_LIST_LEVEL_3: 'teacher.list.level3',
-    TEACHER_LIST_LEVEL_2: 'teacher.list.level2',
-    TEACHER_LIST_LEVEL_1: 'teacher.list.level1',
-    // Takım işlmeleri ile ilgili yetkiler
-    TEAM_CREATE_LEVEL_3: 'team.create.level3',
-    TEAM_CREATE_LEVEL_2: 'team.create.level2',
-    TEAM_CREATE_LEVEL_1: 'team.create.level1',
-    TEAM_UPDATE_LEVEL_3: 'team.update.level3',
-    TEAM_UPDATE_LEVEL_2: 'team.update.level2',
-    TEAM_UPDATE_LEVEL_1: 'team.update.level1',
-    TEAM_DELETE_LEVEL_3: 'team.delete.level3',
-    TEAM_DELETE_LEVEL_2: 'team.delete.level2',
-    TEAM_DELETE_LEVEL_1: 'team.delete.level1',
-    TEAM_LIST_LEVEL_3: 'team.list.level3',
-    TEAM_LIST_LEVEL_2: 'team.list.level2',
-    TEAM_LIST_LEVEL_1: 'team.list.level1',
-    TEAM_ADD_MEMBER_LEVEL_3: 'team.add-member.level3',
-    TEAM_ADD_MEMBER_LEVEL_2: 'team.add-member.level2',
-    TEAM_ADD_MEMBER_LEVEL_1: 'team.add-member.level1',
-    TEAM_REMOVE_MEMBER_LEVEL_3: 'team.remove-member.level3',
-    TEAM_REMOVE_MEMBER_LEVEL_2: 'team.remove-member.level2',
-    TEAM_REMOVE_MEMBER_LEVEL_1: 'team.remove-member.level1',
-    // Kurum izinleri
-    INSTITUTION_CREATE_LEVEL_3: 'institution.create.level3',
-    INSTITUTION_CREATE_LEVEL_2: 'institution.create.level2',
-    INSTITUTION_UPDATE_LEVEL_3: 'institution.update.level3',
-    INSTITUTION_UPDATE_LEVEL_2: 'institution.update.level2',
-    INSTITUTION_DELETE_LEVEL_3: 'institution.delete.level3',
-    INSTITUTION_DELETE_LEVEL_2: 'institution.delete.level2',
-    INSTITUTION_IMPORT_LIST: 'institution.import-list',
-    INSTITUTION_LIST_LEVEL_3: 'institution.list.level3',
-    INSTITUTION_LIST_LEVEL_2: 'institution.list.level2',
-    // Plan izinleri
-    PLAN_CREATE_LEVEL_3: 'plan.create.level3',
-    PLAN_UPDATE_LEVEL_3: 'plan.update.level3',
-    PLAN_DELETE_LEVEL_3: 'plan.delete.level3',
-    // Aktivite izinleri
-    ACTIVITY_CREATE_LEVEL_3: 'activity.create.level3',
-    ACTIVITY_CREATE_LEVEL_2: 'activity.create.level2',
-    ACTIVITY_CREATE_LEVEL_1: 'activity.create.level1',
-    ACTIVITY_UPDATE_LEVEL_3: 'activity.update.level3',
-    ACTIVITY_UPDATE_LEVEL_2: 'activity.update.level2',
-    ACTIVITY_UPDATE_LEVEL_1: 'activity.update.level1',
-    ACTIVITY_DELETE_LEVEL_3: 'activity.delete.level3',
-    ACTIVITY_DELETE_LEVEL_2: 'activity.delete.level2',
-    ACTIVITY_DELETE_LEVEL_1: 'activity.delete.level1',
-    ACTIVITY_LIST_LEVEL_3: 'activity.list.level3',
-    ACTIVITY_LIST_LEVEL_2: 'activity.list.level2',
-    ACTIVITY_LIST_LEVEL_1: 'activity.list.level1',
-    // Rapor yetkileri
-    REPORT_UPLOAD: 'report.upload',
-    REPORT_DELETE_LEVEL_3: 'report.delete.level3',
-    REPORT_DELETE_LEVEL_2: 'report.delete.level2',
-    REPORT_DELETE_LEVEL_1: 'report.delete.level1',
-    REPORT_LIST_LEVEL_3: 'report.list.level3',
-    REPORT_LIST_LEVEL_2: 'report.list.level2',
-    REPORT_LIST_LEVEL_1: 'report.list.level1'
+    THEME: 'theme',
+    DISTRICT: 'district',
+    PARTNER: 'partner',
+    PERSONAL: 'personal'
+  }
+  return {
+    ALL: '*',
+    LEVEL_3: 'level.3',
+    LEVEL_2: 'level.2',
+    LEVEL_1: 'level.1',
+
+    ...subjects,
+
+    TEACHER_CREATE: `${subjects.TEACHER}.${subjects.CREATE}`,
+    TEACHER_UPDATE: subjects.TEACHER + '.' + subjects.UPDATE,
+    TEACHER_DELETE: subjects.TEACHER + '.' + subjects.DELETE,
+    TEACHER_LIST: subjects.TEACHER + '.' + subjects.LIST,
+    TEACHER_SHOW: subjects.TEACHER + '.' + subjects.SHOW,
+    TEACHER_UPLOAD: subjects.TEACHER + '.' + subjects.UPLOAD,
+
+    BRANCH_CREATE: subjects.BRANCH + '.' + subjects.CREATE,
+    BRANCH_UPDATE: subjects.BRANCH + '.' + subjects.UPDATE,
+    BRANCH_DELETE: subjects.BRANCH + '.' + subjects.DELETE,
+    BRANCH_LIST: subjects.BRANCH + '.' + subjects.LIST,
+
+    TEAM_CREATE: subjects.TEAM + '.' + subjects.CREATE,
+    TEAM_UPDATE: subjects.TEAM + '.' + subjects.UPDATE,
+    TEAM_DELETE: subjects.TEAM + '.' + subjects.DELETE,
+    TEAM_LIST: subjects.TEAM + '.' + subjects.LIST,
+
+    INSTITUTION_CREATE: subjects.INSTITUTION + '.' + subjects.CREATE,
+    INSTITUTION_UPDATE: subjects.INSTITUTION + '.' + subjects.UPDATE,
+    INSTITUTION_DELETE: subjects.INSTITUTION + '.' + subjects.DELETE,
+    INSTITUTION_LIST: subjects.INSTITUTION + '.' + subjects.LIST,
+    INSTITUTION_UPLOAD: subjects.INSTITUTION + '.' + subjects.UPLOAD,
+
+    PLAN_CREATE: subjects.PLAN + '.' + subjects.CREATE,
+    PLAN_UPDATE: subjects.PLAN + '.' + subjects.UPDATE,
+    PLAN_DELETE: subjects.PLAN + '.' + subjects.DELETE,
+    PLAN_LIST: subjects.PLAN + '.' + subjects.LIST,
+
+    ACTIVITY_CREATE: subjects.ACTIVITY + '.' + subjects.CREATE,
+    ACTIVITY_UPDATE: subjects.ACTIVITY + '.' + subjects.UPDATE,
+    ACTIVITY_DELETE: subjects.ACTIVITY + '.' + subjects.DELETE,
+    ACTIVITY_LIST: subjects.ACTIVITY + '.' + subjects.LIST,
+
+    REPORT_CREATE: subjects.REPORT + '.' + subjects.CREATE,
+    REPORT_UPDATE: subjects.REPORT + '.' + subjects.UPDATE,
+    REPORT_DELETE: subjects.REPORT + '.' + subjects.DELETE,
+    REPORT_LIST: subjects.REPORT + '.' + subjects.LIST,
+
+    THEME_CREATE: subjects.THEME + '.' + subjects.CREATE,
+    THEME_UPDATE: subjects.THEME + '.' + subjects.UPDATE,
+    THEME_DELETE: subjects.THEME + '.' + subjects.DELETE,
+    THEME_LIST: subjects.THEME + '.' + subjects.LIST,
+
+    DISTRICT_CREATE: subjects.DISTRICT + '.' + subjects.CREATE,
+    DISTRICT_UPDATE: subjects.DISTRICT + '.' + subjects.UPDATE,
+    DISTRICT_DELETE: subjects.DISTRICT + '.' + subjects.DELETE, // Burada soft delete olabilir
+    DISTRICT_LIST: subjects.DISTRICT + '.' + subjects.LIST,
+
+    PARTNER_CREATE: subjects.PARTNER + '.' + subjects.CREATE,
+    PARTNER_UPDATE: subjects.PARTNER + '.' + subjects.UPDATE,
+    PARTNER_DELETE: subjects.PARTNER + '.' + subjects.DELETE,
+    PARTNER_LIST: subjects.PARTNER + '.' + subjects.LIST,
+
+    PERSONAL_PASSWORD_CHANGE: subjects.PERSONAL + '.password_change',
+    PERSONAL_UPDATE: subjects.PERSONAL + '.' + subjects.UPDATE
+
   }
 }
 

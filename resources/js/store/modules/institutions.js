@@ -12,7 +12,7 @@ const {
 } = useInstitutionConstants()
 
 const { LEVEL_2, LEVEL_3 } = usePermissionConstants()
-const { can, cannot } = useAbility()
+// const { can, cannot } = useAbility()
 const { getInstitution } = useInstitutionApi()
 
 export default {
@@ -38,6 +38,7 @@ export default {
   },
   actions: {
     async [INIT] ({ commit, rootGetters }) {
+      const { can, cannot } = useAbility()
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
       if (can(LEVEL_2) && cannot(LEVEL_3)) {

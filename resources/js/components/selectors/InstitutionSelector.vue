@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$can(TEACHER_LIST_LEVEL_3) || $can(TEACHER_LIST_LEVEL_2)"
+    v-if="$can(LEVEL_3) || $can(LEVEL_2)"
     class="form-group"
   >
     <label>Kurum Seçimi</label>

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="can(TEACHER_LIST_LEVEL_3)"
+    v-if="can(LEVEL_3)"
     class="form-group"
   >
     <label>İlçe Seçimi</label>

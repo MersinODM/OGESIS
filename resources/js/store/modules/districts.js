@@ -11,7 +11,7 @@ const {
 } = useDistrictConstants()
 
 const { getDistricts } = useDistrictApi()
-const { can } = useAbility()
+// const { can } = useAbility()
 const { LEVEL_3 } = usePermissionConstants()
 
 export default {
@@ -37,6 +37,7 @@ export default {
   },
   actions: {
     async [INIT] ({ commit }) {
+      const { can } = useAbility()
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
       if (can(LEVEL_3)) {

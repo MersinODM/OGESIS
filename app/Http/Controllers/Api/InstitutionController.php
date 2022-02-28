@@ -103,7 +103,7 @@ class InstitutionController extends ApiController
         $user = Auth::user();
         // Query taslağı oluşturuluyor
         $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
-        if ($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             if (!($request->has('content')
                 && $request->has('district_id'))) {
                 return response()->json([
@@ -119,7 +119,7 @@ class InstitutionController extends ApiController
         }
         // Burada else if bloğuna gerek yok çünkü yukarıda if içine girerse
         // fonk return ediliyor aşağı inmiyor akış
-        if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2)) {
+        if ($user->can(Permissions::LEVEL_2)) {
             if (!$request->has('content')) {
                 return response()->json([
                     ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
@@ -143,13 +143,13 @@ class InstitutionController extends ApiController
         $user = Auth::user();
         // Query taslağı oluşturuluyor
         $query = Institution::selectRaw('id, CONCAT(id, "-", name) as name');
-        if ($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+        if ($user && $user->can(Permissions::LEVEL_3)) {
             if ($id != -1) { $query->where('district_id', $id); } // hepsini seçebiliriz id -1 ise çok iyi bir pratik değil ama refaktör edilebilir
             return response()->json($query->get());
         }
         // Burada else if bloğuna gerek yok çünkü yukarıda if içine girerse
         // fonk return ediliyor aşağı inmiyor akış
-        if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2)) {
+        if ($user->can(Permissions::LEVEL_2)) {
             $query->where('district_id', $user->institution()->district_id);
             return response()->json($query->get());
         }
@@ -166,12 +166,12 @@ class InstitutionController extends ApiController
         $user = Auth::user();
 
         // Yetki 3. seviye ise gönderilen veri içinde district id yok ise tümü ilçelerdeki kurumlar listelenir
-        if($user && $user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+        if($user && $user->can(Permissions::LEVEL_3)) {
             if ($request->has('district_id') && !is_null($request->input('district_id'))) {
                 $query->where('district_id', '=', $request->input('district_id'));
             }
         }
-        else if ($user->can(Permissions::INSTITUTION_LIST_LEVEL_2) && !$user->can(Permissions::INSTITUTION_LIST_LEVEL_3)) {
+        else if ($user->can(Permissions::LEVEL_2) && !$user->can(Permissions::LEVEL_3)) {
             $query->where('ogs_districts.district_id', '=', $user->institution()->district_id);
         }
 

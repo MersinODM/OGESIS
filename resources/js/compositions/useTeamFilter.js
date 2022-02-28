@@ -12,11 +12,11 @@ export function useTeamFilter (selectedDistrict = null, selectedInstitution = nu
   }
   const { can, cannot } = useAbility()
   const { getTeams } = useTeamApi()
-  const { TEAM_LIST_LEVEL_1, TEAM_LIST_LEVEL_2, TEAM_LIST_LEVEL_3 } = usePermissionConstants()
+  const { LEVEL_1, LEVEL_2, LEVEL_3 } = usePermissionConstants()
 
   // Kullanıcı değişimini izliyoruz eğer okul kullanıcısı ise
   // kullanıcının okulundaki öğretmenleri dolduruyoruz seçim için
-  if (can(TEAM_LIST_LEVEL_1) && cannot(TEAM_LIST_LEVEL_3, TEAM_LIST_LEVEL_2)) {
+  if (can(LEVEL_1) && cannot(LEVEL_3, LEVEL_2)) {
     getTeams(store.getters['auth/user']?.institution.district_id, store.getters['auth/user']?.institution_id)
       .then(res => {
         teams.value = res
@@ -37,13 +37,13 @@ export function useTeamFilter (selectedDistrict = null, selectedInstitution = nu
   watch(selectedInstitution, () => {
     selectedTeachers.value = []
     if (selectedInstitution.value) {
-      if (can(TEAM_LIST_LEVEL_2) && cannot(TEAM_LIST_LEVEL_3)) {
+      if (can(LEVEL_2) && cannot(LEVEL_3)) {
         getTeams(store.getters['auth/user']?.institution.district_id, selectedInstitution.value)
           .then(res => {
             teams.value = res
           })
       }
-      if (can(TEAM_LIST_LEVEL_3)) {
+      if (can(LEVEL_3)) {
         getTeams(selectedDistrict.value, selectedInstitution.value)
           .then(res => {
             teams.value = res

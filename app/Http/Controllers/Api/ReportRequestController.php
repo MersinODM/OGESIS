@@ -6,6 +6,7 @@ use App\Helpers\Permissions;
 use App\Http\Controllers\ApiController;
 use App\Models\Institution;
 use App\Models\ReportRequest;
+use App\Traits\DistrictTableFilter;
 use App\Traits\RandomCodeGenerator;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 class ReportRequestController extends ApiController
 {
     use RandomCodeGenerator;
+    use DistrictTableFilter;
 
     public function create(Request $request)
     {

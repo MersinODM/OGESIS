@@ -60,6 +60,17 @@ class CreatePlansTable extends Migration
                 ->on("ogs_districts");
         });
 
+        Schema::create('ogs_teams', function (Blueprint $table) {
+            $table->id()->startingValue(1000);
+            $table->unsignedInteger('institution_id');
+            $table->string("name");
+            $table->timestamps();
+
+            $table->foreign('institution_id')
+                ->references('id')
+                ->on('ogs_institutions');
+        });
+
         Schema::create('ogs_notifications', function (Blueprint $table) {
             $table->id()->startingValue(10000);
             $table->unsignedInteger('notifiable_id');
@@ -277,16 +288,7 @@ class CreatePlansTable extends Migration
                 ->on('ogs_activities');
         });
 
-        Schema::create('ogs_teams', function (Blueprint $table) {
-            $table->id()->startingValue(1000);
-            $table->unsignedInteger('institution_id');
-            $table->string("name");
-            $table->timestamps();
 
-            $table->foreign('institution_id')
-                ->references('id')
-                ->on('ogs_institutions');
-        });
 
         Schema::create('ogs_teachers', function (Blueprint $table) {
             $table->id()->startingValue(10000);;
@@ -350,7 +352,6 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_team_teachers');
         Schema::dropIfExists('ogs_activity_members');
         Schema::dropIfExists('ogs_teachers');
-        Schema::dropIfExists('ogs_teams');
         Schema::dropIfExists('ogs_activity_comments');
         Schema::dropIfExists('ogs_activity_partners');
         Schema::dropIfExists('ogs_partners');
@@ -364,6 +365,7 @@ class CreatePlansTable extends Migration
         Schema::dropIfExists('ogs_institution_facilities');
         Schema::dropIfExists('ogs_facilities');
         Schema::dropIfExists('ogs_notifications');
+        Schema::dropIfExists('ogs_teams');
         Schema::dropIfExists('ogs_institutions');
         Schema::dropIfExists('ogs_branches');
         Schema::dropIfExists('ogs_districts');
