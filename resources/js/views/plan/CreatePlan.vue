@@ -13,82 +13,42 @@
                   <form @submit.prevent>
                     <div class="form-group has-feedback">
                       <div class="form-row">
-                        <div class="form-group col-md-12">
-                          <label>Plan Adı</label>
-                          <input
-                            v-model="title"
-                            name="title"
-                            type="text"
-                            class="form-control"
-                            :class="{'is-invalid': titleEM != null}"
-                          >
-                          <div
-                            v-if="titleEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ titleEM }}
-                          </div>
-                        </div>
+                        <text-box
+                          v-model="name"
+                          label="Plan Başlığı"
+                          name="name"
+                          class="col-md-12"
+                          :validation-message="errors.name"
+                          :validation-required="true"
+                        />
                       </div>
                       <div class="form-row">
-                        <div class="form-group col-md-6">
-                          <label>Plan Başlangıç Tarihi</label>
-                          <date-picker
-                            v-model="startDate"
-                            mode="date"
-                            name="startDate"
-                            locale="tr"
-                            input-format="dd.MM.yyyy"
-                            style="background-color: white"
-                          >
-                            <template #default="{ inputValue, inputEvents }">
-                              <input
-                                class="form-control text-center"
-                                :class="{'is-invalid': startDateEM != null}"
-                                :value="inputValue"
-                                v-on="inputEvents"
-                              >
-                            </template>
-                          </date-picker>
-                          <div
-                            v-if="startDateEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ startDateEM }}
-                          </div>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label>Plan Bitiş Tarihi</label>
-                          <date-picker
-                            v-model="endDate"
-                            mode="date"
-                            name="endDate"
-                            locale="tr"
-                            input-format="dd.MM.yyyy"
-                            style="background-color: white"
-                          >
-                            <template #default="{ inputValue, inputEvents }">
-                              <input
-                                class="form-control text-center"
-                                :class="{'is-invalid': endDateEM != null}"
-                                :value="inputValue"
-                                v-on="inputEvents"
-                              >
-                            </template>
-                          </date-picker>
-                          <div
-                            v-if="endDateEM"
-                            role="alert"
-                            class="invalid-feedback order-last"
-                            style="display: inline-block;"
-                          >
-                            {{ endDateEM }}
-                          </div>
-                        </div>
+                        <date-picker
+                          v-model="startDate"
+                          name="start_date"
+                          label="Plan Başlangıç Tarihi"
+                          class="col-md-6"
+                          :validation-required="true"
+                          :validation-message="errors.start_date"
+                        />
+                        <date-picker
+                          v-model="endDate"
+                          name="end_date"
+                          label="Plan Bitiş Tarihi"
+                          class="col-md-6"
+                          :validation-required="true"
+                          :validation-message="errors.end_date"
+                        />
+                      </div>
+                      <div class="form-row">
+                        <text-area
+                          v-model="description"
+                          name="description"
+                          class="col-md-12"
+                          label="Açıklamalar"
+                          :validation-required="true"
+                          :validation-message="errors.description"
+                        />
                       </div>
                       <div class="form-row justify-content-md-center">
                         <div class="col-md-6">
@@ -115,53 +75,49 @@
 
 <script>
 import Page from '../../components/Page'
-import { DatePicker } from 'v-calendar'
+import DatePicker from '../../components/ODatePicker'
 import { string, date, object, ref as yupRef } from 'yup'
 import { useField, useForm } from 'vee-validate'
 import Messenger from '../../utils/messenger'
 import usePlanApi from '../../services/usePlanApi'
+import TextBox from '../../components/TextBox'
+import TextArea from '../../components/TextArea'
 
 export default {
   name: 'CreatePlan',
-  components: { Page, DatePicker },
+  components: { TextArea, TextBox, Page, DatePicker },
   setup () {
     const { create } = usePlanApi()
     const schema = object({
-      title: string().typeError(() => 'Plan adı/başlığı yazı tipinde olmalıdır!')
+      name: string().typeError(() => 'Plan adı/başlığı yazı tipinde olmalıdır!')
         .required(() => 'Plan adı/başlığı gereklidir!'),
-      startDate: date().typeError(() => 'Plan başlangıç tarihi seçilmelidir')
+      start_date: date().typeError(() => 'Plan başlangıç tarihi seçilmelidir')
         .required(() => 'Plan başlangıç tarihi seçilmelidir!'),
-      endDate: date().typeError(() => 'Plan bitiş tarihi seçilmelidir!')
+      end_date: date().typeError(() => 'Plan bitiş tarihi seçilmelidir!')
         .required(() => 'Plan bitiş tarihi seçilmelidir!')
-        .min(yupRef('startDate'), () => 'Plan tarihi başlangıç tarihinden sonra olmalıdır'),
+        .min(yupRef('start_date'), () => 'Plan tarihi başlangıç tarihinden sonra olmalıdır'),
       description: string().required(() => 'Açıklama gereklidir!')
     })
 
     const { handleSubmit, errors } = useForm({ validationSchema: schema })
 
-    const { value: title, errorMessage: titleEM } = useField('title')
-    const { value: startDate, errorMessage: startDateEM } = useField('startDate')
-    const { value: endDate, errorMessage: endDateEM } = useField('endDate')
+    const { value: name } = useField('name')
+    const { value: startDate } = useField('start_date')
+    const { value: endDate } = useField('end_date')
+    const { value: description } = useField('description')
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Ayarladağınız tarih aralığında başka plan yoksa planlarınız oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
-        await create({
-          start_date: values.startDate,
-          end_date: values.endDate,
-          description: values.title
-        })
+        await create(values)
       }
     })
 
     return {
-      title,
-      titleEM,
+      name,
       startDate,
-      startDateEM,
       endDate,
-      endDateEM,
-      handleSubmit,
+      description,
       errors,
       save
     }

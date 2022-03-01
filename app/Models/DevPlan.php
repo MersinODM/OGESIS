@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DevPlan extends Model
 {
@@ -13,13 +14,14 @@ class DevPlan extends Model
     protected $table="ogs_dev_plans";
 
     protected $fillable = [
-        "institution_id", "start_date", "end_date",
-        "description", "report_name", "report_file",
+        'name',
+        "start_date", "end_date",
+        "description",
         "is_open"
     ];
 
-    public function institution(): BelongsTo
+    public function institutions(): BelongsToMany
     {
-        return $this->belongsTo(Institution::class, "institution_id");
+        return $this->belongsToMany(Institution::class, 'ogs_institution_plans', 'plan_id', 'institution_id');
     }
 }

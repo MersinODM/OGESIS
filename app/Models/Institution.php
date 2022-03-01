@@ -23,6 +23,7 @@ use App\Traits\SelfReferencing;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -48,9 +49,9 @@ class Institution extends Model
         return $this->hasMany(Teacher::class, "institution_id");
     }
 
-    public function plans(): HasMany
+    public function plans(): BelongsToMany
     {
-        return $this->hasMany(DevPlan::class, "institution_id");
+        return $this->belongsToMany(DevPlan::class, 'ogs_institution_plans',  'institution_id', 'plan_id');
     }
 
     public function district(): BelongsTo

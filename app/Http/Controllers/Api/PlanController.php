@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class PlanController extends ApiController
 {
-    public function createAll(Request $request) {
+    public function createAll(Request $request)
+    {
         $validationResult = $this->apiValidator($request, [
+            'name' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
             'description' => 'required',
@@ -25,22 +27,42 @@ class PlanController extends ApiController
             return response()->json($validationResult, 422);
         }
 
+        $isIntersect = DevPlan::query()->where(static function ($query) use ($request) {
+                    return $query->where('start_date', '<=', $request->input('end_date'))
+                    ->where('end_date', '<=', $request->input('start_date'));
+                })
+                ->orWhere(static function ($query) use ($request) {
+                    return $query->where('start_date', '>=', $request->input('end_date'))
+                        ->where('start_date', '<=', $request->input('start_date'))
+                        ->where('end_date', '<=', $request->input('start_date'));
+                })
+                ->orWhere(static function ($query) use ($request) {
+                    return $query->where('end_date', '<=', $request->input('start_date'))
+                        ->where('end_date', '>=', $request->input('end_date'))
+                        ->where('start_date', '<=', $request->input('end_date'));
+                })
+                ->orWhere(static function ($query) use ($request) {
+                    return $query->where('start_date', '>=', $request->input('end_date'))
+                        ->where('start_date', '<=', $request->input('start_date'));
+                })->toSql();
+        if ($isIntersect) {
+            return response()->json([
+                ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
+                ResponseKeys::MESSAGE => 'Seçilen tarih arağında bir plan var zaten!'
+            ]);
+        }
+
         try {
             DB::beginTransaction();
             $devPlan = new DevPlan($request->all());
-            $institutions = Institution::all();
-            foreach ($institutions as $institution) {
-                $devPlan->institution_id = $institution->id;
-                $devPlan->is_open = true;
-                $devPlan->save();
-            }
+            $devPlan->save();
+            $devPlan->institutions()->attach($institutions = Institution::all());
             DB::commit();
-            return  response()->json([
+            return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
-                ResponseKeys::MESSAGE => $institutions->count()." adet okul için planlar başarıyla oluşturuldu."
+                ResponseKeys::MESSAGE => $institutions->count() . " adet okul için planlar başarıyla oluşturuldu."
             ]);
-        }
-        catch (Exception $exception) {
+        } catch (Exception $exception) {
             DB::rollBack();
             return $this->apiException($exception);
         }
