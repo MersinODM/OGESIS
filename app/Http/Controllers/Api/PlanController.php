@@ -10,6 +10,7 @@ use App\Models\Institution;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PlanController extends ApiController
@@ -18,37 +19,53 @@ class PlanController extends ApiController
     {
         $validationResult = $this->apiValidator($request, [
             'name' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'description' => 'required',
         ]);
 
         if ($validationResult) {
             return response()->json($validationResult, 422);
         }
+        $givenStartDate =  $request->input('start_date');
+        $givenEndDate = $request->input('end_date');
 
-        $isIntersect = DevPlan::query()->where(static function ($query) use ($request) {
-                    return $query->where('start_date', '<=', $request->input('end_date'))
-                    ->where('end_date', '<=', $request->input('start_date'));
-                })
-                ->orWhere(static function ($query) use ($request) {
-                    return $query->where('start_date', '>=', $request->input('end_date'))
-                        ->where('start_date', '<=', $request->input('start_date'))
-                        ->where('end_date', '<=', $request->input('start_date'));
-                })
-                ->orWhere(static function ($query) use ($request) {
-                    return $query->where('end_date', '<=', $request->input('start_date'))
-                        ->where('end_date', '>=', $request->input('end_date'))
-                        ->where('start_date', '<=', $request->input('end_date'));
-                })
-                ->orWhere(static function ($query) use ($request) {
-                    return $query->where('start_date', '>=', $request->input('end_date'))
-                        ->where('start_date', '<=', $request->input('start_date'));
-                })->toSql();
+        // Not aşağıda verilen tarihler için bir kapsama kontrol algoritması verilmiştir
+        // Sol taraf daha küçük sağ taraf daha büyük tarih şeklinde yorumlanmalıdır.
+        // GSD<--->GED Verilen başlangış tarihi verilen bitiş tarihinden büyük anlamına gelir
+        // ÜStteki yaklaşıma göre büyülük küçüklük kontrolü ilşikisi aşağıda kurulmuştur.
+
+        $isIntersect = DevPlan::query()
+            ->where(static function ($query) use ($givenEndDate, $givenStartDate) {
+                //     GSD<------>GED             Verilen başlangıç bitiş tarihleri
+                // SD<--------------->ED          DB'deki olası balangıç bitiş tarihleri
+                return $query->where('start_date', '<=', $givenStartDate)
+                    ->where('end_date', '>=', $givenEndDate);
+            })
+            ->orWhere(static function ($query) use ($givenEndDate, $givenStartDate) {
+                // GSD<------------->GED          Verilen başlangıç bitiş tarihleri
+                //     SD<----->ED                DB'deki olası balangıç bitiş tarihleri
+                return $query->where('start_date', '>=', $givenStartDate)
+                    ->where('end_date', '<=', $givenEndDate);
+            })
+            ->orWhere(static function ($query) use ($givenEndDate, $givenStartDate) {
+                //      GSD<-------->GED          Verilen başlangıç bitiş tarihleri
+                // SD<--------->ED                DB'deki olası balangıç bitiş tarihleri
+                return $query->where('start_date', '<=', $givenStartDate)
+                    ->where('end_date', '>=', $givenStartDate)
+                    ->where('end_date', '<=', $givenEndDate);
+            })
+            ->orWhere(static function ($query) use ($givenEndDate, $givenStartDate) {
+                // GSD<-------->GED                Verilen başlangıç bitiş tarihleri
+                //       SD<--------->ED           DB'deki olası balangıç bitiş tarihleri
+                return $query->where('end_date', '>=', $givenEndDate )
+                    ->where('start_date', '>=', $givenStartDate)
+                    ->where('start_date', '<=', $givenEndDate);
+            })->count('id') > 0;
         if ($isIntersect) {
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_WARNING,
-                ResponseKeys::MESSAGE => 'Seçilen tarih arağında bir plan var zaten!'
+                ResponseKeys::MESSAGE => 'Seçilen tarih aralığı içinde/kapsamında ya da kesişimibde halihazırda oluşturulmuş plan var!'
             ]);
         }
 
