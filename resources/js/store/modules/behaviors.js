@@ -8,8 +8,8 @@ export default {
   namespaced: true,
   actions: {
     [INIT] ({ dispatch }) {
-      dispatch(DISTRICT.withSuffix(INIT), { root: true })
-      dispatch(INSTITUTION.withSuffix(INIT), { root: true })
+      dispatch(DISTRICT.withSuffix(INIT), null, { root: true })
+      dispatch(INSTITUTION.withSuffix(INIT), null, { root: true })
     },
     [SET_CRUD] ({ dispatch }, setCrud) {
       dispatch(DISTRICT.withSuffix(SET_CRUD), setCrud, { root: true })

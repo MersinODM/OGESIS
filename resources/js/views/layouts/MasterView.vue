@@ -66,6 +66,8 @@ export default {
       store.dispatch('ui/setToggleSideBar')
     }
 
+    store.dispatch('behavior/init')
+
     onMounted(() => {
       appElement.classList.add('sidebar-mini')
       appElement.classList.add('layout-fixed')

@@ -73,7 +73,7 @@ class PlanController extends ApiController
             DB::beginTransaction();
             $devPlan = new DevPlan($request->all());
             $devPlan->save();
-            $devPlan->institutions()->attach($institutions = Institution::all());
+            $devPlan->institutions()->attach($institutions = Institution::all('id'));
             DB::commit();
             return response()->json([
                 ResponseKeys::CODE => ResponseCodes::CODE_SUCCESS,
