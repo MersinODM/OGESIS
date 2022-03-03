@@ -54,6 +54,7 @@ export const useUIMutationConstants = () => {
 
 export const useBehaviorConstants = () => {
   return {
+    BEHAVIOR: 'behavior/',
     INIT: 'init',
     SET_CRUD: 'setCrud'
   }

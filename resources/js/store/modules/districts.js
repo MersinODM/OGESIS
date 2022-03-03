@@ -43,6 +43,8 @@ export default {
       if (can(LEVEL_3)) {
         const data = await getDistricts()
         commit(DISTRICTS, data)
+      } else {
+        console.log('Yetki doğrulması geçilemedi')
       }
     },
     [SET_DISTRICTS] ({ commit }, districts) {
