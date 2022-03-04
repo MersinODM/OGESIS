@@ -11,9 +11,9 @@ export default {
       dispatch(DISTRICT.withSuffix(INIT), null, { root: true })
       dispatch(INSTITUTION.withSuffix(INIT), null, { root: true })
     },
-    [SET_CRUD] ({ dispatch }, setCrud) {
-      dispatch(DISTRICT.withSuffix(SET_CRUD), setCrud, { root: true })
-      dispatch(INSTITUTION.withSuffix(SET_CRUD), setCrud, { root: true })
+    [SET_CRUD] ({ commit }, setCrud) {
+      commit(DISTRICT.withSuffix(SET_CRUD), setCrud, { root: true })
+      commit(INSTITUTION.withSuffix(SET_CRUD), setCrud, { root: true })
     }
   }
 }

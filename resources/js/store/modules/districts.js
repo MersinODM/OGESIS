@@ -25,19 +25,20 @@ export default {
     selectedDistrict: (state) => state.selectedDistrict
   },
   mutations: {
-    [SET_DISTRICTS] (state, districts) { state.district = districts },
+    [DISTRICTS] (state, districts) { state.districts = districts },
     [SELECT_DISTRICT] (state, selectedDistrict) { state.selectedDistrict = selectedDistrict },
     [SET_CRUD] (state, setCrud) {
       if (setCrud) {
         state.districts.splice(state.districts.findIndex((d) => d.id === -1), 1)
       } else {
+        if (state.institutions.some(d => d.id === -1)) return // Zaten ekli ise tekrar eklenmesin
         state.districts.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
       }
     }
   },
   actions: {
-    async [INIT] ({ commit }) {
-      const { can } = useAbility()
+    async [INIT] ({ commit, rootGetters }) {
+      const { can } = rootGetters['auth/ability']
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
       if (can(LEVEL_3)) {
@@ -51,7 +52,7 @@ export default {
       commit(DISTRICTS, districts)
     },
     [SET_SELECTED_DISTRICT] ({ commit, dispatch }, selectedDistrict) {
-      commit(SET_SELECTED_DISTRICT, selectedDistrict)
+      commit(SELECT_DISTRICT, selectedDistrict)
     }
   }
 }

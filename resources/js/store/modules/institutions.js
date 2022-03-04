@@ -26,19 +26,23 @@ export default {
     institutions: (state) => state.institutions
   },
   mutations: {
-    [INSTITUTIONS] (state, institutions) { state.institutions = institutions },
+    [INSTITUTIONS] (state, institutions) {
+      state.institutions = state.institutions.filter(i => i.id === -1)
+      state.institutions.push(institutions)
+    },
     [SELECTED_INSTITUTION] (state, institution) { state.selectedInstitution = institution },
     [SET_CRUD] (state, setCrud) {
       if (setCrud) {
         state.institutions.splice(state.institutions.findIndex((d) => d.id === -1), 1)
       } else {
+        if (state.institutions.some(i => i.id === -1)) return // Zaten ekli ise tekrar eklenmesin
         state.institutions.insert(0, { id: -1, district_id: -1, name: 'Hepsi' })
       }
     }
   },
   actions: {
     async [INIT] ({ commit, rootGetters }) {
-      const { can, cannot } = useAbility()
+      const { can, cannot } = rootGetters['auth/ability']
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
       if (can(LEVEL_2) && cannot(LEVEL_3)) {

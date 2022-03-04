@@ -217,7 +217,7 @@ class CreatePlansTable extends Migration
             $table->unsignedBigInteger("plan_id");
             $table->unsignedInteger("institution_id");
             $table->unsignedBigInteger("theme_id");
-            $table->unsignedBigInteger("team_id");
+            $table->unsignedBigInteger("team_id")->nullable();
             $table->unsignedBigInteger("type_id")->nullable();
             $table->string("title", 500);
             $table->string("description", 5000);

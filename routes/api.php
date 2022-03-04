@@ -87,7 +87,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
     //Branş endpoint ve yetki tanımlamaları
     Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::BRANCH]], static function (){
         Route::post('branches', [BranchController::class, 'create'])->can(Permissions::BRANCH_CREATE);
-        Route::put('branches/{id}', [BranchController::class, 'update'])->can(Permissions::BRANCH_UPDATE);
+        Route::put('branches/{idvalues}', [BranchController::class, 'update'])->can(Permissions::BRANCH_UPDATE);
         Route::get('branches/search_by', [BranchController::class, 'searchBy'])->can(Permissions::BRANCH_LIST);
     });
 

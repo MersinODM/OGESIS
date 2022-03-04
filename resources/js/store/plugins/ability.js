@@ -17,7 +17,6 @@ export default (store) => {
       case SET_USER.withPrefix(AUTH): {
         mutation.payload.permissions.map(p => p.name)
           .forEach(claim => can(claim))
-        // console.log(claims)
         ability.update(rules)
         break
       }
