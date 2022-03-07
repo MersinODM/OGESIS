@@ -28,7 +28,7 @@ export default {
   mutations: {
     [INSTITUTIONS] (state, institutions) {
       state.institutions = state.institutions.filter(i => i.id === -1)
-      state.institutions.push(institutions)
+      state.institutions.push(...institutions)
     },
     [SELECTED_INSTITUTION] (state, institution) { state.selectedInstitution = institution },
     [SET_CRUD] (state, setCrud) {
@@ -50,8 +50,18 @@ export default {
         commit(INSTITUTIONS, data)
       }
     },
-    [SET_INSTITUTIONS] ({ commit }, institutions) {
-      commit(INSTITUTIONS, institutions)
+    async [SET_INSTITUTIONS] ({ commit, rootGetters }, districtId) {
+      const { can, cannot } = rootGetters['auth/ability']
+      // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
+      // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
+      if (can(LEVEL_2) && cannot(LEVEL_3)) {
+        const data = await getInstitution(rootGetters['auth/user']?.institution.district_id)
+        commit(INSTITUTIONS, data)
+      }
+      if (can(LEVEL_3)) {
+        const data = await getInstitution(districtId)
+        commit(INSTITUTIONS, data)
+      }
     },
     [SET_SELECTED_INSTITUTION] ({ commit }, institution) {
       commit(SELECTED_INSTITUTION, institution)

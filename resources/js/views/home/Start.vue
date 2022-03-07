@@ -41,7 +41,7 @@ export default {
     }
 
     const openModal2 = () => {
-      store.dispatch(MODAL.withSuffix(SHOW), { title: 'Branş seçimi', component: 'BranchSelector' })
+      store.dispatch(MODAL.withSuffix(SHOW), { title: 'Kurum seçimi', component: 'InstitutionSelectorModal' })
     }
     return {
       selectedVal: ref(),

@@ -51,9 +51,11 @@ import { computed } from 'vue'
 import { useModalActionTypes } from '../utils/constants'
 import { useStore } from 'vuex'
 import AddActivity from './activities/AddActivity'
+import InstitutionSelectorModal from './institutions/InstitutionSelectorModal'
 
 const componentMap = {
-  AddActivity
+  AddActivity,
+  InstitutionSelectorModal
 }
 
 export default {

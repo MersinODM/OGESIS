@@ -1,4 +1,9 @@
-import { useBehaviorConstants, useDistrictConstants, usePermissionConstants } from '../../utils/constants'
+import {
+  useBehaviorConstants,
+  useDistrictConstants,
+  useInstitutionConstants,
+  usePermissionConstants
+} from '../../utils/constants'
 import useDistrictApi from '../../services/useDistrictApi'
 import { useAbility } from '@casl/vue'
 
@@ -9,6 +14,10 @@ const {
   SET_SELECTED_DISTRICT,
   DISTRICTS
 } = useDistrictConstants()
+
+const {
+  INSTITUTION, SET_SELECTED_INSTITUTION
+} = useInstitutionConstants()
 
 const { getDistricts } = useDistrictApi()
 // const { can } = useAbility()
@@ -53,6 +62,7 @@ export default {
     },
     [SET_SELECTED_DISTRICT] ({ commit, dispatch }, selectedDistrict) {
       commit(SELECT_DISTRICT, selectedDistrict)
+      dispatch(INSTITUTION.withSuffix(SET_SELECTED_INSTITUTION), null, { root: true })
     }
   }
 }
