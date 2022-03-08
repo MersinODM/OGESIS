@@ -33,6 +33,7 @@ import ValidationError from '../ValidationError'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 import { useModelWrapper } from '../../compositions/useModelWrapper'
 import Multiselect from '@vueform/multiselect'
+import { watch } from 'vue'
 
 export default {
   name: 'InstitutionSelector',
@@ -64,9 +65,16 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const institution = useModelWrapper(props, emit)
+    const institutionList = useModelWrapper(props, emit, 'institutions')
+
+    watch(institutionList, () => {
+      institution.value = null
+    }, { deep: true })
+
     return {
-      institution: useModelWrapper(props, emit),
-      institutionList: useModelWrapper(props, emit, 'institutions'),
+      institution,
+      institutionList,
       ...useComponentValidationWrapper(props)
     }
   }

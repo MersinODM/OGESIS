@@ -32,8 +32,9 @@ import useDistrictApi from '../../services/useDistrictApi'
 import ValidationError from '../ValidationError'
 import { useAbility } from '@casl/vue'
 import Multiselect from '@vueform/multiselect'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import { useStore } from 'vuex'
 
 export default {
   name: 'DistrictSelector',
@@ -61,23 +62,19 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const store = useStore()
     const { can } = useAbility()
-    const { getDistricts } = useDistrictApi()
-    const districts = ref([])
-    getDistricts()
-      .then(value => {
-        if (props.addAllChoice) {
-          districts.value = value
-          districts.value.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
-        } else {
-          districts.value = value
-        }
-      })
 
     const district = computed({
       get: () => props.modelValue,
       set: (value) => emit('update:modelValue', value)
     })
+
+    const districts = computed(() => store.getters['district/districts'])
+
+    watch(districts, () => {
+      district.value = null
+    }, { deep: true })
 
     return {
       can,

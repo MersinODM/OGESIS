@@ -31,9 +31,11 @@ export default {
       state.institutions.push(...institutions)
     },
     [SELECTED_INSTITUTION] (state, institution) { state.selectedInstitution = institution },
+    // Burasi init altına çekilebilir merkezileştirme adına altında
     [SET_CRUD] (state, setCrud) {
       if (setCrud) {
-        state.institutions.splice(state.institutions.findIndex((d) => d.id === -1), 1)
+        const index = state.institutions.findIndex((d) => d.id === -1)
+        if (index >= 0) { state.institutions.splice(index, 1) }
       } else {
         if (state.institutions.some(i => i.id === -1)) return // Zaten ekli ise tekrar eklenmesin
         state.institutions.insert(0, { id: -1, district_id: -1, name: 'Hepsi' })

@@ -42,10 +42,18 @@ import NHeader from './HeaderView'
 import NSidebar from './MainSidebar'
 import NFooter from './FooterView'
 import SkinHelper from '../../utils/SkinHelper'
-import constants, { useAuthActionTypes } from '../../utils/constants'
+import constants, {
+  useAuthActionTypes,
+  useBehaviorConstants,
+  useDistrictConstants,
+  useInstitutionConstants
+} from '../../utils/constants'
 import Modal from '../../components/Modal'
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
+const { SET_CRUD } = useBehaviorConstants()
+const { DISTRICT } = useDistrictConstants()
+const { INSTITUTION } = useInstitutionConstants()
 
 export default {
   name: 'MainView',
@@ -65,6 +73,12 @@ export default {
     const toggleMenuSidebar = () => {
       store.dispatch('ui/setToggleSideBar')
     }
+
+    // TODO Burası önemli sonra rafaktör edilebilir
+    watch(computed(() => store.getters['behavior/crudMode']), (value) => {
+      store.commit(DISTRICT.withSuffix(SET_CRUD), value, { root: true })
+      store.commit(INSTITUTION.withSuffix(SET_CRUD), value, { root: true })
+    })
 
     onMounted(() => {
       appElement.classList.add('sidebar-mini')

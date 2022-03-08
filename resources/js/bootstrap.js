@@ -8,7 +8,6 @@
 // import 'admin-lte/plugins/bootstrap/js/bootstrap.bundle.min'
 // import 'admin-lte/dist/js/adminlte.min'
 import router from './router'
-
 // window.Jquery = window.$ = jquery
 
 $.fn.dataTable.ext.errMode = async (settings) => {
@@ -49,3 +48,4 @@ String.prototype.withSuffix = function (suffix) {
 Array.prototype.insert = function (index, item) {
   this.splice(index, 0, item)
 }
+

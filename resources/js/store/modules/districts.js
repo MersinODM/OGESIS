@@ -38,9 +38,10 @@ export default {
     [SELECT_DISTRICT] (state, selectedDistrict) { state.selectedDistrict = selectedDistrict },
     [SET_CRUD] (state, setCrud) {
       if (setCrud) {
-        state.districts.splice(state.districts.findIndex((d) => d.id === -1), 1)
+        const index = state.districts.findIndex((d) => d.id === -1)
+        if (index >= 0) { state.districts.splice(index, 1) }
       } else {
-        if (state.institutions.some(d => d.id === -1)) return // Zaten ekli ise tekrar eklenmesin
+        if (state.districts.some(d => d.id === -1)) return // Zaten ekli ise tekrar eklenmesin
         state.districts.insert(0, { id: -1, province_id: -1, name: 'Hepsi' })
       }
     }
