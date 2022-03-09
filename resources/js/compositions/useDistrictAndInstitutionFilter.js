@@ -29,10 +29,10 @@ export function useDistrictAndInstitutionFilter (reload = null, selectedDistrict
   // }
 
   // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
-  watch(selectedDistrict, () => {
-    selectedInstitution.value = null
-    store.dispatch(DISTRICT.withSuffix(SET_SELECTED_DISTRICT), selectedDistrict.value)
-  })
+  // watch(selectedDistrict, () => {
+  //   selectedInstitution.value = null
+  //   store.dispatch(DISTRICT.withSuffix(SET_SELECTED_DISTRICT), selectedDistrict.value.id)
+  // })
 
   // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
   watch(selectedInstitution, () => {

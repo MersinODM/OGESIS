@@ -21,7 +21,6 @@
                 <div class="col-md-3 mt-1">
                   <institution-selector
                     v-model="selectedInstitution"
-                    :institutions="institutions"
                     :validation-required="true"
                   />
                 </div>
@@ -70,14 +69,15 @@
 
 <script>
 import Page from '../../components/Page'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, onUnmounted, computed } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
 
 import InstitutionSelector from '../../components/selectors/InstitutionSelector'
 import BranchSelector from '../../components/selectors/BranchSelector'
 import DistrictSelector from '../../components/selectors/DistrictSelector'
-import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
+
+import { useStore } from 'vuex'
 
 let table = null
 
@@ -85,14 +85,13 @@ export default {
   name: 'TeacherList',
   components: { BranchSelector, InstitutionSelector, Page, DistrictSelector },
   setup: function () {
+    const store = useStore()
     const selectedDistrict = ref()
     const selectedInstitution = ref()
     const selectedBranch = ref()
 
-    const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
-
-    watch(([selectedDistrict, selectedInstitution, selectedBranch]), () => {
-      table.ajax.reload(false, null)
+    const unwatch = watch(([selectedDistrict, selectedInstitution, selectedBranch]), () => {
+      table?.ajax?.reload(false, null)
     })
 
     onMounted(() => {
@@ -201,12 +200,12 @@ export default {
       })
     })
 
+    onUnmounted(() => unwatch())
+
     return {
       selectedDistrict,
       selectedInstitution,
-      institutions,
       selectedBranch
-
     }
   }
 }

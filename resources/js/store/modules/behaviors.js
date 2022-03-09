@@ -18,12 +18,12 @@ export default {
     }
   },
   actions: {
-    [INIT] ({ dispatch }) {
-      dispatch(DISTRICT.withSuffix(INIT), null, { root: true })
-      dispatch(INSTITUTION.withSuffix(INIT), null, { root: true })
+    init ({ dispatch }) {
+      dispatch('district/init', null, { root: true })
+      dispatch('institution/init', null, { root: true })
     },
-    [SET_CRUD] ({ commit }, setCrud) {
-      commit('CRUD', setCrud)
+    setCrud ({ commit }, mode) {
+      commit('CRUD', mode)
     }
   }
 }

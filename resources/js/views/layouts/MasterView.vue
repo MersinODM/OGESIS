@@ -76,8 +76,8 @@ export default {
 
     // TODO Burası önemli sonra rafaktör edilebilir
     watch(computed(() => store.getters['behavior/crudMode']), (value) => {
-      store.commit(DISTRICT.withSuffix(SET_CRUD), value, { root: true })
-      store.commit(INSTITUTION.withSuffix(SET_CRUD), value, { root: true })
+      store.commit('district/SET_CRUD', value, { root: true })
+      store.commit('institution/SET_CRUD', value, { root: true })
     })
 
     onMounted(() => {

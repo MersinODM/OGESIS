@@ -17,6 +17,7 @@
       track-by="name"
       :close-on-select="true"
       :loading="false"
+      :object="true"
       :options="institutionList"
       class="form-control"
       :class="{'is-invalid': isValidated && errorMessage != null}"
@@ -33,7 +34,8 @@ import ValidationError from '../ValidationError'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 import { useModelWrapper } from '../../compositions/useModelWrapper'
 import Multiselect from '@vueform/multiselect'
-import { watch } from 'vue'
+import {computed, watch} from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'InstitutionSelector',
@@ -44,7 +46,8 @@ export default {
     },
     institutions: {
       type: Array,
-      default: () => ([])
+      default: () => ([]),
+      required: false
     },
     validationMessage: {
       type: String,
@@ -65,12 +68,22 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const store = useStore()
     const institution = useModelWrapper(props, emit)
-    const institutionList = useModelWrapper(props, emit, 'institutions')
+    // const institutionList = useModelWrapper(props, emit, 'institutions')
+    const institutionList = computed(() => store.getters['institution/institutions'])
 
     watch(institutionList, () => {
       institution.value = null
     }, { deep: true })
+
+    watch(institution, (value) => {
+      // if (store.getters['institution/selectedInstitution']?.id !== value.id) {
+      store.dispatch('institution/setSelectedInstitution', value)
+      // }
+    })
+
+    institution.value = store.getters['institution/selectedInstitution']
 
     return {
       institution,

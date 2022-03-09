@@ -15,6 +15,7 @@
       :min-chars="2"
       value-prop="id"
       :searchable="true"
+      :object="true"
       label="name"
       :options="districts"
       class="form-control"
@@ -75,6 +76,12 @@ export default {
     watch(districts, () => {
       district.value = null
     }, { deep: true })
+
+    watch(district, (value) => {
+      store.dispatch('district/setSelectedDistrict', value)
+    })
+
+    district.value = store.getters['district/selectedDistrict']
 
     return {
       can,
