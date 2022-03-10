@@ -75,7 +75,7 @@ export default {
 
     watch(institutionList, () => {
       institution.value = null
-    }, { deep: true })
+    })
 
     watch(institution, (value) => {
       // if (store.getters['institution/selectedInstitution']?.id !== value.id) {
@@ -83,7 +83,7 @@ export default {
       // }
     })
 
-    institution.value = store.getters['institution/selectedInstitution']
+    // institution.value = store.getters['institution/selectedInstitution']
 
     return {
       institution,

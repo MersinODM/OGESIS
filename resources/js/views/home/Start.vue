@@ -3,13 +3,13 @@
     <template #header>
       <h4>Giriş</h4> <button
         class="btn btn-danger"
-        @click="openModal"
+        @click="openM1"
       >
         AÇ
       </button>
       <button
         class="btn btn-danger"
-        @click="openModal2"
+        @click="openM2"
       >
         AÇ
       </button>
@@ -17,7 +17,7 @@
     <template #content>
       <div class="row justify-content-md-center">
         <div class="col-md-8">
-
+          <institution-not-valid />
         </div>
       </div>
     </template>
@@ -27,26 +27,25 @@
 <script>
 import Page from '../../components/Page'
 import { ref } from 'vue'
-import { useStore } from 'vuex'
-import { useModalActionTypes } from '../../utils/constants'
+import InstitutionNotValid from '../../components/institutions/InstitutionNotValid'
+import useModal from '../../compositions/useModal'
 
 export default {
   name: 'Start',
-  components: { Page },
+  components: { InstitutionNotValid, Page },
   setup (props) {
-    const store = useStore()
-    const { MODAL, SHOW } = useModalActionTypes()
-    const openModal = () => {
-      store.dispatch(MODAL.withSuffix(SHOW), { title: 'Yeni Etkinlik', component: 'AddActivity' })
+    const { openModal } = useModal()
+    const openM1 = () => {
+      openModal({ title: 'Yeni Etkinlik', component: 'AddActivity' })
     }
 
-    const openModal2 = () => {
-      store.dispatch(MODAL.withSuffix(SHOW), { title: 'Kurum seçimi', component: 'InstitutionSelectorModal' })
+    const openM2 = () => {
+      openModal({ title: 'Kurum seçimi', component: 'InstitutionSelectorModal' })
     }
     return {
       selectedVal: ref(),
-      openModal,
-      openModal2
+      openM1,
+      openM2
     }
   }
 }

@@ -10,14 +10,18 @@
   <div class="row">
     <institution-selector
       v-model="selectedInstitution"
-      :institutions="institutions"
       :validation-required="false"
       class="col-md-12 mt-1"
     />
   </div>
   <div class="row justify-content-md-center">
     <div class="col-md-4">
-      <button class="btn btn-primary btn-block">SEÇ</button>
+      <button
+        class="btn btn-danger btn-block"
+        @click="close"
+      >
+        KAPAT
+      </button>
     </div>
   </div>
 </template>
@@ -26,15 +30,21 @@
 import DistrictSelector from '../selectors/DistrictSelector'
 import InstitutionSelector from '../selectors/InstitutionSelector'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
+import { useStore } from 'vuex'
+import { useModalActionTypes } from '../../utils/constants'
 
 export default {
   name: 'InstitutionSelectorModal',
   components: { DistrictSelector, InstitutionSelector },
   setup () {
-    const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter()
-
+    const store = useStore()
+    const { MODAL, CLOSE } = useModalActionTypes()
+    const { selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter()
+    const close = async () => {
+      await store.dispatch(MODAL.withSuffix(CLOSE))
+    }
     return {
-      institutions,
+      close,
       selectedInstitution,
       selectedDistrict
     }

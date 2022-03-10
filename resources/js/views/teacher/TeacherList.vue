@@ -69,7 +69,7 @@
 
 <script>
 import Page from '../../components/Page'
-import { onMounted, ref, watch, onUnmounted, computed } from 'vue'
+import { onMounted, ref, watch, onUnmounted } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
 
@@ -77,7 +77,7 @@ import InstitutionSelector from '../../components/selectors/InstitutionSelector'
 import BranchSelector from '../../components/selectors/BranchSelector'
 import DistrictSelector from '../../components/selectors/DistrictSelector'
 
-import { useStore } from 'vuex'
+import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 
 let table = null
 
@@ -85,9 +85,7 @@ export default {
   name: 'TeacherList',
   components: { BranchSelector, InstitutionSelector, Page, DistrictSelector },
   setup: function () {
-    const store = useStore()
-    const selectedDistrict = ref()
-    const selectedInstitution = ref()
+    const { selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter()
     const selectedBranch = ref()
 
     const unwatch = watch(([selectedDistrict, selectedInstitution, selectedBranch]), () => {

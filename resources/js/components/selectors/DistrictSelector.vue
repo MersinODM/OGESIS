@@ -81,7 +81,7 @@ export default {
       store.dispatch('district/setSelectedDistrict', value)
     })
 
-    district.value = store.getters['district/selectedDistrict']
+    // district.value = store.getters['district/selectedDistrict']
 
     return {
       can,

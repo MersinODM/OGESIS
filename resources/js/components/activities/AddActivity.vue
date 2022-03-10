@@ -30,7 +30,6 @@
       <div class="form-row">
         <institution-selector
           v-model="selectedInstitution"
-          :institutions="institutions"
           class="col-md-12"
           :validation-required="true"
           :validation-message="errors.institution_id"
@@ -170,6 +169,7 @@ import router from '../../router'
 import useNotifier from '../../utils/useNotifier'
 import useActivityApi from '../../services/useActivityApi'
 import { useStore } from 'vuex'
+import useModal from '../../compositions/useModal'
 
 export default {
   name: 'AddActivity',
@@ -196,9 +196,7 @@ export default {
     const TEAM_ERROR_MESSAGE = 'Takım seçimi yapılmaldır!'
     const notifier = useNotifier()
     const { createActivity } = useActivityApi()
-    const store = useStore()
-    const { MODAL, CLOSE } = useModalActionTypes()
-
+    const { closeModal } = useModal()
     // Validasyon bilgileri
     const schema = object({
       isTeamSelected: boolean(),
@@ -225,10 +223,10 @@ export default {
         is: true,
         then: (schema) => schema.typeError(() => TEAM_ERROR_MESSAGE).required(() => TEAM_ERROR_MESSAGE)
       }),
-      // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
-      ...useRuleInstitution(),
-      // Eğer il yetkisi vars    const notifier = useNotifier()a ilçe kurum doğrulması yapacağız
-      ...useRuleDistrict()
+      // // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
+      ...useRuleInstitution()
+      // // Eğer il yetkisi vars    const notifier = useNotifier()a ilçe kurum doğrulması yapacağız
+      // ...useRuleDistrict()
     })
 
     const { handleSubmit, errors } = useForm({ validationSchema: schema })
@@ -256,7 +254,7 @@ export default {
         const response = await createActivity(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Etkinlik/Aktivite başarıyla oluşturuldu.', duration: 3200 })
-          await store.dispatch(MODAL.withSuffix(CLOSE))
+          await closeModal()
           await router.push({ name: 'activityList', params: { planId: values.plan_id } })
         } else {
           await notifier.error({ message: 'Etkinlik/Aktivite kaydı oluşturalamadı!.', duration: 3200 })

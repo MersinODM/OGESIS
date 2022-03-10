@@ -1,11 +1,12 @@
-import { number } from 'yup'
+import { object, number } from 'yup'
 import { useAbility } from '@casl/vue'
 import { usePermissionConstants } from '../utils/constants'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 const branchValidationMessage = 'Branş bilgisi seçilmelidir!'
 const districtValidationMessage = 'İlçe seçimi yapılmalıdır!'
 const institutionValidationMessage = 'Kurum seçilmelidir!'
-
 
 export function useRuleBranch () {
   return {
@@ -16,10 +17,10 @@ export function useRuleBranch () {
 
 export function useRuleDistrict () {
   const { can } = useAbility()
-  const { TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
+  const { LEVEL_3 } = usePermissionConstants()
   return {
-    ...(can(TEACHER_LIST_LEVEL_3) && {
-      district_id: number().typeError(() => districtValidationMessage)
+    ...(can(LEVEL_3) && {
+      district_id: object().typeError(() => districtValidationMessage)
         .required(() => districtValidationMessage)
     })
   }
@@ -27,11 +28,21 @@ export function useRuleDistrict () {
 
 export function useRuleInstitution () {
   const { can } = useAbility()
-  const { TEACHER_LIST_LEVEL_2 } = usePermissionConstants()
+  const { LEVEL_2 } = usePermissionConstants()
   return {
-    ...(can(TEACHER_LIST_LEVEL_2) && {
-      institution_id: number().typeError(() => institutionValidationMessage)
+    ...(can(LEVEL_2) && {
+      institution_id: object().typeError(() => institutionValidationMessage)
         .required(() => institutionValidationMessage)
     })
+  }
+}
+
+export function useInstitutionCheck () {
+  const { LEVEL_3, LEVEL_2 } = usePermissionConstants()
+  const { can } = useAbility()
+  const store = useStore()
+  const hasInstitutionNotSelected = computed(() => store.getters['institution/selectedInstitution'] === null && (can(LEVEL_3) || can(LEVEL_2)))
+  return {
+    hasInstitutionNotSelected
   }
 }
