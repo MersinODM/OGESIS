@@ -19,25 +19,22 @@ export default {
   mutations: {
     [TITLE] (state, title) { state.title = title },
     [CURRENT_COMPONENT] (state, currentComponent) { state.currentComponent = currentComponent },
-    [IS_SHOW] (state, isShow) {
-      state.isShow = isShow
-      if (isShow) {
-        SkinHelper.OpenModalSkin()
-      } else {
-        SkinHelper.CloseModalSkin()
-      }
-    }
+    [IS_SHOW] (state, isShow) { state.isShow = isShow }
   },
   actions: {
     [SHOW] ({ commit }, modal) {
       commit(TITLE, modal.title)
       commit(CURRENT_COMPONENT, modal.component)
       commit(IS_SHOW, true)
+
+      SkinHelper.CloseModalSkin()
+      SkinHelper.OpenModalSkin()
     },
     [CLOSE] ({ commit }) {
       commit(TITLE, '')
       commit(CURRENT_COMPONENT, null)
       commit(IS_SHOW, false)
+      SkinHelper.CloseModalSkin()
     }
   }
 }

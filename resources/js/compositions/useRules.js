@@ -42,7 +42,9 @@ export function useInstitutionCheck () {
   const { can } = useAbility()
   const store = useStore()
   const hasInstitutionNotSelected = computed(() => store.getters['institution/selectedInstitution'] === null && (can(LEVEL_3) || can(LEVEL_2)))
+  const hasInstitutionSelected = computed(() => store.getters['institution/selectedInstitution'] !== null && (can(LEVEL_3) || can(LEVEL_2)))
   return {
-    hasInstitutionNotSelected
+    hasInstitutionNotSelected,
+    hasInstitutionSelected
   }
 }

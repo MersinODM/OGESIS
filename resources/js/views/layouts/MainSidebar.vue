@@ -34,7 +34,7 @@
       class="sidebar"
       style="margin-top: 0"
     >
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="user-panel mt-3 pb-3 d-flex">
         <div class="image">
           <img
             id="avatar"
@@ -49,6 +49,14 @@
           >
             {{ user?.full_name }}
           </router-link>
+        </div>
+      </div>
+      <div class="form-inline mb-3">
+        <div class="info">
+          <a
+            href="javascript:void(0)"
+            class="d-block text-wrap"
+          >{{ selectedInstitution }}</a>
         </div>
       </div>
       <nav class="mt-2">
@@ -125,6 +133,11 @@ export default {
 
     nextTick(() => {
       crateAvatar()
+    })
+
+    const selectedInstitution = computed(() => {
+      const si = store.getters['institution/selectedInstitution']
+      return si !== null ? si?.name : 'Kurum seçili değil'
     })
 
     const menu = [
@@ -229,7 +242,8 @@ export default {
     return {
       menu,
       logo,
-      user
+      user,
+      selectedInstitution
     }
   }
 }

@@ -1,6 +1,10 @@
 <template>
   <div>
-    <form @submit.prevent>
+    <institution-not-valid />
+    <form
+      v-if="hasInstitutionSelected"
+      @submit.prevent
+    >
       <div class="form-row">
         <plan-selector
           v-model="selectedPlan"
@@ -17,22 +21,6 @@
           label="Açıklama"
           :validation-required="true"
           :validation-message="errors.theme_id"
-        />
-      </div>
-      <div class="form-row">
-        <district-selector
-          v-model="selectedDistrict"
-          class="col-md-12"
-          :validation-required="true"
-          :validation-message="errors.district_id"
-        />
-      </div>
-      <div class="form-row">
-        <institution-selector
-          v-model="selectedInstitution"
-          class="col-md-12"
-          :validation-required="true"
-          :validation-message="errors.institution_id"
         />
       </div>
       <div class="form-row">
@@ -144,10 +132,7 @@
 </template>
 <script>
 
-import { ref } from 'vue'
 import PlanSelector from '../selectors/PlanSelector'
-import DistrictSelector from '../selectors/DistrictSelector'
-import InstitutionSelector from '../selectors/InstitutionSelector'
 import ThemeSelector from '../selectors/ThemeSelector'
 import TextBox from '../TextBox'
 import TextArea from '../TextArea'
@@ -158,30 +143,28 @@ import RadioButton from '../buttons/RadioButton'
 import TeamSelector from '../selectors/TeamSelector'
 import TeacherSelector from '../selectors/TeacherSelector'
 import { object, string, date, ref as yupRef, array, boolean, number } from 'yup'
-import { useRuleDistrict, useRuleInstitution } from '../../compositions/useRules'
+import { useInstitutionCheck } from '../../compositions/useRules'
 import { useField, useForm } from 'vee-validate'
-import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 import { useTeacherFilter } from '../../compositions/useTeacherFilter'
 import { useTeamFilter } from '../../compositions/useTeamFilter'
 import Messenger from '../../utils/messenger'
-import { ResponseCodes, useModalActionTypes } from '../../utils/constants'
+import { ResponseCodes } from '../../utils/constants'
 import router from '../../router'
 import useNotifier from '../../utils/useNotifier'
 import useActivityApi from '../../services/useActivityApi'
-import { useStore } from 'vuex'
 import useModal from '../../compositions/useModal'
+import InstitutionNotValid from '../institutions/InstitutionNotValid'
 
 export default {
   name: 'AddActivity',
   components: {
+    InstitutionNotValid,
     TeacherSelector,
     RadioButton,
     RadioGroup,
     PartnerSelector,
     TextArea,
     TextBox,
-    InstitutionSelector,
-    DistrictSelector,
     PlanSelector,
     ThemeSelector,
     DatePicker,
@@ -197,6 +180,7 @@ export default {
     const notifier = useNotifier()
     const { createActivity } = useActivityApi()
     const { closeModal } = useModal()
+    const { hasInstitutionSelected } = useInstitutionCheck()
     // Validasyon bilgileri
     const schema = object({
       isTeamSelected: boolean(),
@@ -222,11 +206,7 @@ export default {
       team_id: number().when('isTeamSelected', {
         is: true,
         then: (schema) => schema.typeError(() => TEAM_ERROR_MESSAGE).required(() => TEAM_ERROR_MESSAGE)
-      }),
-      // // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
-      ...useRuleInstitution()
-      // // Eğer il yetkisi vars    const notifier = useNotifier()a ilçe kurum doğrulması yapacağız
-      // ...useRuleDistrict()
+      })
     })
 
     const { handleSubmit, errors } = useForm({ validationSchema: schema })
@@ -236,8 +216,6 @@ export default {
     const { value: selectedTheme } = useField('theme_id')
     const { value: plannedStartDate } = useField('planned_start_date')
     const { value: plannedEndDate } = useField('planned_end_date')
-    const { value: selectedInstitution } = useField('institution_id')
-    const { value: selectedDistrict } = useField('district_id')
     const { value: selectedPartners } = useField('partners')
     const { value: description } = useField('description')
     const { value: isTeamSelected } = useField('isTeamSelected')
@@ -245,9 +223,9 @@ export default {
     const { value: selectedTeam } = useField('team_id')
     isTeamSelected.value = false
 
-    const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
-    const { teachers } = useTeacherFilter(selectedDistrict, selectedInstitution, selectedTeachers)
-    const { teams } = useTeamFilter(selectedDistrict, selectedInstitution, selectedTeachers)
+    // const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
+    const { teachers } = useTeacherFilter(selectedTeachers)
+    const { teams } = useTeamFilter(selectedTeachers)
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Etkinlik/Aktivite oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
@@ -263,10 +241,9 @@ export default {
     })
 
     return {
+      hasInstitutionSelected,
       title,
       selectedPlan,
-      selectedDistrict,
-      selectedInstitution,
       selectedTheme,
       selectedPartners,
       plannedStartDate,
@@ -274,7 +251,6 @@ export default {
       isTeamSelected,
       selectedTeachers,
       selectedTeam,
-      institutions,
       description,
       teachers,
       teams,
