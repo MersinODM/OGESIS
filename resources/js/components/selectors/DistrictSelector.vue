@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="can(LEVEL_3)"
+    v-if="$can(LEVEL_3)"
     class="form-group"
   >
     <label>İlçe Seçimi</label>
@@ -29,11 +29,9 @@
 </template>
 
 <script>
-import useDistrictApi from '../../services/useDistrictApi'
 import ValidationError from '../ValidationError'
-import { useAbility } from '@casl/vue'
 import Multiselect from '@vueform/multiselect'
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 import { useStore } from 'vuex'
 
@@ -64,7 +62,6 @@ export default {
   },
   setup (props, { emit }) {
     const store = useStore()
-    const { can } = useAbility()
 
     const district = computed({
       get: () => props.modelValue,
@@ -84,7 +81,6 @@ export default {
     // district.value = store.getters['district/selectedDistrict']
 
     return {
-      can,
       districts,
       district,
       // useModelWrapper(props, emit, 'addAllChoice'),

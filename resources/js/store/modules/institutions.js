@@ -10,9 +10,9 @@ import useInstitutionApi from '../../services/useInstitutionApi'
 //   SET_INSTITUTIONS
 // } = useInstitutionConstants()
 
-const { LEVEL_2, LEVEL_3 } = usePermissionConstants()
+const { LEVEL_1, LEVEL_2, LEVEL_3 } = usePermissionConstants()
 // const { can, cannot } = useAbility()
-const { getInstitution } = useInstitutionApi()
+const { getInstitutions } = useInstitutionApi()
 
 export default {
   namespaced: true,
@@ -47,8 +47,11 @@ export default {
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
       if (can(LEVEL_2) && cannot(LEVEL_3)) {
-        const data = await getInstitution(rootGetters['auth/user']?.institution.district_id)
+        const data = await getInstitutions(rootGetters['auth/user']?.institution.district_id)
         commit('INSTITUTIONS', data)
+      }
+      if (can(LEVEL_1) && cannot(LEVEL_2, LEVEL_3)) {
+        commit('SELECTED_INSTITUTION', rootGetters['auth/user'].institution)
       }
     },
     async setInstitutions ({ commit, rootGetters }, district) {
@@ -57,13 +60,13 @@ export default {
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
 
       if (can(LEVEL_2) && cannot(LEVEL_3)) {
-        const data = await getInstitution(rootGetters['auth/user']?.institution.district_id)
+        const data = await getInstitutions(rootGetters['auth/user']?.institution.district_id)
         commit('INSTITUTIONS', data)
       }
 
       // 3. seviye yetkilerde ilçe nul geçilirse kurumalrın işini boşaltıyoruz
       if (district && can(LEVEL_3)) {
-        const data = await getInstitution(district.id)
+        const data = await getInstitutions(district.id)
         commit('INSTITUTIONS', data)
       } else {
         commit('INSTITUTIONS', [])

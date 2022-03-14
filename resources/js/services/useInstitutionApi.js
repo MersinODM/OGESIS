@@ -20,9 +20,16 @@ export default function () {
     } catch (e) {}
   }
 
-  const getInstitution = async (districtId) => {
+  const getInstitutions = async (districtId) => {
     try {
       const response = await http.get(`api/v1/districts/${districtId}/institutions`)
+      return response.data
+    } catch (e) {}
+  }
+
+  const getInstitution = async (institutionId) => {
+    try {
+      const response = await http.get(`api/v1/institutions/${institutionId}`)
       return response.data
     } catch (e) {}
   }
@@ -32,6 +39,6 @@ export default function () {
     updateInstitution,
     deleteInstitution,
     searchInstitution,
-    getInstitution
+    getInstitutions
   }
 }
