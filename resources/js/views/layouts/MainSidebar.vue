@@ -51,7 +51,10 @@
           </router-link>
         </div>
       </div>
-      <div class="form-inline mb-3">
+      <div
+        v-if="isInstitutionShow"
+        class="user-panel form-inline mb-3"
+      >
         <div class="info">
           <a
             href="javascript:void(0)"
@@ -134,6 +137,10 @@ export default {
     nextTick(() => {
       crateAvatar()
     })
+
+    const isInstitutionShow = computed(() => !store.getters['ui/isSidebarMenuCollapsed'] ||
+        (store.getters['ui/screenSize'] === 'xs' && store.getters['ui/isSidebarMenuCollapsed']) ||
+        (store.getters['ui/screenSize'] === 'sm' && store.getters['ui/isSidebarMenuCollapsed']))
 
     const selectedInstitution = computed(() => {
       const si = store.getters['institution/selectedInstitution']
@@ -243,7 +250,8 @@ export default {
       menu,
       logo,
       user,
-      selectedInstitution
+      selectedInstitution,
+      isInstitutionShow
     }
   }
 }

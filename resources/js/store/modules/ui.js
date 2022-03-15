@@ -25,6 +25,12 @@ export default {
     setToggleSideBar ({ commit, state }) {
       commit(IS_SIDE_BAR_MENU_COLLAPSED, !state.isSidebarMenuCollapsed)
     },
+    // setCollapseSidebar ({ commit }) {
+    //   commit(IS_SIDE_BAR_MENU_COLLAPSED, true)
+    // },
+    // setExpandSidebar ({ commit }) {
+    //   commit(IS_SIDE_BAR_MENU_COLLAPSED, false)
+    // },
     setDarkMode ({ commit }, mode) {
       commit(DARK_MODE, mode)
     },

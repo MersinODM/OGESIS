@@ -43,17 +43,11 @@ import NSidebar from './MainSidebar'
 import NFooter from './FooterView'
 import SkinHelper from '../../utils/SkinHelper'
 import constants, {
-  useAuthActionTypes,
-  useBehaviorConstants,
-  useDistrictConstants,
-  useInstitutionConstants
+  useAuthActionTypes
 } from '../../utils/constants'
 import Modal from '../../components/Modal'
 import { computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
-const { SET_CRUD } = useBehaviorConstants()
-const { DISTRICT } = useDistrictConstants()
-const { INSTITUTION } = useInstitutionConstants()
 
 export default {
   name: 'MainView',
