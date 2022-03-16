@@ -8,9 +8,12 @@ use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Models\Activity;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Yajra\DataTables\Facades\DataTables;
 
 class ActivityController  extends ApiController
 {
@@ -92,5 +95,33 @@ class ActivityController  extends ApiController
 
     public function list(Request $request) {
         //TODO burada role ve okula görefarklı listeleme mantıkları eklenecek
+    }
+
+    public function getTable(Request $request) {
+        $query = Activity::with('theme:id,name', 'institution:id,name', 'type:id,name', 'partners:id, name');
+        $user = Auth::user();
+
+        // TODO refaktör gerekebilir
+        // Kullanıcı 2i seviye(leve2) ise yani ilçe Mem kullanıcısı ise sadece kendi ilçesini listeleyebilsin
+        // Yetkiye en üst seviyeden başlayarak bakabiliriz böylece üst else if yapısı amacına uygun çalışmış olur
+        if ($user && $user->can(Permissions::LEVEL_3)) {
+            $this->checkDistrict($request, $query);
+            $this->checkInstitution($request, $query);
+        } else if ($user && $user->can(Permissions::LEVEL_2)) {
+            $query->whereHas('institution', static function (Builder $q) use ($user) {
+                $q->where('district_id', $user->institution()->district_id);
+            });
+            $this->checkInstitution($request, $query);
+        } else if ($user && $user->can(Permissions::LEVEL_1)) {
+            $query->whereHas('institution', static function (Builder $q) use ($user) {
+                $q->where('district_id', $user->institution()->district_id);
+            });
+            $query->where('institution_id', '=', $user->institution()->id);
+        } else {
+            return $this->unauthorized();
+        }
+
+        return Datatables::eloquent($query)
+            ->toJson();
     }
 }

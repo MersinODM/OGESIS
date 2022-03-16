@@ -20,7 +20,7 @@
           <institution-not-valid />
         </div>
       </div>
-      <div class="row justify-content">
+      <div class="row">
         <div class="col-md-6">
           <draggable
             :list="myArr"

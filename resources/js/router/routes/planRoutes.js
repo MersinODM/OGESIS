@@ -1,6 +1,6 @@
 import CreatePlan from '../../views/plan/CreatePlan'
 import PlanList from '../../views/plan/PlanList'
-import ActivityList from '../../views/activity/ActivityList'
+import ActivityList from '../../views/activity/Activities'
 
 const planRoutes = [
   {

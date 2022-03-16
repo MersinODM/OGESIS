@@ -33,7 +33,7 @@ class Activity extends Model
         return $this->belongsTo(ActivityType::class, "type_id");
     }
 
-    public function activityTheme(): BelongsTo
+    public function theme(): BelongsTo
     {
         return $this->belongsTo(ActivityTheme::class, "theme_id");
     }

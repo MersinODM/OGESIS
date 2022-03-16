@@ -1,98 +1,66 @@
 <template>
-  <page>
-    <template #header>
-      <h4>
-        <span class="text-bold text-blue">{{ plan.title }}</span> Aktiviteleri Tablosu
-      </h4>
-    </template>
-    <template #content>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <div class="row justify-content-md-center">
-                <district-selector
-                  v-model="selectedDistrict"
-                  name="district_id"
-                  class="col-md-3 mt-1"
-                  :validation-required="false"
-                />
-                <institution-selector
-                  v-model="selectedInstitution"
-                  :institutions="institutions"
-                  :validation-required="false"
-                  class="col-md-3 mt-1"
-                />
-                <plan-selector
-                  v-model="selectedPlan"
-                  :validation-required="false"
-                  class="col-md-3 mt-1"
-                />
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="dataTables_wrapper dt-bootstrap4 table-responsive">
-                    <table
-                      id="reportTable"
-                      class="table table-bordered table-hover dataTable dtr-inline"
-                      role="grid"
-                      style="width:100%"
-                    >
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>DISTRICT_ID</th>
-                          <th>PLAN_ID</th>
-                          <th>CREATOR_ID</th>
-                          <th>KOD</th>
-                          <th>KURUM</th>
-                          <th>PLAN</th>
-                          <th>AÇIKLAMA</th>
-                          <th>DURUM</th>
-                          <th>AKSİYON</th>
-                        </tr>
-                      </thead>
-                    </table>
-                  </div>
-                </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row justify-content-md-center">
+            <div class="col-md-3 mt-1" />
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="dataTables_wrapper dt-bootstrap4 table-responsive">
+                <table
+                  id="activitiesTable"
+                  class="table table-bordered table-hover dataTable dtr-inline"
+                  role="grid"
+                  style="width:100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>PLAN_ID</th>
+                      <th>INSTITUTION_ID</th>
+                      <th>TEMA</th>
+                      <th>AKTİVİTE TÜRÜ</th>
+                      <th>AKTİVİTE</th>
+                      <th>PAYDAŞ</th>
+                      <th>DURUM</th>
+                      <th>AKSİYON</th>
+                    </tr>
+                  </thead>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </template>
-  </page>
+    </div>
+  </div>
 </template>
+
 <script>
-import PlanSelector from '../../components/selectors/PlanSelector'
-import Page from '../../components/Page'
-import DistrictSelector from '../../components/selectors/DistrictSelector'
-import InstitutionSelector from '../../components/selectors/InstitutionSelector'
-import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
+import { useStore } from 'vuex'
 let table = null
 
 export default {
   name: 'ActivityList',
-  components: { PlanSelector, Page, DistrictSelector, InstitutionSelector },
   setup () {
-    const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter(() => table?.ajax.reload(null, false))
-    const selectedPlan = ref()
-    watch(selectedPlan, () => {
+    const store = useStore()
+
+    const selectedInstitution = computed(() => store.getters['institution/selectedInstitution'])
+    watch(selectedInstitution, () => {
       table?.ajax.reload(null, false)
     })
 
-
     onMounted(() => {
-      table = $('#reportTable')
+      table = $('#activitiesTable')
         .on('preXhr.dt', (e, settings, data) => {
           // Bu event sunucuya datatable üzerinden veri gitmeden önce
           // yeni parametre eklemek için ateşleniyor
-          data.district_id = selectedDistrict.value
-          data.institution_id = selectedInstitution.value
-          data.plan_id = selectedPlan.value
+          data.institution_id = selectedInstitution.value.id
           // data.branch_id = selectedBranch.value
         })
         .DataTable({
@@ -106,7 +74,7 @@ export default {
           paging: true,
           stateDuration: -1,
           ajax: {
-            url: '/api/v1/report-requests/table',
+            url: '/api/v1/activities/table',
             dataType: 'json',
             type: 'POST',
             xhrFields: {
@@ -205,13 +173,6 @@ export default {
         await router.push({ name: 'underConstruction' })
       })
     })
-
-    return {
-      institutions,
-      selectedDistrict,
-      selectedInstitution,
-      selectedPlan
-    }
   }
 }
 </script>

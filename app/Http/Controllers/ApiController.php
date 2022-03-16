@@ -22,6 +22,7 @@ use App\Http\Controllers\Utils\ResponseCodes;
 use App\Http\Controllers\Utils\ResponseContents;
 use App\Http\Controllers\Utils\ResponseKeys;
 use App\Traits\ValidationTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -65,6 +66,30 @@ class ApiController extends Controller
             ResponseKeys::CODE => ResponseCodes::CODE_UNAUTHORIZED,
             ResponseKeys::MESSAGE => ResponseContents::UNAUTHORIZED_MESSAGE
         ], 400);
+    }
+
+    /**
+     * @param Request $request
+     * @param Builder $query
+     */
+    protected function checkInstitution(Request $request, Builder $query): void
+    {
+        if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
+            $query->where('institution_id', '=', $request->input('institution_id'));
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Builder $query
+     */
+    protected function checkDistrict(Request $request, Builder $query): void
+    {
+        if ($request->has('district_id') && !is_null($request->input('district_id'))) {
+            $query->whereHas('institution', static function (Builder $q) use ($request) {
+                $q->where('district_id', $request->input('district_id'));
+            });
+        }
     }
 
 }

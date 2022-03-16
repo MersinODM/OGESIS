@@ -208,28 +208,28 @@ class TeacherController extends ApiController
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Builder $query
-     */
-    private function checkInstitution(Request $request, Builder $query): void
-    {
-        if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
-            $query->where('institution_id', '=', $request->input('institution_id'));
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @param Builder $query
-     */
-    private function checkDistrict(Request $request, Builder $query): void
-    {
-        if ($request->has('district_id') && !is_null($request->input('district_id'))) {
-            $query->whereHas('institution', static function (Builder $q) use ($request) {
-                $q->where('district_id', $request->input('district_id'));
-            });
-        }
-    }
+//    /**
+//     * @param Request $request
+//     * @param Builder $query
+//     */
+//    private function checkInstitution(Request $request, Builder $query): void
+//    {
+//        if ($request->has('institution_id') && !is_null($request->input('institution_id'))) {
+//            $query->where('institution_id', '=', $request->input('institution_id'));
+//        }
+//    }
+//
+//    /**
+//     * @param Request $request
+//     * @param Builder $query
+//     */
+//    private function checkDistrict(Request $request, Builder $query): void
+//    {
+//        if ($request->has('district_id') && !is_null($request->input('district_id'))) {
+//            $query->whereHas('institution', static function (Builder $q) use ($request) {
+//                $q->where('district_id', $request->input('district_id'));
+//            });
+//        }
+//    }
 
 }
