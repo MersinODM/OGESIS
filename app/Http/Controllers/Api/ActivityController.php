@@ -98,7 +98,10 @@ class ActivityController  extends ApiController
     }
 
     public function getTable(Request $request) {
-        $query = Activity::with('theme:id,name', 'institution:id,name', 'type:id,name', 'partners:id, name');
+        $query = Activity::with('theme:id,name', 'institution:id,name', 'type:id,name')
+        ->with(['partners' => static function ($query) {
+           $query->select('id','name');
+        }]);
         $user = Auth::user();
 
         // TODO refaktör gerekebilir

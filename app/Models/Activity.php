@@ -45,7 +45,7 @@ class Activity extends Model
 
     public function partners(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'ogs_activity_partners', "activity_id", "partner_id");
+        return $this->belongsToMany(Partner::class, 'ogs_activity_partners', "activity_id", "partner_id");
     }
 
     public function notifications(): MorphMany

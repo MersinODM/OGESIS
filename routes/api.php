@@ -59,14 +59,15 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
         Route::post('themes', [ThemeController::class, 'create'])->can(Permissions::THEME_CREATE);
         Route::put('themes/{id}', [ThemeController::class, 'update'])->can(Permissions::THEME_UPDATE);
         Route::get('themes', [ThemeController::class, 'getThemes'])->can(Permissions::THEME_LIST);
-        Route::get('districts/{district_id}/institutions/{institution_id}/teams', [TeamController::class, 'get'])->can(Permissions::THEME_LIST);
     });
 
     // Aktivite endpoint ve yetki denetimleri
     Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::ACTIVITY]], static function () {
         Route::post('activities', [ActivityController::class, 'create'])->can(Permissions::ACTIVITY_CREATE);
         Route::put('activities/{id}', [ActivityController::class, 'update'])->can(Permissions::ACTIVITY_UPDATE);
-        Route::get('activities', [ActivityController::class, 'list'])->can(Permissions::ACTIVITY_LIST);
+        Route::get('institutions/{id}/activities', [ActivityController::class, 'list'])->can(Permissions::ACTIVITY_LIST);
+        Route::post('activities/table', [ActivityController::class, 'getTable'])->can(Permissions::ACTIVITY_LIST);
+
     });
 
     // Öğretmen endpoint ve yetki tanımlamaları
@@ -82,12 +83,13 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], static function
         Route::post('teams', [TeamController::class, 'create'])->can(Permissions::TEAM_CREATE);
         Route::put('teams/{id}', [TeamController::class, 'update'])->can(Permissions::TEAM_UPDATE);
         Route::post('teams/table', [TeamController::class, 'getTable'])->can(Permissions::TEAM_LIST);
+        Route::get('districts/{district_id}/institutions/{institution_id}/teams', [TeamController::class, 'get'])->can(Permissions::THEME_LIST);
     });
 
     //Branş endpoint ve yetki tanımlamaları
     Route::group(['middleware' => ['role_or_permission:super-admin|'. Permissions::BRANCH]], static function (){
         Route::post('branches', [BranchController::class, 'create'])->can(Permissions::BRANCH_CREATE);
-        Route::put('branches/{idvalues}', [BranchController::class, 'update'])->can(Permissions::BRANCH_UPDATE);
+        Route::put('branches/{id}', [BranchController::class, 'update'])->can(Permissions::BRANCH_UPDATE);
         Route::get('branches/search_by', [BranchController::class, 'searchBy'])->can(Permissions::BRANCH_LIST);
     });
 

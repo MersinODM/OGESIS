@@ -15,6 +15,6 @@ class Partner extends Model
 
     public function activities(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'ogs_activity_partners', "partner_id", "activity_id");
+        return $this->belongsToMany(Activity::class, 'ogs_activity_partners', "partner_id", "activity_id");
     }
 }
