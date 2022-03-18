@@ -38,13 +38,13 @@ export function useTeacherFilter (selectedDistrict = null, selectedInstitution =
     selectedTeachers.value = []
     if (selectedInstitution.value) {
       if (can(LEVEL_2) && cannot(LEVEL_3)) {
-        getTeachers(store.getters['auth/user']?.institution.district_id, selectedInstitution.value)
+        getTeachers(store.getters['auth/user']?.institution.district_id, selectedInstitution.value.id)
           .then(res => {
             teachers.value = res
           })
       }
       if (can(LEVEL_3)) {
-        getTeachers(selectedDistrict.value, selectedInstitution.value)
+        getTeachers(selectedDistrict.value.id, selectedInstitution.value.id)
           .then(res => {
             teachers.value = res
           })
