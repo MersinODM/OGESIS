@@ -45,14 +45,16 @@ import ValidationError from '../ValidationError'
 import Multiselect from '@vueform/multiselect'
 import { useModelWrapper } from '../../compositions/useModelWrapper'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import { computed, watch } from 'vue'
+import store from '../../store'
 
 export default {
   name: 'TeacherSelector',
   components: { ValidationError, Multiselect },
   props: {
     modelValue: {
-      type: Number,
-      default: null
+      default: null,
+      required: false
     },
     validationMessage: {
       type: String,
@@ -73,9 +75,22 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const selectedTeachers = useModelWrapper(props, emit)
+    const teacherList = computed(() => store.getters['teacher/teachers'])
+
+    watch(teacherList, () => {
+      selectedTeachers.value = null
+    })
+
+    watch(selectedTeachers, (value) => {
+      // if (store.getters['institution/selectedInstitution']?.id !== value.id) {
+      store.dispatch('teacher/setSelectedTeacher', value)
+      // }
+    })
+
     return {
-      selectedTeachers: useModelWrapper(props, emit),
-      teacherList: useModelWrapper(props, emit, 'teachers'),
+      selectedTeachers,
+      teacherList,
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
     }
   }

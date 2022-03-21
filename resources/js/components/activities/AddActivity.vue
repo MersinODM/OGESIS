@@ -71,7 +71,6 @@
       >
         <teacher-selector
           v-model="selectedTeachers"
-          :teachers="teachers"
           name="teachers"
           class="col-md-12"
           :validation-required="true"
@@ -91,7 +90,7 @@
       <div class="form-row">
         <text-area
           v-model="description"
-          label="Açıklama"
+          label="Açıklama"type: Array,
           class="col-md-12"
           :validation-required="true"
           :validation-message="errors.description"
@@ -145,7 +144,6 @@ import TeacherSelector from '../selectors/TeacherSelector'
 import { object, string, date, ref as yupRef, array, boolean, number } from 'yup'
 import { useInstitutionCheck } from '../../compositions/useRules'
 import { useField, useForm } from 'vee-validate'
-import { useTeacherFilter } from '../../compositions/useTeacherFilter'
 import { useTeamFilter } from '../../compositions/useTeamFilter'
 import Messenger from '../../utils/messenger'
 import { ResponseCodes } from '../../utils/constants'
@@ -223,8 +221,7 @@ export default {
     const { value: selectedTeam } = useField('team_id')
     isTeamSelected.value = false
 
-    // const { institutions } = useDistrictAndInstitutionFilter(null, selectedDistrict, selectedInstitution)
-    const { teachers } = useTeacherFilter(selectedTeachers)
+
     const { teams } = useTeamFilter(selectedTeachers)
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Etkinlik/Aktivite oluşturulacaktır. Onaylıyor musunuz?')
@@ -252,7 +249,6 @@ export default {
       selectedTeachers,
       selectedTeam,
       description,
-      teachers,
       teams,
       errors,
       save
