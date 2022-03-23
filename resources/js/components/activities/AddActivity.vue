@@ -90,7 +90,7 @@
       <div class="form-row">
         <text-area
           v-model="description"
-          label="Açıklama"type: Array,
+          label="Açıklama"
           class="col-md-12"
           :validation-required="true"
           :validation-message="errors.description"

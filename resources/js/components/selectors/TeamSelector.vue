@@ -51,6 +51,8 @@ import ValidationError from '../ValidationError'
 import Multiselect from '@vueform/multiselect'
 import { useModelWrapper } from '../../compositions/useModelWrapper'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
+import { useStore } from 'vuex'
+import { watch, computed } from 'vue'
 
 export default {
   name: 'TeamSelector',
@@ -79,9 +81,21 @@ export default {
     }
   },
   setup (props, { emit }) {
+    const store = useStore()
+    const teamList = computed(() => store.getters['team/teams'])
+    const selectedTeam = useModelWrapper(props, emit)
+
+    watch(teamList, () => {
+      selectedTeam.value = null
+    })
+
+    watch(selectedTeam, (value) => {
+      store.dispatch('team/setSelectedTeam', value)
+    })
+
     return {
-      selectedTeam: useModelWrapper(props, emit),
-      teamList: useModelWrapper(props, emit, 'teams'),
+      selectedTeam,
+      teamList,
       ...useComponentValidationWrapper(props) // Buradan validasyon parametreleri geliyor
     }
   }

@@ -21,6 +21,8 @@ export default {
     init ({ dispatch }) {
       dispatch('district/init', null, { root: true })
       dispatch('institution/init', null, { root: true })
+      dispatch('teacher/init', null, { root: true })
+      dispatch('team/init', null, { root: true })
     },
     setCrud ({ commit }, mode) {
       commit('CRUD', mode)

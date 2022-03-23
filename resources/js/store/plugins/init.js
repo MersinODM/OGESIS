@@ -30,6 +30,7 @@ export default (store) => {
       store.dispatch(INSTITUTION.withSuffix(SET_INSTITUTIONS), mutation.payload)
     } else if (mutation.type === 'institution/SELECTED_INSTITUTION') {
       store.dispatch('teacher/setTeachers', mutation.payload)
+      store.dispatch('team/setTeams', mutation.payload)
     }
   })
 }

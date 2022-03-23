@@ -8,6 +8,7 @@ import ability from './plugins/ability'
 import modal from './modules/modal'
 import behavior from './modules/behaviors'
 import teacher from './modules/teachers'
+import team from './modules/teams'
 import init from './plugins/init'
 
 const debug = process.env.NODE_ENV !== 'production'
@@ -21,7 +22,8 @@ export default createStore({
     district,
     institution,
     behavior,
-    teacher
+    teacher,
+    team
   },
   strict: debug,
   plugins: debug ? [createLogger(), ability, init] : [ability, init]
