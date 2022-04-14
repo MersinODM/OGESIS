@@ -42,9 +42,13 @@ export default {
       // }
       dispatch('setTeams')
     },
-    async setTeams ({ commit, rootGetters }, institution) {
+    async setTeams ({ commit, rootGetters }, institution = null) {
       const { can, cannot } = rootGetters['auth/ability']
       const user = rootGetters['auth/user']
+      // Kurum verilmiyorsa bu aksiyona
+      if (!institution) {
+        institution = rootGetters['institution/selectedInstitution']
+      }
       // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
       // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
 

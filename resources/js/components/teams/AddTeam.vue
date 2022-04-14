@@ -51,6 +51,7 @@ import TextBox from '../../components/TextBox'
 import router from '../../router'
 import TeacherSelector from '../../components/selectors/TeacherSelector'
 import InstitutionNotValid from '../../components/institutions/InstitutionNotValid'
+import {useStore} from "vuex";
 
 export default {
   name: 'AddTeam',
@@ -58,10 +59,9 @@ export default {
   setup () {
     const notifier = useNotifier()
     const { can } = useAbility()
-    const { getDistricts } = useDistrictApi()
     const TEAM_VALIDATION_EM = 'Öğretmen seçimi yapılmalıdır!'
     const { createTeam } = useTeamApi()
-    const institutions = ref([])
+    const store = useStore()
 
     const schema = object({
       name: string().typeError(() => 'Takım adı yazı tipinde olmalıdır!')
@@ -76,15 +76,18 @@ export default {
 
     const { value: name } = useField('name')
     const { value: selectedTeachers } = useField('teachers')
-    const { value: institutionId } = useField('institution_id')
-    const { value: districtId } = useField('district_id')
+    // const { value: institutionId } = useField('institution_id').
+    // const { value: districtId } = useField('district_id')
 
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Takım oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
+        values.district_id = store.getters['district/selectedDistrict'].id
+        values.institution_id = store.getters['institution/selectedInstitution'].id
         const response = await createTeam(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Takım kaydı başarıyla oluşturuldu.', duration: 3200 })
+          await store.dispatch('team/setTeams') // Takımları yeniden yükleyelim
           await router.replace({ name: 'listTeams' })
         } else {
           await notifier.error({ message: 'Takım kaydı oluşturalamadı!.', duration: 3200 })
@@ -95,12 +98,8 @@ export default {
     return {
       errors,
       save,
-      districtId,
-      institutionId,
-      institutions,
       name,
       selectedTeachers,
-      getDistricts,
       can
     }
   }
