@@ -10,21 +10,6 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-body">
-              <div class="row justify-content-md-center">
-                <div class="col-md-3 mt-1">
-                  <district-selector
-                    v-model="selectedDistrict"
-                    :validation-required="false"
-                  />
-                </div>
-                <div class="col-md-3 mt-1">
-                  <institution-selector
-                    v-model="selectedInstitution"
-                    :institutions="institutions"
-                    :validation-required="true"
-                  />
-                </div>
-              </div>
               <div class="row">
                 <div class="col-md-12">
                   <div class="dataTables_wrapper dt-bootstrap4 table-responsive">
@@ -59,54 +44,31 @@
 
 <script>
 import Page from '../../components/Page'
-import DistrictSelector from '../../components/selectors/DistrictSelector'
-import InstitutionSelector from '../../components/selectors/InstitutionSelector'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, watch, computed } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
-import { useAbility } from '@casl/vue'
-import { usePermissionConstants } from '../../utils/constants'
-import useInstitutionApi from '../../services/useInstitutionApi'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 let table = null
 
 export default {
   name: 'TeamList',
-  components: { InstitutionSelector, DistrictSelector, Page },
+  components: { Page },
   setup () {
-    const { can, cannot } = useAbility()
     const router = useRouter()
-    const { getInstitution } = useInstitutionApi()
-    const { TEACHER_LIST_LEVEL_2, TEACHER_LIST_LEVEL_3 } = usePermissionConstants()
+
     const store = useStore()
-    const selectedDistrict = ref()
-    const selectedInstitution = ref()
-    const institutions = ref([])
+    const selectedDistrict = computed(() => store.getters['district/selectedDistrict'])
+    const selectedInstitution = computed(() => store.getters['institution/selectedInstitution'])
 
     // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
     watch(selectedDistrict, async () => {
-      selectedInstitution.value = null
       table?.ajax.reload(null, false)
-      if (selectedDistrict.value) {
-        institutions.value = await getInstitution(selectedDistrict.value)
-      } else {
-        institutions.value = []
-      }
     })
 
     // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
     watch(selectedInstitution, () => {
       table?.ajax.reload(null, false)
     })
-
-    // Kullanıcı değişimini izliyoruz eğer ilçe kullanıcısı ise
-    // kullanıcının ilçesindeki okulları dolduruyoruz seçim için
-    if (can(TEACHER_LIST_LEVEL_2) && cannot(TEACHER_LIST_LEVEL_3)) {
-      getInstitution(store.getters['auth/user']?.institution.district_id)
-        .then(res => {
-          institutions.value = res
-        })
-    }
 
     onMounted(() => {
       table = $('#teamsTable')
@@ -198,12 +160,6 @@ export default {
     onUnmounted(() => {
       table?.destroy()
     })
-
-    return {
-      selectedDistrict,
-      selectedInstitution,
-      institutions
-    }
   }
 }
 </script>

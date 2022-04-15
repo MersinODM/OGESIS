@@ -34,7 +34,10 @@
       class="sidebar"
       style="margin-top: 0"
     >
-      <div class="user-panel mt-3 pb-3 d-flex">
+      <div
+        class="user-panel mt-3 pb-3 d-flex"
+        style="width: calc(250px - .5rem * 2);"
+      >
         <div class="image">
           <img
             id="avatar"
@@ -53,13 +56,19 @@
       </div>
       <div
         v-if="isInstitutionShow"
-        class="user-panel form-inline mb-3"
+        class="d-flex form-inline mt-2"
+        style="border-bottom: 1px solid #4f5962; width: calc(250px - .5rem * 2);"
       >
-        <div class="info">
+        <div class="col-md-12 pl-0 pr-0">
           <a
+            v-if="selectedInstitution"
             href="javascript:void(0)"
-            class="d-block text-wrap"
+            class="d-block text-wrap text-bold text-warning mb-2"
           >{{ selectedInstitution }}</a>
+          <select-institution-button
+            v-else
+            class="btn-block btn-sm mb-2 text-dark"
+          />
         </div>
       </div>
       <nav class="mt-2">
@@ -87,13 +96,15 @@
 import logo from '../../../images/svg/logo.svg'
 import { computed, nextTick, watch } from 'vue'
 import MenuItem from '../../components/MenuItem'
+import SelectInstitutionButton from '../../components/SelectInstitutionButton'
 import { useStore } from 'vuex'
 
 export default {
   name: 'NMainSidebar',
-  components: { MenuItem },
+  components: { MenuItem, SelectInstitutionButton },
   setup () {
     const store = useStore()
+
     const generateAvatar = (text, foregroundColor, backgroundColor) => {
       const canvas = document.createElement('canvas')
       const context = canvas.getContext('2d')
@@ -142,10 +153,7 @@ export default {
         (store.getters['ui/screenSize'] === 'xs' && store.getters['ui/isSidebarMenuCollapsed']) ||
         (store.getters['ui/screenSize'] === 'sm' && store.getters['ui/isSidebarMenuCollapsed']))
 
-    const selectedInstitution = computed(() => {
-      const si = store.getters['institution/selectedInstitution']
-      return si !== null ? si?.name : 'Kurum seçili değil'
-    })
+    const selectedInstitution = computed(() => store.getters['institution/selectedInstitution']?.name)
 
     const menu = [
       {

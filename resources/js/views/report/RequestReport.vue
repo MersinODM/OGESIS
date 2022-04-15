@@ -104,10 +104,10 @@ export default {
         .required(() => 'Açıklama gereklidir!'),
       plan_id: number().typeError(() => 'Plan seçilmelidir')
         .required(() => 'Plan seçilmelidir!'),
-      // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
-      ...useRuleInstitution(),
-      // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
-      ...useRuleDistrict()
+      // // Eğer ilçe yetkisi varsa kurum doğrulaması yapacağız
+      // ...useRuleInstitution(),
+      // // Eğer il yetkisi varsa ilçe kurum doğrulması yapacağız
+      // ...useRuleDistrict()
     })
 
     // Bu fonksiyonu çağırma sırası önemli

@@ -52,22 +52,11 @@
           <i class="fas fa-bars" />
         </button>
       </li>
-      <!--      <li class="nav-item d-none d-sm-inline-block">-->
-      <!--        <router-link-->
-      <!--          to="/"-->
-      <!--          class="nav-link"-->
-      <!--        >-->
-      <!--          {{ $t("labels.home") }}-->
-      <!--        </router-link>-->
-      <!--      </li>-->
-      <!--      <li class="nav-item d-none d-sm-inline-block">-->
-      <!--        <router-link-->
-      <!--          to="/"-->
-      <!--          class="nav-link"-->
-      <!--        >-->
-      <!--          {{ $t("labels.contact") }}-->
-      <!--        </router-link>-->
-      <!--      </li>-->
+      <li class="nav-item d-none d-sm-inline-block ml-2">
+        <select-institution-button
+          class="btn-block mb-2 text-dark"
+        />
+      </li>
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
@@ -87,14 +76,22 @@
 import Messenger from '../../utils/messenger'
 import { useStore } from 'vuex'
 import { useAuthActionTypes } from '../../utils/constants'
+import useModal from '../../compositions/useModal'
+import SelectInstitutionButton from "../../components/SelectInstitutionButton";
 
 export default {
   name: 'NHeader',
-  components: { },
+  components: { SelectInstitutionButton },
   emits: ['toggleMenuSideBar'],
   setup () {
     const store = useStore()
     const { AUTH, LOGOUT } = useAuthActionTypes()
+    const { openModal } = useModal()
+
+    const selectInstitution = () => {
+      openModal({ title: 'Kurum seçimi', component: 'InstitutionSelectorModal' })
+    }
+
     const logout = async () => {
       const result = await Messenger.showPrompt('Oturumu kapatmak istediğinize emin misiniz?')
       if (result.isConfirmed) {
@@ -102,7 +99,8 @@ export default {
       }
     }
     return {
-      logout
+      logout,
+      selectInstitution
     }
   }
 }

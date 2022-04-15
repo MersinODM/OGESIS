@@ -13,7 +13,6 @@ export function useDistrictAndInstitutionFilter (reload = null) {
     }
   })
 
-
   return {
     selectedDistrict,
     selectedInstitution,

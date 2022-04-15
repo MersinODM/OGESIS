@@ -19,7 +19,7 @@
       :loading="false"
       :object="true"
       :options="institutionList"
-      class="form-control"
+      class="form-control h-auto"
       :class="{'is-invalid': isValidated && errorMessage != null}"
     />
     <validation-error
@@ -34,7 +34,7 @@ import ValidationError from '../ValidationError'
 import { useComponentValidationWrapper } from '../../compositions/useComponentValidationWrapper'
 import { useModelWrapper } from '../../compositions/useModelWrapper'
 import Multiselect from '@vueform/multiselect'
-import {computed, watch} from 'vue'
+import { computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -79,8 +79,9 @@ export default {
 
     watch(institution, (value) => {
       // if (store.getters['institution/selectedInstitution']?.id !== value.id) {
-      store.dispatch('institution/setSelectedInstitution', value)
-      // }
+      if (props.mode === 'single') {
+        store.dispatch('institution/setSelectedInstitution', value)
+      }
     })
 
     // institution.value = store.getters['institution/selectedInstitution']

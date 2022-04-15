@@ -11,18 +11,6 @@
           <div class="card">
             <div class="card-body">
               <div class="row justify-content-md-center">
-                <district-selector
-                  v-model="selectedDistrict"
-                  name="district_id"
-                  class="col-md-3 mt-1"
-                  :validation-required="false"
-                />
-                <institution-selector
-                  v-model="selectedInstitution"
-                  :institutions="institutions"
-                  :validation-required="false"
-                  class="col-md-3 mt-1"
-                />
                 <plan-selector
                   v-model="selectedPlan"
                   :validation-required="false"
@@ -66,22 +54,36 @@
 
 <script>
 import Page from '../../components/Page'
-import DistrictSelector from '../../components/selectors/DistrictSelector'
-import InstitutionSelector from '../../components/selectors/InstitutionSelector'
-import {onMounted, ref, watch} from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import tr from '../../utils/dataTablesTurkish'
 import router from '../../router'
 import { useDistrictAndInstitutionFilter } from '../../compositions/useDistrictAndInstitutionFilter'
 import PlanSelector from '../../components/selectors/PlanSelector'
+import { useStore } from 'vuex'
 let table = null
 
 export default {
   name: 'ReportList',
-  components: { PlanSelector, Page, DistrictSelector, InstitutionSelector },
+  components: { PlanSelector, Page },
   setup () {
-    const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter(() => table?.ajax.reload(null, false))
+    // const { institutions, selectedInstitution, selectedDistrict } = useDistrictAndInstitutionFilter(() => table?.ajax.reload(null, false))
+
+    const store = useStore()
+    const selectedDistrict = computed(() => store.getters['district/selectedDistrict'])
+    const selectedInstitution = computed(() => store.getters['institution/selectedInstitution'])
     const selectedPlan = ref()
+
     watch(selectedPlan, () => {
+      table?.ajax.reload(null, false)
+    })
+
+    // İl kullanıcıları için ilçe seçimi değişikliğini takip ediyoruz
+    watch(selectedDistrict, async () => {
+      table?.ajax.reload(null, false)
+    })
+
+    // Kurum id değştiyse öğretmenleri tekrar yüklüyoruz
+    watch(selectedInstitution, () => {
       table?.ajax.reload(null, false)
     })
 
@@ -207,9 +209,6 @@ export default {
     })
 
     return {
-      institutions,
-      selectedDistrict,
-      selectedInstitution,
       selectedPlan
     }
   }
