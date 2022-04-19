@@ -133,6 +133,7 @@ export default {
     const save = handleSubmit(async values => {
       const result = await Messenger.showPrompt('Rapor talebi oluşturulacaktır. Onaylıyor musunuz?')
       if (result.isConfirmed) {
+        values.institution_id = values.institution_id.map(i => i.id)
         const response = await createReportRequest(values)
         if (response?.code === ResponseCodes.SUCCESS) {
           await notifier.success({ message: 'Rapor talebi başarıyla oluşturuldu.', duration: 3200 })
