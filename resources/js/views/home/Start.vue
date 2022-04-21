@@ -30,7 +30,18 @@
             <template #item="{element}">
               <div class="card">
                 <div class="card-body">
-                  {{ element.name }}
+                  <div class="row">
+                    <div class="col-md-12">
+                      {{ element.name }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="float-right">
+                        <member />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </template>
@@ -62,10 +73,11 @@ import { ref } from 'vue'
 import Draggable from 'vuedraggable'
 import InstitutionNotValid from '../../components/institutions/InstitutionNotValid'
 import useModal from '../../compositions/useModal'
+import Member from '../../components/members/Member'
 
 export default {
   name: 'Start',
-  components: { InstitutionNotValid, Page, Draggable },
+  components: { InstitutionNotValid, Page, Draggable, Member },
   order: 1,
   setup (props) {
     const { openModal } = useModal()
@@ -80,7 +92,8 @@ export default {
     const myArr1 = ref([{ id: 5, name: 'KİMO' }, { id: 8, name: 'DENEME' }, { id: 14, name: 'FSFD' }])
     return {
       selectedVal: ref(),
-      myArr, myArr1,
+      myArr,
+      myArr1,
       openM1,
       openM2
     }
